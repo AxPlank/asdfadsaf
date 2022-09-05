@@ -1,0 +1,28 @@
+doctype html 
+html 
+    head 
+        meta(charset='utf-8')
+    body 
+        form(action="/", method="post") 
+            p League: 
+                input(type='text', id='league', name='league')
+            - for (let i=1; i<=20; i++)
+                case i 
+                    when 1
+                        p 1st place: 
+                            input(type='text', id='place1', name='place1')
+                        - break 
+                    when 2
+                        p 2nd place: 
+                            input(type='text', id='place2', name='place2')
+                        - break 
+                    when 1
+                        p 3rd place: 
+                            input(type='text', id='place3', name='place3')
+                        - break 
+                    default
+                        p #{i}th place: 
+                            input(type='text', id='place'+i, name='place'+i)
+                        - break 
+            p 
+                input(type='submit', id='subBtn', name='subBtn', value='Submit')

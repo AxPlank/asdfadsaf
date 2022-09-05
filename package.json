@@ -1,0 +1,27 @@
+{
+  "name": "projectnode",
+  "version": "1.0.0",
+  "description": "these are projects made with node.js",
+  "main": "hello.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AxPlank/nodeproject.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "Papus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AxPlank/nodeproject/issues"
+  },
+  "homepage": "https://github.com/AxPlank/nodeproject#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "pug": "^3.0.2"
+  }
+}
