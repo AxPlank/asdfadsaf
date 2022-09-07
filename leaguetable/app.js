@@ -4,6 +4,12 @@ const fs = require('fs');
 
 const app = express();
 
+/*
+Setting
+*/
+
+app.locals.pretty = true;
+
 // listen
 const port = 3000;
 app.listen(port, () => {
@@ -15,6 +21,7 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 // use
+// app.use(express.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
@@ -24,8 +31,40 @@ REST API
 */
 
 // get
-app.get('/', (req, res) => {
-    res.send("<h1>Hello Express!!!</h1>");
+app.get(['/', '/:id'], (req, res) => {
+    fs.readdir('data', (err, files) =>{
+        if (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error!");
+        }
+
+        let id = req.params.id;
+
+        if (id) {
+            fs.readFile('data/'+id, 'utf-8', (err, data) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("Internal Server Error!");
+                }
+
+                const league_name = id.replace(/ /g, ' ');
+                const teams = data.split(',');
+
+                const jsons = {
+                    leagues: files,
+                    teams: teams,
+                    league_name: league_name
+                };
+
+                res.render('table', jsons);
+            });
+        } else {
+            const jsons = {
+                leagues: files,
+            };
+            res.render('table', jsons);
+        }
+    });
 });
 
 app.get('/add', (req, res) => {
@@ -34,34 +73,29 @@ app.get('/add', (req, res) => {
 
 // post
 app.post('/', (req, res) => {
-    let league = req.body.league.replace(/ /g, '_');
-    let initData = req.body;
-    let data_key = Object.keys(initData);
-    let data = String();
+    // 변수에 전송된 데이터 저장
+    let title = String(req.body.league).replace(/ /g, '_');
+    let body = req.body;
+    let keys = Object.keys(body);
 
-    data_key.pop(data_key.at(-1));
-    data_key.splice(0, 1);
+    let data = Array();
 
-    for (key in data_key) {
-        if (initData[key] == '') {
+    // 데이터 가공
+    for (let i = 1; i < 21; i++) { // value가 ''라는 것은 해당 리그의 리그 순위표가 모두 나왔다는 것과 동일한 의미를 가지므로 반복문 중단 선언
+        if (body[keys[i]] === '') {
             break;
         }
 
-        data += initData[key] + ',';
-        console.log(initData[key]);
-
-        if (key == data_key.at[-1]) {
-            data -= ',';
-        }
+        data.push(body[keys[i]]);
     }
-    console.log(data);
-    console.log(league);
 
-    // fs.writeFile('./data/'+league, data, (err) => {
-    //     if (err) {
-    //         throw err;
-    //     }
+    data = data.join(',');
+
+    fs.writeFile('./data/'+title, data, (err) => {
+        if (err) {
+            throw err;
+        }
         
-    //     res.send('Saved!');
-    // });
+        res.send('Saved!');
+    });
 });
