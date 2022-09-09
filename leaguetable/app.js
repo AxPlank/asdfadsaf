@@ -108,7 +108,7 @@ app.post('/', (req, res) => {
     let body = req.body;
     let keys = Object.keys(body);
 
-    let data = Array();
+    let leagueData = Array();
 
     // 데이터 가공
     for (let i = 1; i < 21; i++) { // value가 ''라는 것은 해당 리그의 리그 순위표가 모두 나왔다는 것과 동일한 의미를 가지므로 반복문 중단 선언
@@ -116,12 +116,12 @@ app.post('/', (req, res) => {
             break;
         }
 
-        data.push(body[keys[i]]);
+        leagueData.push(body[keys[i]]);
     }
 
-    data = data.join(',');
+    leagueData = leagueData.join(',');
 
-    fs.writeFile('./data/'+title, data, (err) => {
+    fs.writeFile('./data/'+title, leagueData, (err) => {
         if (err) {
             throw err;
         }
