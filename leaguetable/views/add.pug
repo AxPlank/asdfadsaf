@@ -4,7 +4,11 @@ html
         meta(charset='utf-8')
     body 
         h1 
-            a(href='/') Football League Table
+            a(href="/") Football League Table 
+        ul 
+            each league in leagues
+                li 
+                    a(href="/"+league)=league.replace('_', ' ') 
         form(action='/', method='post') 
             p League: 
                 input(type='text', id='league', name='league')

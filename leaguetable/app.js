@@ -21,7 +21,6 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 // use
-// app.use(express.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
@@ -31,6 +30,42 @@ REST API
 */
 
 // get
+
+app.get('/add', (req, res) => {
+    fs.readdir('data', (err, files) =>{
+        if (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error!");
+        }
+
+        let id = req.params.id;
+
+        if (id) {
+            fs.readFile('data/'+id, 'utf-8', (err, data) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send("Internal Server Error!");
+                }
+
+                const league_name = id.replace(/_/g, ' ');
+
+                const jsons = {
+                    leagues: files,
+                    teams: data.split(','),
+                    league_name: league_name
+                };
+
+                res.render('table', jsons);
+            });
+        } else {
+            const jsons = {
+                leagues: files,
+            };
+            res.render('add', jsons);
+        }
+    });
+});
+
 app.get(['/', '/:id'], (req, res) => {
     fs.readdir('data', (err, files) =>{
         if (err) {
@@ -47,12 +82,11 @@ app.get(['/', '/:id'], (req, res) => {
                     res.status(500).send("Internal Server Error!");
                 }
 
-                const league_name = id.replace(/ /g, ' ');
-                const teams = data.split(',');
+                const league_name = id.replace(/_/g, ' ');
 
                 const jsons = {
                     leagues: files,
-                    teams: teams,
+                    teams: data.split(','),
                     league_name: league_name
                 };
 
@@ -65,10 +99,6 @@ app.get(['/', '/:id'], (req, res) => {
             res.render('table', jsons);
         }
     });
-});
-
-app.get('/add', (req, res) => {
-    res.render('add');
 });
 
 // post
@@ -96,6 +126,6 @@ app.post('/', (req, res) => {
             throw err;
         }
         
-        res.send('Saved!');
+        res.redirect('/');
     });
 });
