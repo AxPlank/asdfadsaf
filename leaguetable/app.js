@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-
 const app = express();
+const port = 3000;
 
 /*
 Setting
@@ -11,7 +11,6 @@ Setting
 app.locals.pretty = true; // 소스 코드 예쁘게 정렬
 
 // listen
-const port = 3000;
 app.listen(port);
 
 // set
@@ -28,13 +27,13 @@ REST API
 */
 
 // get
-
 app.get('/add', (req, res) => { // 리그 순위를 만드는 화면
     fs.readdir('data', (err, files) =>{ // 파일이 위치한 폴더에 접속
         if (err) { // 에러 발생 시 출력
             console.log(err);
             res.status(500).send("Internal Server Error!");
         }
+
         const jsons = { // View에서 사용할 데이터
             leagues: files
         };
@@ -53,17 +52,19 @@ app.get(['/', '/:id'], (req, res) => {
         let id = req.params.id; // 특정 리그 순위표를 볼 때 사용
 
         if (id) {
-            fs.readFile('data/'+id, 'utf-8', (err, data) => {
+            fs.readFile('data/'+id, 'utf-8', (err, data) => { // readFileSync가 아니기 때문에 파일을 읽으면서 callback 함수가 진행됨. 그래서 콘솔에 에러가 출력되는 것.
                 if (err) { // 에러 발생 시 출력
                     console.log(err);
                     res.status(500).send("Internal Server Error!");
                 }
 
                 const league_name = id.replace(/_/g, ' '); // 리그 순위표를 저장할 때, 리그 이름의 공백을 _로 대체했었음. 이를 다시 공백으로 대체하는 작업
+                let teams = data;
+                teams = teams.split(','); // 보다 편리하게 사용하도록 데이터를 Array로 변환함
 
                 const jsons = { // View에서 사용할 데이터
                     leagues: files,
-                    teams: data.split(','), // 보다 편리하게 사용하도록 데이터를 Array로 변환함
+                    teams: teams,
                     league_name: league_name
                 };
 
@@ -73,6 +74,7 @@ app.get(['/', '/:id'], (req, res) => {
             const jsons = { // View에서 사용할 데이터
                 leagues: files,
             };
+
             res.render('table', jsons);
         }
     });
@@ -84,7 +86,6 @@ app.post('/', (req, res) => { // 리그 순위를 저장할 때 사용
     let title = String(req.body.league).replace(/ /g, '_');
     let body = req.body;
     let keys = Object.keys(body);
-
     let leagueData = String();
 
     // 데이터 가공. 리그 순위에 맞춰 팀들을 문자열의 형태로 저장
@@ -98,7 +99,7 @@ app.post('/', (req, res) => { // 리그 순위를 저장할 때 사용
 
     leagueData = leagueData.substring(0, leagueData.length-1); // 맨 마지막 쉼표 제거
 
-    fs.writeFile('./data/'+title, leagueData, (err) => { // 데이터 저장
+    fs.writeFileSync('./data/'+title, leagueData, (err) => { // 데이터 저장
         if (err) { // 에러 발생 시 에러 출력
             throw err;
         }
