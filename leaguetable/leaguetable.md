@@ -1,7 +1,7 @@
 # Project: 5대 축구 리그 순위표
 
 # Introduction
-&nbsp;JavaScript는 웹에서의 다양한 동작을 구현하는 프론트엔드의 역할 뿐 아니라, 데이터베이스를 연동하고, API를 구현하는 백엔드의 역할도 할 수 있는 언어입니다. 그래서 저는 인프런 강의에서 배운 것을 토대로 JavaScript를 활용한 간단한 웹 서버를 제작해 보기로 하였습니다.
+&nbsp;JavaScript는 웹에서의 다양한 동작을 구현하는 프론트엔드의 역할 뿐 아니라, 데이터베이스를 연동하고, API를 구현하는 백엔드의 역할도 할 수 있는 언어입니다. 그래서 저는 [인프런 강의](https://www.inflearn.com/course/nodejs-%EA%B0%95%EC%A2%8C-%EC%83%9D%ED%99%9C%EC%BD%94%EB%94%A9/dashboard)에서 배운 것을 토대로 JavaScript를 활용한 간단한 웹 서버를 제작해 보기로 하였습니다.
 
 # Language and Framework
 
