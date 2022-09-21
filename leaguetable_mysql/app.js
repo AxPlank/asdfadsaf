@@ -22,10 +22,13 @@ const db = mysql.createConnection({
 app.set('views', './views'); // View에 사용할 파일들을 위치시킬 폴더 지정
 app.set('view engine', 'pug'); // View에 사용할 언어 지정
 
-// Middleware
+/**
+ * Middleware
+ */
 app.use(bodyParser.urlencoded({ // 요청이 왔을 때, JSON 파일을 읽기 위한 설정
     extended: false
 }));
+app.use(express.static('static'));
 
 // Mainpage
 app.get('/', (req, res) => {
@@ -33,8 +36,13 @@ app.get('/', (req, res) => {
 
     db.query(sql, (err, rows, fields) => {
         if (err) {
+            const jsonn = {
+                leagues: rows,
+                errortype: 500
+            }
+
             console.log(err);
-                res.status(404).send("Not Found Page!!!");
+            res.render('error', jsonn);
         } else {
             const jsonn = {
                 leagues: rows
@@ -53,40 +61,50 @@ app.get('/', (req, res) => {
  * 리그 순위표 조회
  */
 // 순위표 조회 페이지 접속
-app.get('/:id', (req, res) => {
+app.get('/:league', (req, res) => {
     let sql = 'select league from leagues';
 
     db.query(sql, (err, rows, fields) => {
         if (err) {
+            const jsonn = {
+                leagues: rows,
+                errortype: 500
+            };
+
             console.log(err);
-                res.status(404).send("Not Found Page!!!");
-        }
+            res.render('error', jsonn);
+        } else {
+            const leagues = rows;
+            const league = req.params.league.replace(/[(]/g,'').replace(/[)]/g,'');
+            sql = `select * from ${league} order by ranking, team`;
 
-        const leagues = rows;
-        const id = req.params.id.replace(/[(]/,'').replace(/[)]/,'');
-        sql = `select * from ${id} order by ranking, team`;
+            db.query(sql, (err, rows, fields) => {
+                if (err) {
+                    const jsonn = {
+                        leagues: leagues,
+                        errortype: 500
+                        };
+                        
+                    console.log(err);
+                    res.render('error', jsonn);
+                } else {
+                    const teams = rows;
 
-        db.query(sql, (err, rows, fields) => {
-            if (err) {
-                console.log(err);
-                res.status(404).send("Not Found Page!!!");
-            } else {
-                const teams = rows;
-
-                const jsonn = {
-                    leagues: leagues,
-                    league: req.params.id,
-                    teams: teams
+                    const jsonn = {
+                        leagues: leagues,
+                        league: req.params.league,
+                        teams: teams
+                    };
+                    
+                    res.render('table', jsonn);
                 }
-
-                res.render('table', jsonn);
-            }
-        });
+            });
+        }
     });
 });
 
 /**
- * 리그 순위표 수정
+ * 리그 순위표 수정 및 팀 데이터 삭제
  */
 // 팀 데이터 수정 페이지 접속
 app.get('/:league/:team/edit', (req, res) => {
@@ -94,29 +112,41 @@ app.get('/:league/:team/edit', (req, res) => {
 
     db.query(sql, (err, rows, fields) => {
         if (err) {
+            const jsonn = {
+                leagues: rows,
+                league: req.params.league,
+                errortype: 500,
+            };
+
             console.log(err);
-                res.status(404).send("Not Found Page!!!");
-        }
+            res.render('error', jsonn);
+        } else {
+            const leagues = rows;
+            const league = req.params.league.replace(/[(]/g,'').replace(/[)]/g,'');
+            const team = req.params.team.replace(/_/g, ' ');
+            sql = `select * from ${league} where team='${team}'`;
 
-        const leagues = rows;
-        const league = req.params.league.replace(/[(]/,'').replace(/[)]/,'');
-        const team = req.params.team.replace(/_/g, ' ');
-        sql = `select * from ${league} where team='${team}'`;
+            db.query(sql, (err, rows, fields) => {
+                if (err) {
+                    const jsonn = {
+                        leagues: leagues,
+                        league: req.params.league,
+                        errortype: 500,
+                    };
+    
+                    console.log(err);
+                    res.render('error', jsonn);
+                } else {
+                    const jsonn = {
+                        leagues: leagues,
+                        league: req.params.league,
+                        teamdata: rows[0],
+                    };
 
-        db.query(sql, (err, rows, fields) => {
-            if (err) {
-                console.log(err);
-                res.status(404).send("Not Found Page!!!");
-            } else {
-                const jsonn = {
-                    leagues: leagues,
-                    league: req.params.league,
-                    teamdata: rows[0],
+                    res.render('edit', jsonn);
                 }
-
-                res.render('edit', jsonn);
-            }
-        });
+            });
+        }
     });
 });
 
@@ -126,31 +156,91 @@ app.post('/:league/:team/edit', (req, res) => {
 
     db.query(sql, (err, rows, fields) => {
         if (err) {
+            const jsonn = {
+                leagues: rows,
+                league: req.params.league,
+                team: req.params.team,
+                errortype: 500,
+            };
+
             console.log(err);
-                res.status(404).send("Not Found Page!!!");
+            res.render('error', jsonn);
+        } else {
+            const leagues = rows;
+            const bodyvalue = Object.values(req.body).map(Number);
+            const league = req.params.league.replace(/[(]/g,'').replace(/[)]/g,'');
+            const team = req.params.team.replace(/_/g, ' ');
+
+            for (let i = 0; i < bodyvalue.length; i++) {
+                if (bodyvalue == "") {
+                    const jsonn = {
+                        leagues: leagues,
+                        league: req.params.league,
+                        team: req.params.team,
+                        errortype: 400,
+                    };
+
+                    console.log(err);
+                    res.render('error', jsonn);
+                }
+            }
+
+            sql = `update ${league} set ranking=?, pl=?, win=?, draw=?, lose=?, f=?, a=?, gd=?, pts=? where team='${team}'`;
+            db.query(sql, bodyvalue, (err, rows, fields) => {
+                if (err) {
+                    const jsonn = {
+                        leagues: leagues,
+                        league: req.params.league,
+                        team: req.params.team,
+                        errortype: 500,
+                    };
+        
+                    console.log(err);
+                    res.render('error', jsonn);
+                } else {
+                    res.redirect(`/${req.params.league}`);
+                }
+            });
         }
+    });
+});
 
-        const leagues = rows;
-        const league = req.params.league.replace(/[(]/,'').replace(/[)]/,'');
-        const team = req.params.team.replace(/_/g, ' ');
-        const output = `<h4>league: ${league}</h4><h4>team: ${team}</h4>`;
+// 팀 데이터 삭제
+app.get('/:league/:team/delete', (req, res) => {
+    let sql = 'select league from leagues';
 
-        res.send(output);
-        // sql = `select * from ${league} where team='${team}'`;
+    db.query(sql, (err, rows, fields) => {
+        if (err) {
+            const jsonn = {
+                leagues: leagues,
+                league: req.params.league,
+                team: req.params.team,
+                errortype: 500,
+            };
 
-        // db.query(sql, (err, rows, fields) => {
-        //     if (err) {
-        //         console.log(err);
-        //         res.status(404).send("Not Found Page!!!");
-        //     } else {
-        //         const jsonn = {
-        //             leagues: leagues,
-        //             league: req.params.league,
-        //             teamdata: rows[0],
-        //         }
-
-        //         res.render('edit', jsonn);
-        //     }
-        // });
+            console.log(err);
+            res.render('error', jsonn);
+        } else {
+            const leagues = rows;
+            const league = req.params.league.replace(/[(]/g,'').replace(/[)]/g,'');
+            const team = req.params.team.replace(/_/g, ' ');
+            sql = `delete from ${league} where team='${team}'`;
+            
+            db.query(sql, (err) => {
+                if (err) {
+                    const jsonn = {
+                        leagues: leagues,
+                        league: req.params.league,
+                        team: req.params.team,
+                        errortype: 500,
+                    };
+        
+                    console.log(err);
+                    res.render('error', jsonn);
+                } else {
+                    res.redirect(`/${req.params.league}`);
+                }
+            });
+        }
     });
 });

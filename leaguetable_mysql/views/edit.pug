@@ -21,4 +21,5 @@ block content
             input(type="text" name='gd' value=teamdata.gd)
         p Pts: 
             input(type="text" name='pts' value=teamdata.pts)
-        input(type="submit" value='edit')
+        input(type="submit" value='Edit')
+    a(href=`/${league}/${teamdata.team.replace(/ /g, '_')}/delete`) Delete

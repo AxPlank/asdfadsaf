@@ -1,0 +1,22 @@
+extend layout 
+
+block content 
+    article 
+        div 
+            h2='HTTP ' + errortype + ' ERROR!!!'
+            case errortype 
+                when 400
+                    p Bad Request!!! 
+                    | Blank is not allowed.
+                when 404
+                    p Page not found!!! 
+                when 500
+                    p Internal sever error!!! 
+
+            if league 
+                if team 
+                    a(href=`/${league}/${team}/edit`) Back 
+                else 
+                    a(href=`/${league}`) Back
+            else 
+                a(href='/') Back
