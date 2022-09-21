@@ -1,0 +1,35 @@
+extend layout 
+
+block content 
+    if teams 
+        h2=league.replace(/_/g, ' ')
+        article 
+            table 
+                thead 
+                    tr 
+                        td #
+                        td Team
+                        td Pl 
+                        td W 
+                        td D 
+                        td L 
+                        td F 
+                        td A 
+                        td GD 
+                        td Pts 
+                        td Edit
+                tbody 
+                    each team in teams 
+                        tr 
+                            td=team.ranking
+                            td=team.team 
+                            td=team.pl 
+                            td=team.win 
+                            td=team.draw 
+                            td=team.lose 
+                            td=team.f 
+                            td=team.a 
+                            td=team.gd 
+                            td=team.pts
+                            td
+                                a(href=`/${league}/${team.team.replace(/ /g, '_')}/edit`) edit

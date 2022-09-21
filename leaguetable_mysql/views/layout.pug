@@ -1,0 +1,15 @@
+doctype html 
+html 
+    head
+        meta(charset='utf-8')
+        title Football League  
+    body 
+        h1 Hello!
+        p You can see ranking of football league at this page 
+
+        ul 
+        each league in leagues 
+            li 
+                a(href='/'+league.league.replace(/ /g, '_'))=league.league 
+        
+        block content
