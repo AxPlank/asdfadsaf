@@ -167,26 +167,25 @@ app.post('/:league/:team/edit', (req, res) => {
             res.render('error', jsonn);
         } else {
             const leagues = rows;
-            const bodyvalue = Object.values(req.body).map(Number);
             const league = req.params.league.replace(/[(]/g,'').replace(/[)]/g,'');
             const team = req.params.team.replace(/_/g, ' ');
 
-            for (let i = 0; i < bodyvalue.length; i++) {
-                if (bodyvalue == "") {
-                    const jsonn = {
-                        leagues: leagues,
-                        league: req.params.league,
-                        team: req.params.team,
-                        errortype: 400,
-                    };
+            if (Object.values(req.body).includes("")) {
+                const jsonn = {
+                    leagues: leagues,
+                    league: req.params.league,
+                    team: req.params.team,
+                    page: 'edit',
+                    errortype: 400,
+                };
 
-                    console.log(err);
-                    res.render('error', jsonn);
-                }
+                res.render('error', jsonn);
             }
 
+            const values = Object.values(req.body).map(Number);
+
             sql = `update ${league} set ranking=?, pl=?, win=?, draw=?, lose=?, f=?, a=?, gd=?, pts=? where team='${team}'`;
-            db.query(sql, bodyvalue, (err, rows, fields) => {
+            db.query(sql, values, (err, rows, fields) => {
                 if (err) {
                     const jsonn = {
                         leagues: leagues,
@@ -212,7 +211,7 @@ app.get('/:league/:team/delete', (req, res) => {
     db.query(sql, (err, rows, fields) => {
         if (err) {
             const jsonn = {
-                leagues: leagues,
+                leagues: rows,
                 league: req.params.league,
                 team: req.params.team,
                 errortype: 500,
@@ -243,4 +242,93 @@ app.get('/:league/:team/delete', (req, res) => {
             });
         }
     });
+});
+
+/**
+ * 리그 소속팀 추가
+ */
+// 팀 추가 페이지 접속
+app.get('/:league/add', (req, res) => {
+    let sql = 'select * from leagues';
+
+    db.query(sql, (err, rows, fields) => {
+        if (err) {
+            const jsonn = {
+                leagues: rows,
+                league: req.params.league,
+                errortype: 500,
+            };
+
+            console.log(err);
+            res.render('error', jsonn);
+        } else {
+            const leagues = rows;
+            const league = req.params.league;
+
+            const jsonn = {
+                leagues: leagues,
+                league: league
+            };
+
+            res.render('add', jsonn);
+        }
+    }); 
+});
+
+// 팀 추가
+app.post('/:league/add', (req, res) => {
+    let sql = 'select * from leagues';
+
+    db.query(sql, (err, rows, fields) => {
+        if (err) {
+            const jsonn = {
+                leagues: rows,
+                league: req.params.league,
+                page: 'add',
+                errortype: 500,
+            };
+
+            console.log(err);
+            res.render('error', jsonn);
+        } else {
+            const leagues = rows;
+            const league = req.params.league.replace(/[(]/g,'').replace(/[)]/g,'');
+
+            if (Object.values(req.body).includes("")) {
+                const jsonn = {
+                    leagues: leagues,
+                    league: req.params.league,
+                    page: 'add',
+                    errortype: 400
+                };
+
+                res.render('error', jsonn);
+            }
+
+            const values = Object.values(req.body).map((e, i) => {
+                if (i !== 1) {
+                    return parseInt(e);
+                } else {
+                    return e;
+                }
+            });
+
+            sql = `insert into ${league} (ranking, team, pl, win, draw, lose, f, a, gd, pts) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            db.query(sql, values, (err, rows, fields) => {
+                if (err) {
+                    const jsonn = {
+                        leagues: leagues,
+                        league: req.params.league,
+                        page: 'add',
+                        errortype: 500,
+                    };
+        
+                    console.log(err);
+                    res.render('error', jsonn);
+                } else {
+                    res.redirect(`/${req.params.league}`);
+                }
+            });
+        }
+    }); 
 });

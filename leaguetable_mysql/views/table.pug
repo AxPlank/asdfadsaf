@@ -1,6 +1,6 @@
 extend layout 
 
-block content 
+block content
     if teams 
         h2=league.replace(/_/g, ' ')
         article 
@@ -33,3 +33,7 @@ block content
                             td=team.pts
                             td
                                 a(href=`/${league}/${team.team.replace(/ /g, '_')}/edit`) edit
+                
+            a(href=`/${league}/add`) add team
+    else 
+        p You can see ranking of football league at this page 

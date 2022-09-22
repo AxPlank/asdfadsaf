@@ -1,0 +1,27 @@
+extend layout 
+
+block content 
+    article 
+        form(action=`/${league}/add` method='post')
+            p Ranking
+                input(type="text" name='ranking' placeholder='Ranking') 
+            p Team
+                input(type="text" name='team' placeholder='Team') 
+            p Pl
+                input(type="text" name='pl' placeholder='Pl') 
+            p Win
+                input(type="text" name='win' placeholder='Win') 
+            p Draw
+                input(type="text" name='draw' placeholder='Draw') 
+            p Lose
+                input(type="text" name='lose' placeholder='Lose') 
+            p F
+                input(type="text" name='f' placeholder='F') 
+            p A
+                input(type="text" name='a' placeholder='A') 
+            p GD
+                input(type="text" name='gd' placeholder='GD') 
+            p Pts
+                input(type="text" name='pts' placeholder='Pts') 
+            p 
+                input(type="submit" value='add')
