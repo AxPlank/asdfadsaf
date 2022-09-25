@@ -1,17 +1,19 @@
 doctype html 
 html 
     head
+        link(rel="shortcut icon", href="/favicon/favicon.ico")
         meta(charset='utf-8')
-        title Football League
+        title Football League Tables
         link(rel="stylesheet", href="/style.css")
     body 
-        
-        h1 
-            a(href='/') Football League 
-
-        ul 
-            each league in leagues 
-                li 
-                    a(href='/'+league.league.replace(/ /g, '_'))=league.league 
-
-        block content
+        article(class='header')
+            div 
+                h1 
+                    a(href='/') Football League Tables
+            div 
+                ul 
+                    each league in leagues 
+                        li 
+                            a(href='/'+league.league.replace(/ /g, '_'))=league.league 
+        article(class='body')
+            block content

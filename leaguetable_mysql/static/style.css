@@ -1,8 +1,170 @@
 body {
-    background-color: rgb(211, 211, 211);
+    text-align: center;
 }
 
 a {
     text-decoration: none;
     color: black;
+}
+
+.tables {
+    border: 2px solid black;
+    border-collapse: collapse;
+    border-style: hidden;
+    margin-bottom: auto;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-left: auto;
+    min-width: 800px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.tables-header {
+    background-color: white;
+    margin-left: 35px;
+    margin-right: 35px;
+    min-width: 820px;
+    margin-top: 35px;
+    margin-bottom: 0px;
+    padding: 5px 5px 0px 5px;
+    border-radius: 15px 15px 0px 0px/ 15px 15px 0px 0px;
+}
+
+div.tables-header > h2 {
+    color: white;
+    background-color: rgb(26, 3, 160);
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0px;
+    width: 64.5%;
+    padding: 10px 0px 10px 0px;
+}
+
+.tables-body {
+    background-color: white;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px 5px 5px 5px;
+}
+
+.tables-tail {
+    background-color: white;
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-top: 0px;
+    margin-bottom: 35px;
+    padding: 5px;
+    border-radius: 0px 0px 15px 15px/ 0px 0px 15px 15px;
+    font-weight: 600;
+}
+
+thead {
+    background-color: rgba(243, 243, 243, 0.63);
+}
+
+thead > tr {
+    border: 2px solid black;
+}
+
+thead > tr > td {
+    padding: 8px;
+}
+
+tbody > tr > td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.header {
+    border: 4px solid white;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 15px;
+    width: 70%;
+    min-width: 900px;
+    height: 130px;
+    font-weight: 700;
+}
+
+    article.header > div > ul > li {
+        list-style: none;
+        float: left;
+        margin-left: auto;
+        margin-right: auto;
+        width: 20%;
+        min-width: 170px;
+    }
+
+    article.header > div > h1 > a {
+        font-size: 32px;
+    }
+
+.body {
+    margin-top: 32px;
+    border: 4px solid rgb(243, 243, 243);
+    background-color: rgb(243, 243, 243);
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 15px;
+    width: 70%;
+    min-width: 900px;
+}
+
+        article.body > div > img {
+            margin-top: 25px;
+            margin-bottom: 25px;
+            width: 95%;
+            min-width: 850px;
+            object-fit: cover;
+        }
+
+.form-header {
+    margin: 35px 35px 0px 35px;
+    background-color: white;
+    padding: 5px 5px 5px 5px;
+    border-radius: 15px 15px 0px 0px/15px 15px 0px 0px;
+}
+
+    div.form-header > h2 {
+        margin-bottom: 0px;
+        padding: 5px 0px 5px 0px;
+    }
+
+.form-body {
+    margin: 0px 35px 0px 35px;
+    background-color: white;
+    border-radius: 0px 0px 15px 15px/0px 0px 15px 15px;
+    padding: 0px 5px 5px 5px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+    div.form-body > form {
+        border: 0px 4px 4px 4px solid rgba(243, 243, 243, 0.63);
+        border-radius: 0px 0px 15px 15px/0px 0px 15px 15px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 5px;
+    }
+
+    div.form-body > form > div > input {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 4px 8px 4px 8px;
+        height: 28px;
+        background-color: rgba(224, 224, 224, 0.63);
+        border: 0px;
+        border-radius: 15px;
+        font-weight: 600;
+    }
+
+.form-tail {
+    background-color: white;
+    margin: 0px 35px 35px 35px;
+    padding: 5px;
+    border-radius: 0px 0px 15px 15px/ 0px 0px 15px 15px;
+    font-weight: 600;
 }

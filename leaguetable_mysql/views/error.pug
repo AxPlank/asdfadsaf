@@ -1,9 +1,8 @@
 extend layout 
 
 block content 
-    article 
-        div 
-            h2='HTTP ' + errortype + ' ERROR!!!'
+    div 
+        h2='HTTP ' + errortype + ' ERROR!!!'
             case errortype 
                 when 400
                     p Bad Request!!! 
@@ -12,14 +11,14 @@ block content
                     p Page not found!!! 
                 when 500
                     p Internal sever error!!! 
-
-            p 
-                if league 
-                    if page == 'edit' 
-                        a(href=`/${league}/${team}/edit`) Back 
-                    else if page == 'add'
-                        a(href=`/${league}/add`) Back
-                    else 
-                        a(href=`/${league}`) Back
+    div
+        p 
+            if league 
+                if page == 'edit' 
+                    a(href=`/${league}/${team}/edit`) Back 
+                else if page == 'add'
+                    a(href=`/${league}/add`) Back
                 else 
-                    a(href='/') Back
+                    a(href=`/${league}`) Back
+            else 
+                a(href='/') Back

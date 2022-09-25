@@ -1,10 +1,11 @@
 extend layout 
 
 block content
-    if teams 
-        h2=league.replace(/_/g, ' ')
-        article 
-            table 
+    if teams
+        div(class='tables-header') 
+            h2=league.replace(/_/g, ' ')
+        div(class='tables-body')
+            table(class='tables')
                 thead 
                     tr 
                         td #
@@ -33,7 +34,8 @@ block content
                             td=team.pts
                             td
                                 a(href=`/${league}/${team.team.replace(/ /g, '_')}/edit`) edit
-                
-            a(href=`/${league}/add`) add team
+        div(class='tables-tail') 
+            a(href=`/${league}/add`) Add team
     else 
-        p You can see ranking of football league at this page 
+        div 
+            img(src="/mainpage.jpg", alt="")

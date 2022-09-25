@@ -1,25 +1,29 @@
 extend layout 
 
 block content 
-    h2=league.replace(/_/g, ' ')+' - '+teamdata.team
-    form(action=`/${league}/${teamdata.team.replace(/ /g, '_')}/edit`, method='post') 
-        p Ranking: 
-            input(type="text" name='ranking' value=teamdata.ranking)
-        p Pl: 
-            input(type="text" name='pl' value=teamdata.pl)
-        p Win: 
-            input(type="text" name='win' value=teamdata.win)
-        p Draw: 
-            input(type="text" name='draw' value=teamdata.draw)
-        p Lose: 
-            input(type="text" name='lose' value=teamdata.lose)
-        p F: 
-            input(type="text" name='f' value=teamdata.f)
-        p A: 
-            input(type="text" name='a' value=teamdata.a)
-        p GD: 
-            input(type="text" name='gd' value=teamdata.gd)
-        p Pts: 
-            input(type="text" name='pts' value=teamdata.pts)
-        input(type="submit" value='Edit')
-    a(href=`/${league}/${teamdata.team.replace(/ /g, '_')}/delete`) Delete
+    div(class='form-header') 
+        h2=league.replace(/_/g, ' ')+' - '+teamdata.team
+    div(class='form-body') 
+        form(action=`/${league}/${teamdata.team.replace(/ /g, '_')}/edit`, method='post') 
+            div Ranking: 
+                input(type="text" name='ranking' value=teamdata.ranking)
+            div Pl: 
+                input(type="text" name='pl' value=teamdata.pl)
+            div Win: 
+                input(type="text" name='win' value=teamdata.win)
+            div Draw: 
+                input(type="text" name='draw' value=teamdata.draw)
+            div Lose: 
+                input(type="text" name='lose' value=teamdata.lose)
+            div F: 
+                input(type="text" name='f' value=teamdata.f)
+            div A: 
+                input(type="text" name='a' value=teamdata.a)
+            div GD: 
+                input(type="text" name='gd' value=teamdata.gd)
+            div Pts: 
+                input(type="text" name='pts' value=teamdata.pts)
+            div 
+                input(type="submit" value='Edit')
+    div(class='form-tail') 
+        a(href=`/${league}/${teamdata.team.replace(/ /g, '_')}/delete`) Delete

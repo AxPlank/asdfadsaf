@@ -1,27 +1,31 @@
 extend layout 
 
 block content 
-    article 
+    div(class='form-header') 
+        h2 Add Team
+    div(class='form-body')
         form(action=`/${league}/add` method='post')
-            p Ranking
+            div Ranking
                 input(type="text" name='ranking' placeholder='Ranking') 
-            p Team
+            div Team
                 input(type="text" name='team' placeholder='Team') 
-            p Pl
+            div Pl
                 input(type="text" name='pl' placeholder='Pl') 
-            p Win
+            div Win
                 input(type="text" name='win' placeholder='Win') 
-            p Draw
+            div Draw
                 input(type="text" name='draw' placeholder='Draw') 
-            p Lose
+            div Lose
                 input(type="text" name='lose' placeholder='Lose') 
-            p F
+            div F
                 input(type="text" name='f' placeholder='F') 
-            p A
+            div A
                 input(type="text" name='a' placeholder='A') 
-            p GD
+            div GD
                 input(type="text" name='gd' placeholder='GD') 
-            p Pts
+            div Pts
                 input(type="text" name='pts' placeholder='Pts') 
-            p 
+            div 
                 input(type="submit" value='add')
+    div(class='form-tail') 
+        a(href=`/${league}}`) Back League
