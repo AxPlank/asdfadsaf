@@ -9,7 +9,7 @@ block content
                 thead 
                     tr 
                         td #
-                        td Team
+                        td(class='team') Team
                         td Pl 
                         td W 
                         td D 
@@ -35,7 +35,7 @@ block content
                             td
                                 a(href=`/${league}/${team.team.replace(/ /g, '_')}/edit`) edit
         div(class='tables-tail') 
-            a(href=`/${league}/add`) Add team
+            a(href=`/${league}/add`) Add Team
     else 
         div 
             img(src="/mainpage.jpg", alt="")

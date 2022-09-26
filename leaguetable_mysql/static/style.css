@@ -37,7 +37,7 @@ div.tables-header > h2 {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 0px;
-    width: 64.5%;
+    width: 800px;
     padding: 10px 0px 10px 0px;
 }
 
@@ -167,4 +167,8 @@ tbody > tr > td {
     padding: 5px;
     border-radius: 0px 0px 15px 15px/ 0px 0px 15px 15px;
     font-weight: 600;
+}
+
+.team {
+    width: 400px;
 }
