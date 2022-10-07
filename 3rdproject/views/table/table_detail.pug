@@ -1,0 +1,34 @@
+html 
+    head 
+        meta(charset='utf-8')
+    body 
+        h2=league_name 
+        table
+            thead
+                tr 
+                    td #
+                    td Team 
+                    td Pl
+                    td W
+                    td D 
+                    td L 
+                    td GF 
+                    td GA 
+                    td GD 
+                    td Pts
+                    td Edit
+            tbody 
+                each team, ranking in teams 
+                    tr 
+                        td=ranking+1
+                        td=team.team 
+                        td=team.pl
+                        td=team.win 
+                        td=team.draw 
+                        td=team.lose 
+                        td=team.gf 
+                        td=team.ga 
+                        td=team.gd 
+                        td=team.pts 
+                        td
+                            a(href=`/edit/${team.team.replace(/ /g, '_')}`) Edit
