@@ -1,7 +1,7 @@
-html 
-    head 
-        meta(charset='utf-8')
-    body 
+extends ../layout
+
+block content 
+    article
         h2=league_name 
         table
             thead
@@ -16,7 +16,8 @@ html
                     td GA 
                     td GD 
                     td Pts
-                    td Edit
+                    if auth === 'admin'
+                        td Edit
             tbody 
                 each team, ranking in teams 
                     tr 
@@ -30,5 +31,9 @@ html
                         td=team.ga 
                         td=team.gd 
                         td=team.pts 
-                        td
-                            a(href=`/edit/${team.team.replace(/ /g, '_')}`) Edit
+                        if auth 
+                            td
+                                a(href=`/table/edit/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}`) Edit
+        
+        if auth === 'admin'
+            a(href="/table/add") Add Team

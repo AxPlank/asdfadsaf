@@ -1,0 +1,18 @@
+extends ../layout
+
+block content 
+
+    article
+        if !user
+            p If you don't have ID...
+                a(href="/auth/signup") Sign up 
+            form(action="/auth/login", method="post") 
+                input(type="text", name="id" placeholder="ID")
+                input(type="password", name="password" placeholder="Password")
+                input(type="submit" value='Login')
+
+            include ../error
+        else 
+            p You have already Login!
+            p
+                a(href="/") Go to Mainpage

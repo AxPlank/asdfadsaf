@@ -6,7 +6,8 @@ module.exports = () => {
     const MySQLStore = require('express-mysql-session')(session);
 
     app.listen(3003, () => {
-        console.log("Connected Port 3003");
+        console.log(`Connected Port 3003
+        http://localhost:3003/`);
     });
 
     app.locals.pretty = true;
@@ -28,6 +29,16 @@ module.exports = () => {
 
     app.set('views', './views');
     app.set('view engine', 'pug');
+    
+    app.get('/', (req, res) => {
+        const obj = {}
+
+        if (req.session.user) {
+            obj["user"] = req.session.user["name"];
+        }
+
+        res.render('main', obj);
+    })
     
     return app;
 }

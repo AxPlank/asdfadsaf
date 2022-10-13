@@ -1,0 +1,17 @@
+extends layout 
+
+block content 
+    article 
+        case error 
+            when 500
+                p Internal Server Error
+                p 
+                    a(href=url) Back
+            when 404
+                p Not Found
+                p 
+                    a(href=url) Back
+            when 400
+                p Bad Request 
+                p 
+                    a(href=url) Back

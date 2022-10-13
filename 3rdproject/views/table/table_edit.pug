@@ -1,6 +1,36 @@
-html 
-    head 
-        meta(charset='utf-8')
-    body 
+extends ../layout
+
+block content
+    article
         h2=`Edit - ${team.team}`
-        form(action="") 
+        form(action=`/table/edit/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}` method='post')
+            div 
+                p Pl 
+                p 
+                    input(type='text' name='pl' value=`${team.pl}`) 
+            div 
+                p Win
+                p 
+                    input(type='text' name='win' value=`${team.win}`) 
+            div 
+                p Draw
+                p 
+                    input(type='text' name='draw' value=`${team.draw}`) 
+            div 
+                p Lose
+                p 
+                    input(type='text' name='lose' value=`${team.lose}`) 
+            div 
+                p GF
+                p 
+                    input(type='text' name='gf' value=`${team.gf}`) 
+            div 
+                p GA
+                p 
+                    input(type='text' name='ga' value=`${team.ga}`) 
+            div 
+                p GD
+                p 
+                    input(type='text' name='gd' value=`${team.gd}`) 
+            div 
+                input(type="submit" value="Edit")
