@@ -1,0 +1,49 @@
+extends ../layout
+
+block content 
+
+    article
+        if !user
+            p If you have ID...
+                a(href="/auth/login") Login
+
+            form(action="/auth/signup", method="post") 
+                div 
+                    p 
+                        b ID
+                    p ID length should is over 5, And you can only use alphabet and number at ID.
+                    p 
+                        input(type="text", name="id" value=UserData?UserData["id"]:"")
+                div 
+                    p 
+                        b Password
+                    p Password length should is over 8, And you can only use alphabet and number at password.
+                    p 
+                        input(type="password", name="password")
+                        input(type="password", name="checkpassword")
+                div 
+                    p 
+                        b Nickname
+                    p You can use Alphabet and Number at Nickname.
+                    p 
+                        input(type="text", name="nickname" value=UserData?UserData["nickname"]:"")
+                div 
+                    p 
+                        b Phone
+                    p
+                        input(type="text", name="phone1" value=UserData?UserData["phone1"]:"")
+                        input(type="text", name="phone2" value=UserData?UserData["phone2"]:"")
+                        input(type="text", name="phone3" value=UserData?UserData["phone3"]:"")
+                div 
+                    p 
+                        b Email
+                    p
+                        input(type="text", name="email" value=UserData?UserData["email"]:"")
+                div
+                    input(type="submit" value='Signup')
+
+            include ../error
+        else 
+            p You have already Login!
+            p
+                a(href="/") Go to Mainpage

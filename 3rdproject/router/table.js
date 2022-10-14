@@ -2,6 +2,78 @@ module.exports = () => {
     const router = require('express').Router();
     const db = require('../config/mysql')();
 
+    router.get('/:league/add', (req, res) => {
+        if (!req.session.user) {
+            res.redirect(`/table/${req.params.league}`);
+        } else if (req.session.user["auth"] !== 'admin') {
+            res.redirect(`/table/${req.params.league}`);
+        } else {
+            const obj = {
+                league: req.params.league
+            };
+
+            res.render('table/table_add', obj);
+        }
+    }).post('/:league/add', (req, res) => {
+        if (!req.session.user) {
+            res.redirect(`/table/${req.params.league}`);
+        } else if (req.session.user["auth"] !== 'admin') {
+            res.redirect(`/table/${req.params.league}`);
+        } else if (Object.values(req.body).includes("")) {
+            const obj = {
+                user: req.session.user["name"],
+                url: `/table/${req.params.league}/${req.params.team}/edit`,
+                error: 400
+            };
+
+            res.render('errorpage', obj);
+        } else {
+            const body = Object.values(req.body)
+                .map((el, idx) => {
+                    if (idx === 0) {
+                        return el;
+                    } else {
+                        return parseInt(el);
+                    }
+                });
+
+            if (isValidValue(body)) {
+                const obj = {
+                    user: req.session.user["name"],
+                    url: `/table/${req.params.league}/${req.params.team}/edit`,
+                    error: 400
+                };
+
+                res.render('errorpage', obj);
+            }
+
+            const team = body[0];
+            const league = req.params.league.replace(/_/g, ' ');
+            const values = body.slice(1, body.length);
+            const pl = values.slice(0, 3).reduce((previous, current) => previous + current, 0);
+            const pts = values[0] * 3 + values[1];
+            const gd = values[3] - values[4];
+
+            const sql = `insert into teams (team, league, pl, win, draw, lose, gf, ga, gd, pts) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+            db.query(sql, [team, league, pl, ...values, gd, pts], (err, data) => {
+                if (err) {
+                    console.log(err);
+                    
+                    const obj = {
+                        user: req.session.user["name"],
+                        url: `/table/${req.params.league}/${req.params.team}/edit`,
+                        error: 500
+                    };
+
+                    res.render('errorpage', obj);
+                } else {
+                    res.send("success");
+                }
+            });
+        }
+    });
+
     router.get(['/', '/:league'], (req, res) => {
         let sql = 'select league from leagues';
 
@@ -63,7 +135,7 @@ module.exports = () => {
         });
     });
 
-    router.get('/edit/:league/:team', (req, res) => {
+    router.get('/:league/:team/edit', (req, res) => {
         if (!req.session.user) {
             res.redirect(`/table/${req.params.league}`);
         } else if (req.session.user["auth"] !== 'admin') {
@@ -101,7 +173,7 @@ module.exports = () => {
                 }
             });
         }
-    }).post('/edit/:league/:team', (req, res) => {
+    }).post('/:league/:team/edit', (req, res) => {
         if (!req.session.user) {
             res.redirect(`/table/${req.params.league}`);
         } else if (req.session.user["auth"] !== 'admin') {
@@ -109,37 +181,36 @@ module.exports = () => {
         } else if (Object.values(req.body).includes('')) {
             const obj = {
                 user: req.session.user["name"],
-                url: `/table/edit/${req.params.league}/${req.params.team}`,
+                url: `/table/${req.params.league}/${req.params.team}/edit`,
                 error: 400
             };
 
             res.render('errorpage', obj);
         } else {
-            const values = Object.values(req.body).map(Number);
+            const body = Object.values(req.body).map(Number);
 
-            for (let value of values) {
-                console.log(value);
-                if (!value) {
-                    const obj = {
-                        user: req.session.user["name"],
-                        url: `/table/edit/${req.params.league}/${req.params.team}`,
-                        error: 400
-                    };
+            if (isValidValue(body)) {
+                const obj = {
+                    user: req.session.user["name"],
+                    url: `/table/${req.params.league}/${req.params.team}/edit`,
+                    error: 400
+                };
 
-                    res.render('errorpage', obj);
-                }
+                res.render('errorpage', obj);
             }
 
-            let pts = values[1] * 3 + values[2];
-            let sql = `update teams set pl=?, win=?, draw=?, lose=?, gf=?, ga=?, gd=?, pts=? where team='${req.params.team.replace(/_/g, ' ')}'`;
+            const pl = body.slice(0, 3).reduce((previous, current) => previous + current, 0);
+            const pts = body[0] * 3 + body[1];
+            const gd = body[3] - body[4];
+            const sql = `update teams set pl=?, win=?, draw=?, lose=?, gf=?, ga=?, gd=?, pts=? where team='${req.params.team.replace(/_/g, ' ')}'`;
 
-            db.query(sql, [...values, pts], (err, data) => {
+            db.query(sql, [pl, ...values, gd, pts], (err, data) => {
                 if (err) {
                     console.log(err);
                     
                     const obj = {
                         user: req.session.user["name"],
-                        url: `/table/edit/${req.params.league}/${req.params.team}`,
+                        url: `/table/${req.params.league}/${req.params.team}/edit`,
                         error: 500
                     };
 
@@ -151,9 +222,43 @@ module.exports = () => {
         }
     });
 
-    router.get('/add', (req, res) => {
-        res.send('tested');
+    router.get('/:league/:team/delete', (req, res) => {
+        if (!req.session.user) {
+            res.redirect(`/table/${req.params.league}`);
+        } else if (req.session.user["auth"] !== 'admin') {
+            res.redirect(`/table/${req.params.league}`);
+        } else {
+            const team = req.params.team.replace(/_/g, ' ');
+            const sql = `delete from teams where team='${team}'`;
+
+            db.query(sql, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    
+                    const obj = {
+                        user: req.session.user["name"],
+                        url: `/table/${req.params.league}/${req.params.team}/edit`,
+                        error: 500
+                    };
+
+                    res.render('errorpage', obj);
+                } else {
+                    res.redirect(`/table/${req.params.league}`);
+                }
+            });
+        }
     });
 
     return router;
+}
+
+function isValidValue(arr) {
+    for (let el of arr) {
+        if (!el && el !== 0) {
+            console.log(el);
+            return true;
+        }
+    }
+
+    return false;
 }

@@ -33,7 +33,7 @@ block content
                         td=team.pts 
                         if auth 
                             td
-                                a(href=`/table/edit/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}`) Edit
+                                a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
         
         if auth === 'admin'
-            a(href="/table/add") Add Team
+            a(href=`/table/${league_name.replace(/ /g, '_')}/add`) Add Team

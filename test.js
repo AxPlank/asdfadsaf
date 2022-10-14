@@ -1,9 +1,6 @@
-let result = '';
-let strr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()<>?[]{}';
-let strrlen = strr.length;
+let a = 'a';
+let b = 'b';
 
-for (let i = 0; i < 12; i++) {
-    result += strr[Math.floor(Math.random() * strrlen)];
+if ((a === 'a') ^ (b === 'b')) {
+    console.log(1);
 }
-
-console.log(result);

@@ -3,11 +3,7 @@ extends ../layout
 block content
     article
         h2=`Edit - ${team.team}`
-        form(action=`/table/edit/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}` method='post')
-            div 
-                p Pl 
-                p 
-                    input(type='text' name='pl' value=`${team.pl}`) 
+        form(action=`/table/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit` method='post')
             div 
                 p Win
                 p 
@@ -29,8 +25,5 @@ block content
                 p 
                     input(type='text' name='ga' value=`${team.ga}`) 
             div 
-                p GD
-                p 
-                    input(type='text' name='gd' value=`${team.gd}`) 
-            div 
                 input(type="submit" value="Edit")
+        a(href=`/table/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/delete`) Delete Team 

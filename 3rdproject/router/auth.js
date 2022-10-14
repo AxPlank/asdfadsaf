@@ -75,5 +75,58 @@ module.exports = () => {
         res.redirect('/');
     });
 
+    router.get('/signup', (req, res) => {
+        const obj = {};
+
+        if (req.session.user) {
+            obj["user"] = req.session.user["name"];
+        }
+
+        res.render('auth/signup', obj);
+    }).post('/signup', (req, res) => {
+        const UserData = req.body;
+
+        const obj = {
+            UserData: UserData,
+        };
+
+        const PatternPhone1 = /\d{3}/;
+        const PatternPhone2 = /\d{4}/;
+
+        if (Object.values(UserData).includes("")) {
+            obj["error"] = "You should be write all items no exception.";
+
+            res.render('auth/signup', obj);
+        } else if (UserData["id"].length < 5 || UserData["password"] < 8) {
+            obj["error"] = "ID/Password is not valid.";
+
+            res.render('auth/signup', obj);
+        } else if (UserData["password"] !== UserData["checkpassword"]) {
+            obj["error"] = "Password is not match.";
+
+            res.render('auth/signup', obj);
+        } else if (UserData["phone1"] !== '010' || !(UserData["phone2"].match(PatternPhone1) ^ UserData["phone2"].match(PatternPhone2)) || UserData["phone2"][0] === '1' || !UserData["phone3"].match(PatternPhone2)) {
+            obj["error"] = "Phone number is not valid.";
+
+            res.render('auth/signup', obj);
+        }
+
+        const phone = UserData["phone1"] + UserData["phone2"] + UserData["phone3"];
+
+        const PatternID = /d/;
+    });
+
     return router;
+}
+
+function getSecretKey() {
+    let result = '';
+    let strr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()<>?[]{}';
+    let strrlen = strr.length;
+
+    for (let i = 0; i < 12; i++) {
+        result += strr[Math.floor(Math.random() * strrlen)];
+    }
+
+    return result;
 }

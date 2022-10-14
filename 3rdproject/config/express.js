@@ -38,7 +38,7 @@ module.exports = () => {
         }
 
         res.render('main', obj);
-    })
+    });
     
     return app;
 }
