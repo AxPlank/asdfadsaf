@@ -97,23 +97,97 @@ module.exports = () => {
             obj["error"] = "You should be write all items no exception.";
 
             res.render('auth/signup', obj);
-        } else if (UserData["id"].length < 5 || UserData["password"] < 8) {
-            obj["error"] = "ID/Password is not valid.";
+        } else if (UserData["password"].length < 8) {
+            obj["error"] = "Password do not valid.";
 
             res.render('auth/signup', obj);
         } else if (UserData["password"] !== UserData["checkpassword"]) {
-            obj["error"] = "Password is not match.";
+            obj["error"] = "Password do not match.";
 
             res.render('auth/signup', obj);
         } else if (UserData["phone1"] !== '010' || !(UserData["phone2"].match(PatternPhone1) ^ UserData["phone2"].match(PatternPhone2)) || UserData["phone2"][0] === '1' || !UserData["phone3"].match(PatternPhone2)) {
-            obj["error"] = "Phone number is not valid.";
+            obj["error"] = "Phone number do not valid.";
+
+            res.render('auth/signup', obj);
+        } else if (UserData["id"].length >= 5 && UserData["id"].length <= 20 && UserData["id"].match(/\W/)) {
+            obj["error"] = "ID do not valid.";
+
+            res.render('auth/signup', obj);
+        } else if (UserData["nickname"].match(/\W/)) {
+            obj["error"] = "Nickname do not valid.";
 
             res.render('auth/signup', obj);
         }
 
-        const phone = UserData["phone1"] + UserData["phone2"] + UserData["phone3"];
+        const SerectKey = getSecretKey();
+        const PW = sha256(UserData["password"] + SerectKey);
+        const Phone = UserData["phone1"] + UserData["phone2"] + UserData["phone3"];
+        let sql = 'select * from personal_info where id=? or nickname=? or email=? or phone_number=?';
+        let SqlArr = [UserData["id"], UserData["nickname"], UserData["email"], Phone];
 
-        const PatternID = /d/;
+        db.query(sql, SqlArr, (err, datas) => {
+            if (err) {
+                console.log(err);
+                
+                const obj = {
+                    url: `/auth/signup`,
+                    error: 500
+                };
+
+                res.render('errorpage', obj);
+            } else if (datas.length !== 0) {
+                console.log(datas);
+                obj["error"] = "Data is already exist one of ID, Nickname, Phone and Email.";
+                            
+                res.render('auth/signup', obj);
+            } else {
+                sql = 'insert into personal_info (id, pw, nickname, email, phone_number, secrect_key) values (?, ?, ?, ?, ?, ?)';
+                SqlArr = [UserData["id"], PW, UserData["nickname"], UserData["email"], Phone, SerectKey];
+
+                db.query(sql, SqlArr, (err, data) => {
+                    if (err) {
+                        console.log(err);
+                
+                        const obj = {
+                            url: `/auth/signup`,
+                            error: 500
+                        };
+
+                        res.render('errorpage', obj);
+                    } else {
+                        req.session.user = {
+                            name: UserData["nickname"],
+                            auth: 'user',
+                        };
+
+                        res.redirect('/');
+                    }
+                });
+            }
+        });
+    });
+
+    router.get('/mypage', (req, res) => {
+        if (req.session.user) {
+            let sql = `select * from personal_info where id='${req.session.user["name"]}'`;
+
+            db.query(sql, (err, data) => {
+                if (err) {
+                    console.log(err);
+            
+                    const obj = {
+                        url: `/auth/signup`,
+                        error: 500
+                    };
+
+                    res.render('errorpage', obj);
+                } else {
+                    res.send(data);
+                }
+            });
+        } else {
+            res.redirect('/auth/login');
+        }
     });
 
     return router;

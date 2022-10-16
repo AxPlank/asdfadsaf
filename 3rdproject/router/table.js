@@ -54,7 +54,7 @@ module.exports = () => {
             const pts = values[0] * 3 + values[1];
             const gd = values[3] - values[4];
 
-            const sql = `insert into teams (team, league, pl, win, draw, lose, gf, ga, gd, pts) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            let sql = `insert into teams (team, league, pl, win, draw, lose, gf, ga, gd, pts) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
             db.query(sql, [team, league, pl, ...values, gd, pts], (err, data) => {
                 if (err) {
@@ -202,7 +202,7 @@ module.exports = () => {
             const pl = body.slice(0, 3).reduce((previous, current) => previous + current, 0);
             const pts = body[0] * 3 + body[1];
             const gd = body[3] - body[4];
-            const sql = `update teams set pl=?, win=?, draw=?, lose=?, gf=?, ga=?, gd=?, pts=? where team='${req.params.team.replace(/_/g, ' ')}'`;
+            let sql = `update teams set pl=?, win=?, draw=?, lose=?, gf=?, ga=?, gd=?, pts=? where team='${req.params.team.replace(/_/g, ' ')}'`;
 
             db.query(sql, [pl, ...values, gd, pts], (err, data) => {
                 if (err) {
@@ -229,7 +229,7 @@ module.exports = () => {
             res.redirect(`/table/${req.params.league}`);
         } else {
             const team = req.params.team.replace(/_/g, ' ');
-            const sql = `delete from teams where team='${team}'`;
+            let sql = `delete from teams where team='${team}'`;
 
             db.query(sql, (err, data) => {
                 if (err) {

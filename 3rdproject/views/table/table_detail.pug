@@ -31,7 +31,7 @@ block content
                         td=team.ga 
                         td=team.gd 
                         td=team.pts 
-                        if auth 
+                        if auth === 'admin'
                             td
                                 a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
         
