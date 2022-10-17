@@ -1,0 +1,23 @@
+extends ../layout
+
+block content 
+
+    article
+        table 
+            tbody 
+                tr 
+                    td ID 
+                    td=id
+                tr 
+                    td Nickname 
+                    td=nickname
+                tr 
+                    td Phone 
+                    td=phone
+                tr 
+                    td Email
+                    td=email 
+                    td 
+                        a(href='/auth/authentication') Authentication
+        p If you want change Password... 
+            a(href="/auth/change") Change 

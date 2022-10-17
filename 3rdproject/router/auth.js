@@ -1,3 +1,5 @@
+
+
 module.exports = () => {
     const router = require('express').Router();
     const sha256 = require('sha256');
@@ -182,12 +184,32 @@ module.exports = () => {
 
                     res.render('errorpage', obj);
                 } else {
-                    res.send(data);
+                    const obj = {
+                        user: req.session.user["name"],
+                        id: data[0]["id"],
+                        nickname: data[0]["nickname"],
+                        phone: data[0]["phone_number"],
+                        email: data[0]["email"]
+                    };
+
+                    res.render('auth/mypage', obj);
                 }
             });
         } else {
             res.redirect('/auth/login');
         }
+    });
+
+    router.get('/authentication', (req, res) => {
+        if (req.session.user) {
+            res.send("authenticaton");
+        } else {
+            res.redirect('/auth/login');
+        }
+    });
+
+    router.get('/change', (req, res) => {
+        res.send("change");
     });
 
     return router;
