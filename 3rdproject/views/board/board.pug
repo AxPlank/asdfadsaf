@@ -1,0 +1,59 @@
+extends ../layout
+
+block content 
+    article
+        ul 
+            each league in leagues
+                if league.league !== "Others"
+                    li 
+                        a(href=`/board/${league.category.replace(/ /g, '_')}`)=league.category
+
+        table 
+            thead 
+                tr 
+                    td No 
+                    td Notice
+                    td Title 
+                    td Writer 
+                    td Date 
+                    if auth === "admin"
+                            td Delete?
+            tbody 
+                each notice, i in notices
+                    tr 
+                        td=notices.length - i
+                        td=notice.category 
+                        td
+                            a(href=`/board/category/${notice.id}`)=notice.title 
+                        td=notice.auth 
+                        td=new Date(notice.create_date).toLocaleString()
+
+        table 
+            thead 
+                tr 
+                    td No 
+                    td Category 
+                    td Title 
+                    td Writer 
+                    td Date 
+                    if auth === "admin"
+                            td Delete?
+            tbody 
+                each post, i in postlist 
+                    tr 
+                        td=postlist.length - i
+                        td=post.category 
+                        td
+                            a(href=`/board/category/${post.id}`)=post.title 
+                        td=post.auth 
+                        td=new Date(post.create_date).toLocaleString()
+                        if auth === "admin"
+                            td 
+                                a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
+
+        if authentication === "Y"
+            a(href="/board/post") Write 
+        else if authentication === "N"
+            a(href="/auth/mypage") You don't have authorization to write post.
+        else
+            a(href="/auth/login") Login 

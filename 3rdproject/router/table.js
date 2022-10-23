@@ -3,21 +3,18 @@ module.exports = () => {
     const db = require('../config/mysql')();
 
     router.get('/:league/add', (req, res) => {
-        if (!req.session.user) {
-            res.redirect(`/table/${req.params.league}`);
-        } else if (req.session.user["auth"] !== 'admin') {
+        if (!req.session.user || req.session.user["auth"] !== 'admin') {
             res.redirect(`/table/${req.params.league}`);
         } else {
             const obj = {
+                user: req.session.user["name"],
                 league: req.params.league
             };
 
             res.render('table/table_add', obj);
         }
     }).post('/:league/add', (req, res) => {
-        if (!req.session.user) {
-            res.redirect(`/table/${req.params.league}`);
-        } else if (req.session.user["auth"] !== 'admin') {
+        if (!req.session.user || req.session.user["auth"] !== 'admin') {
             res.redirect(`/table/${req.params.league}`);
         } else if (Object.values(req.body).includes("")) {
             const obj = {
@@ -82,6 +79,7 @@ module.exports = () => {
                 console.log(err);
                 
                 const obj = {
+                    user: req.session.user["name"],
                     url: `/`,
                     error: 500
                 }
@@ -100,6 +98,7 @@ module.exports = () => {
                             console.log(err);
 
                             const obj = {
+                                user: req.session.user["name"],
                                 url: `/table`,
                                 error: 500
                             }
@@ -136,9 +135,7 @@ module.exports = () => {
     });
 
     router.get('/:league/:team/edit', (req, res) => {
-        if (!req.session.user) {
-            res.redirect(`/table/${req.params.league}`);
-        } else if (req.session.user["auth"] !== 'admin') {
+        if (!req.session.user || req.session.user["auth"] !== 'admin') {
             res.redirect(`/table/${req.params.league}`);
         } else {
             let sql = `select * from teams where team='${req.params.team.replace(/_/g, ' ')}'`;
@@ -174,9 +171,7 @@ module.exports = () => {
             });
         }
     }).post('/:league/:team/edit', (req, res) => {
-        if (!req.session.user) {
-            res.redirect(`/table/${req.params.league}`);
-        } else if (req.session.user["auth"] !== 'admin') {
+        if (!req.session.user || req.session.user["auth"] !== 'admin') {
             res.redirect(`/table/${req.params.league}`);
         } else if (Object.values(req.body).includes('')) {
             const obj = {
@@ -223,9 +218,7 @@ module.exports = () => {
     });
 
     router.get('/:league/:team/delete', (req, res) => {
-        if (!req.session.user) {
-            res.redirect(`/table/${req.params.league}`);
-        } else if (req.session.user["auth"] !== 'admin') {
+        if (!req.session.user || req.session.user["auth"] !== 'admin') {
             res.redirect(`/table/${req.params.league}`);
         } else {
             const team = req.params.team.replace(/_/g, ' ');

@@ -4,12 +4,13 @@ html
         title Football Table 
     body 
         article 
-            h1 Football League Table
+            h1 
+                a(href='/') Football League Table
             a(href="/table") League Table 
             a(href="/board") Board 
             if user
                 a(href="/auth/logout") Logout 
-                a(href="/auth/mypage") MyPage 
+                a(href="/auth/mypage")=`${user}(MyPage)`
             else
                 a(href="/auth/login") Login
 

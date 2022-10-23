@@ -1,5 +1,3 @@
-
-
 module.exports = () => {
     const router = require('express').Router();
     const sha256 = require('sha256');
@@ -15,7 +13,6 @@ module.exports = () => {
         res.render('auth/login', obj);
     }).post('/login', (req, res) => {
         if (!req.body.id) {
-            console.log(1);
             const obj = {
                 error: 'Please enter your ID'
             }
@@ -58,6 +55,7 @@ module.exports = () => {
                     req.session.user = {
                         name: data[0]["nickname"],
                         auth: data[0]["authority"],
+                        authentication: data[0]["authentication_email"]
                     }
 
                     res.redirect('/');
@@ -78,13 +76,11 @@ module.exports = () => {
     });
 
     router.get('/signup', (req, res) => {
-        const obj = {};
-
         if (req.session.user) {
-            obj["user"] = req.session.user["name"];
+            res.redirect('/auth/login');
+        } else {
+            res.render('auth/signup');
         }
-
-        res.render('auth/signup', obj);
     }).post('/signup', (req, res) => {
         const UserData = req.body;
 
@@ -160,6 +156,7 @@ module.exports = () => {
                         req.session.user = {
                             name: UserData["nickname"],
                             auth: 'user',
+                            authentication: 'N'
                         };
 
                         res.redirect('/');
@@ -171,25 +168,27 @@ module.exports = () => {
 
     router.get('/mypage', (req, res) => {
         if (req.session.user) {
-            let sql = `select * from personal_info where id='${req.session.user["name"]}'`;
+            let sql = `select * from personal_info where nickname='${req.session.user["name"]}'`;
 
             db.query(sql, (err, data) => {
                 if (err) {
                     console.log(err);
             
                     const obj = {
+                        user: req.session.user["name"],
                         url: `/auth/signup`,
                         error: 500
                     };
 
                     res.render('errorpage', obj);
                 } else {
+                    
                     const obj = {
                         user: req.session.user["name"],
                         id: data[0]["id"],
                         nickname: data[0]["nickname"],
                         phone: data[0]["phone_number"],
-                        email: data[0]["email"]
+                        email: data[0]["email"],
                     };
 
                     res.render('auth/mypage', obj);
@@ -200,16 +199,131 @@ module.exports = () => {
         }
     });
 
-    router.get('/authentication', (req, res) => {
+    router.get('/change', (req, res) => {
         if (req.session.user) {
-            res.send("authenticaton");
+            const obj = {
+                user: req.session.user["name"]
+            };
+
+            res.render('auth/change', obj);
         } else {
             res.redirect('/auth/login');
         }
+    }).post('/change', (req, res) => {
+        if (Object.values(req.body).includes('')) {
+            const obj = {
+                error: "You should be write all items no exception.",
+                user: req.session.user["name"]
+            };
+
+            res.render('auth/change', obj);
+        } else if (req.body["newpassword"].length < 8) {
+            const obj = {
+                error: "New Password do not valid",
+                user: req.session.user["name"]
+            };
+
+            res.render('auth/change', obj);
+        } else if (req.body["newpassword"] === req.body["password"]) {
+            const obj = {
+                error: "You cannot change the password to the same password as your current password.",
+                user: req.session.user["name"]
+            };
+
+            res.render('auth/change', obj);
+        } else if (req.body["newpassword"] !== req.body["checknewpassword"]) {
+            const obj = {
+                error: "New Password do not match",
+                user: req.session.user["name"]
+            };
+
+            res.render('auth/change', obj);
+        } else {
+            let sql = `select pw, secrect_key from personal_info where nickname='${req.session.user["name"]}'`;
+
+            db.query(sql, (err, data) => {
+                if (err) {
+                    console.log(err);
+                    
+                    const obj = {
+                        user: req.session.user["name"],
+                        url: `/auth/change`,
+                        error: 500
+                    };
+
+                    res.render('errorpage', obj);
+                } else {
+                    const CurrentPassword = sha256(req.body["password"] + data[0]["secrect_key"]);
+
+                    if (CurrentPassword !== data[0]["pw"]) {
+                        const obj = {
+                            error: "Password do not valid",
+                            user: req.session.user["name"]
+                        };
+            
+                        res.render('auth/change', obj);
+                    } else {
+                        const NewPassword = sha256(req.body["newpassword"] + data[0]["secrect_key"]);
+
+                        sql = `update personal_info set pw='${NewPassword}' where nickname='${req.session.user["name"]}'`;
+                        
+                        db.query(sql, (err, data) => {
+                            if (err)  {
+                                console.log(err);
+                                
+                                const obj = {
+                                    user: req.session.user["name"],
+                                    url: `/auth/change`,
+                                    error: 500
+                                };
+            
+                                res.render('errorpage', obj);
+                            } else {
+                                res.redirect('/');
+                            }
+                        });
+                    }
+                }
+            });
+        }
     });
 
-    router.get('/change', (req, res) => {
-        res.send("change");
+    router.get('/leave', (req, res) => {
+        if (!req.session.user) {
+            res.redirect('/auth/login');
+        } else {
+            const obj = {
+                user: req.session.user["name"]
+            };
+
+            res.render('auth/leave', obj);
+        }
+    });
+
+    router.get('/yes', (req, res) => {
+        if (!req.session.user) {
+            res.redirect('/auth/login');
+        } else {
+            let sql = `delete from personal_info where nickname='${req.session.user["name"]}'`;
+
+            db.query(sql, (err, data) => {
+                if (err)  {
+                    console.log(err);
+                    
+                    const obj = {
+                        user: req.session.user["name"],
+                        url: `/auth/leave`,
+                        error: 500
+                    };
+
+                    res.render('errorpage', obj);
+                } else {
+                    delete req.session.user;
+
+                    res.redirect('/');
+                }
+            });
+        }
     });
 
     return router;
@@ -225,4 +339,15 @@ function getSecretKey() {
     }
 
     return result;
+}
+
+function getAuthenticationNumber() {
+    let result = '';
+    let Numbers = '0123456789';
+
+    for (let i = 0; i < 6; i++) {
+        result += Numbers[Math.floor(Math.random() * 10)];
+    }
+
+    return result
 }

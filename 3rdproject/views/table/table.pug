@@ -4,5 +4,6 @@ block content
     article
         ul 
             each league in leagues
-                li 
-                    a(href=`/table/${league.league.replace(/ /g, '_')}`)=league.league
+                if league.league !== "Others"
+                    li 
+                        a(href=`/table/${league.league.replace(/ /g, '_')}`)=league.league
