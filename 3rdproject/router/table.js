@@ -72,7 +72,7 @@ module.exports = () => {
     });
 
     router.get(['/', '/:league'], (req, res) => {
-        let sql = 'select league from leagues';
+        let sql = 'select distinct league from teams order by league';
 
         db.query(sql, (err, rows, fields) => {
             if (err) {

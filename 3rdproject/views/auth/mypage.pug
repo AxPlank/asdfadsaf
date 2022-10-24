@@ -1,23 +1,21 @@
 extends ../layout
 
 block content 
-
-    article
-        table 
-            tbody 
-                tr 
-                    td ID 
-                    td=id
-                tr 
-                    td Nickname 
-                    td=nickname
-                tr 
-                    td Phone 
-                    td=phone
-                tr 
-                    td Email
-                    td=email 
-        p If you want change Password... 
-            a(href="/auth/change") Change
-        p If you leave this site... 
-            a(href="/auth/leave") Leave 
+    table 
+        tbody 
+            tr 
+                td ID 
+                td=id
+            tr 
+                td Nickname 
+                td=nickname
+            tr 
+                td Phone 
+                td=phone
+            tr 
+                td Email
+                td=email 
+    p If you want change Password... 
+        a(href="/auth/change") Change
+    p If you leave this site... 
+        a(href="/auth/leave") Leave 

@@ -1,23 +1,21 @@
 extends ../layout
 
 block content 
-
-    article
-        form(action="/auth/change" method="post")
-            div 
-                p Password length should is over 8.
-            div 
-                p 
-                    b Password
-                p 
-                    input(type="password", name="password")
-            div 
-                p 
-                    b New Password
-                p 
-                    input(type="password", name="newpassword")
-                    input(type="password", name="checknewpassword" placeholder="One more...")
-            div 
-                input(type="submit", value="Change")
-        
-        include ../error
+    form(action="/auth/change" method="post")
+        div 
+            p Password length should is over 8.
+        div 
+            p 
+                b Password
+            p 
+                input(type="password", name="password")
+        div 
+            p 
+                b New Password
+            p 
+                input(type="password", name="newpassword")
+                input(type="password", name="checknewpassword" placeholder="One more...")
+        div 
+            input(type="submit", value="Change")
+    
+    include ../error

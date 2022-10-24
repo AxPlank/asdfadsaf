@@ -1,9 +1,12 @@
 extends ../layout
 
 block content 
-    article
+    div 
+        h1 Tables
+    div(class="league-list")
         ul 
             each league in leagues
-                if league.league !== "Others"
-                    li 
-                        a(href=`/table/${league.league.replace(/ /g, '_')}`)=league.league
+                li 
+                    a(href=`/table/${league.league.replace(/ /g, '_')}`)
+                        img(src=`/table/${league.league.replace(/ /g, '_')}.jpg`)
+                        p=league.league

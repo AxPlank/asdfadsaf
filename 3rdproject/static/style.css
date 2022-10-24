@@ -1,0 +1,103 @@
+article {
+    margin-left: auto;
+    margin-right: auto;
+    width: 65%;
+    min-width: 1100px;
+}
+
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.head {
+    margin-top: 64px;
+    margin-bottom: 32px;
+    font-weight: 700;
+    height: 150px;
+}
+
+.header-btn {
+    padding: 1px;
+}
+    article.head > div.header-btn > h1 > a {
+        color: rgb(40, 180, 40);
+        font-size: 2.5em;
+    }
+
+.navbar {
+    border-top: 2px solid rgb(40, 180, 40);
+    border-bottom: 2px solid rgb(40, 180, 40);
+    padding: 3px 0px 3px 0px;
+    float: left;
+    width: 100%;
+}
+
+    article.head > div.navbar > ul {
+        width: 100%;
+        padding: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    article.head > div.navbar > ul > li {
+        text-align: center;
+        float: left;
+        font-size: 20px;
+        padding: 2px 0px 2px 0px;
+        width: 25%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    article.head > div.navbar > ul > li > a {
+        color: black;
+        font-size: 20px;
+    }
+
+.body {
+    margin-top: 64px;
+}
+
+    article.body > img {
+        margin-right: auto;
+        margin-left: auto;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    article.body > div > h1 {
+        font-size: 2em;
+        border-bottom: 1px solid rgb(180, 180, 180);
+        padding-left: 32px;
+    }
+
+    article.body > div > ul {
+        width: 100%;
+        padding: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    article.body > div > ul > li {
+        float: left;
+        padding: 2px 0px 2px 0px;
+        width: 20%;
+        margin-left: auto;
+        margin-right: auto;
+        border-bottom: 1px solid rgb(180, 180, 180);
+    }
+
+    article.body > div > ul > li > a > img {
+        width: 100%;
+        object-fit: cover;
+    }
+
+    article.body > div > ul > li > a > p {
+        text-align: center;
+        font-weight: 600;
+        color: black;
+    }

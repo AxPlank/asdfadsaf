@@ -25,8 +25,30 @@ module.exports = () => {
                 };
 
                 if (req.params.category && req.params.id) {
-                    sql = `select * `;
-                    res.send('board');
+                    sql = `select * from board where id='${req.params.id}'`;
+
+                    db.query(sql, (err, data) => {
+                        if (err) {
+                            obj["url"] = '/';
+                            obj["error"] = 500;
+        
+                            if (req.session.user) {
+                                obj["user"] = req.session.user["name"];
+                            }
+        
+                            res.render('errorpage', obj);
+                        } else {
+                            obj["post"] = data[0];
+
+                            if (req.session.user) {
+                                obj["user"] = req.session.user["name"];
+                                obj["auth"] = req.session.user["auth"];
+                                obj["authentication"] = req.session.user["authentication"];
+                            }
+
+                            res.render('board/board_detail', obj);
+                        }
+                    });
                 } else {
                     sql = `select * from board where notice=1 order by id desc`;
 

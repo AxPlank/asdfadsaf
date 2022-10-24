@@ -1,39 +1,39 @@
 extends ../layout
 
 block content 
-    article
-        h2=league_name 
-        table
-            thead
+    h2=league_name 
+    table
+        thead
+            tr 
+                td #
+                td Team 
+                td Pl
+                td W
+                td D 
+                td L 
+                td GF 
+                td GA 
+                td GD 
+                td Pts
+                if auth === 'admin'
+                    td Edit
+        tbody 
+            each team, ranking in teams 
                 tr 
-                    td #
-                    td Team 
-                    td Pl
-                    td W
-                    td D 
-                    td L 
-                    td GF 
-                    td GA 
-                    td GD 
-                    td Pts
+                    td=ranking+1
+                    td=team.team 
+                    td=team.pl
+                    td=team.win 
+                    td=team.draw 
+                    td=team.lose 
+                    td=team.gf 
+                    td=team.ga 
+                    td=team.gd 
+                    td=team.pts 
                     if auth === 'admin'
-                        td Edit
-            tbody 
-                each team, ranking in teams 
-                    tr 
-                        td=ranking+1
-                        td=team.team 
-                        td=team.pl
-                        td=team.win 
-                        td=team.draw 
-                        td=team.lose 
-                        td=team.gf 
-                        td=team.ga 
-                        td=team.gd 
-                        td=team.pts 
-                        if auth === 'admin'
-                            td
-                                a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
+                        td
+                            a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
         
-        if auth === 'admin'
-            a(href=`/table/${league_name.replace(/ /g, '_')}/add`) Add Team
+    a(href="/table") Back 
+    if auth === 'admin'
+        a(href=`/table/${league_name.replace(/ /g, '_')}/add`) Add Team
