@@ -1,39 +1,42 @@
 extends ../layout
 
 block content 
-    h2=league_name 
-    table
-        thead
-            tr 
-                td #
-                td Team 
-                td Pl
-                td W
-                td D 
-                td L 
-                td GF 
-                td GA 
-                td GD 
-                td Pts
-                if auth === 'admin'
-                    td Edit
-        tbody 
-            each team, ranking in teams 
+    div(class="league-table-head")
+        h1=league_name 
+    div(class="league-table-body")
+        table
+            thead
                 tr 
-                    td=ranking+1
-                    td=team.team 
-                    td=team.pl
-                    td=team.win 
-                    td=team.draw 
-                    td=team.lose 
-                    td=team.gf 
-                    td=team.ga 
-                    td=team.gd 
-                    td=team.pts 
+                    td #
+                    td(class="team-name") Team 
+                    td Pl
+                    td W
+                    td D 
+                    td L 
+                    td GF 
+                    td GA 
+                    td GD 
+                    td Pts
                     if auth === 'admin'
-                        td
-                            a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
-        
-    a(href="/table") Back 
-    if auth === 'admin'
-        a(href=`/table/${league_name.replace(/ /g, '_')}/add`) Add Team
+                        td Edit
+            tbody 
+                each team, ranking in teams 
+                    tr 
+                        td=ranking+1
+                        td=team.team 
+                        td=team.pl
+                        td=team.win 
+                        td=team.draw 
+                        td=team.lose 
+                        td=team.gf 
+                        td=team.ga 
+                        td=team.gd 
+                        td=team.pts 
+                        if auth === 'admin'
+                            td
+                                a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
+
+    div(class="league-table-tail")
+        a(href="/table") Back 
+        if auth === 'admin'
+            a(href=`/table/${league_name.replace(/ /g, '_')}/add`) Add Team
