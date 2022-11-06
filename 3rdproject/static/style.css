@@ -35,13 +35,13 @@ table {
     padding: 1px;
 }
     article.head > div.header-btn > h1 > a {
-        color: rgb(40, 180, 40);
+        color: #f00000;
         font-size: 2.5em;
     }
 
 .navbar {
-    border-top: 2px solid rgb(40, 180, 40);
-    border-bottom: 2px solid rgb(40, 180, 40);
+    border-top: 2px solid #f00000;
+    border-bottom: 2px solid #f00000;
     padding: 3px 0px 3px 0px;
     float: left;
     width: 100%;
@@ -71,6 +71,7 @@ table {
 
 .body {
     margin-top: 64px;
+    margin-bottom: 256px;
 }
 
     article.body > img {
@@ -133,14 +134,44 @@ table {
         color: black;
     }
 
-    article.body > div.league-table-tail > a {
-        border: 2px rgb(40, 180, 40);
-        padding: 5px;
-        margin-left: 5px;
-        margin-right: 5px;
-        border-radius: 10px;
-        background-color: rgb(40, 180, 40);
+    article.body > div.form-body > div > form > div > p {
+        width: 40%;
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: 0px;
+        
+    }
+
+    article.body > div.form-body > div > form > div > p > input {
+        width: 100%;
+        height: 30px;
+        font-size: 20px;
+        border: 0px;
+        background-color: rgb(240, 240, 240);
+        text-align: center;
+    }
+
+    article.body > div.category > div > a {
         color: white;
+        background-color: #f00000;
+        padding: 5px 10px 5px 10px;
+        margin-left: 8px;
+        margin-right: 8px;
+        font-size: 12px;
+    }
+
+    article.body > div.board-body > table > thead {
+        background-color: #f00000;
+        color: white;
+    }
+
+    article.body > div.board-body > table > tbody > tr > td > a {
+        color: black;
+    }
+
+    article.body > div.post-body > div.post-title > p {
+        padding: 5px 10px 5px 10px;
+        margin-bottom: 0;
     }
 
 .league-table-head {
@@ -154,7 +185,6 @@ table {
 .league-table-tail {
     padding: 0px 5px 0px 5px;
     float: right;
-    font-weight: 600;
     font-size: 20px;
     margin-top: 16px;
     margin-bottom: 32px;
@@ -162,4 +192,110 @@ table {
 
 .team-name {
     width: 56%;
+}
+
+.form-body {
+    font-size: 20px;
+    font-weight: 600;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    width: 60%;
+}
+
+.form-tail {
+    margin-right: auto;
+    margin-left: auto;
+    text-align: right;
+    width: 40%;
+}
+
+.form-attribute {
+    border-top: 2px solid #f00000;
+    border-bottom: 2px solid #f00000;
+}
+
+.form-submit {
+    border: 2px #f00000;
+    padding: 5px 10px 5px 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    border-radius: 10px;
+    background-color: #f00000;
+    color: white;
+    font-size: 16px;
+}
+
+.category {
+    margin-bottom: 32px;
+}
+
+.board-category {
+    width: 20%;
+}
+
+.board-title {
+    width: 45%;
+}
+
+.board-date {
+    width: 10%;
+}
+
+.board-writer {
+    width: 15%;
+}
+
+.board-No {
+    width: 5%;
+    padding-left: 5px;
+}
+
+.board-body {
+    width: 100%;
+}
+
+.text-overflow {
+    text-overflow: ellipsis;
+}
+
+.post-body {
+    border-top: 2px solid rgb(180, 180, 180);
+    border-bottom: 2px solid rgb(180, 180, 180);
+    padding-bottom: 32px;
+}
+
+.post-tail {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 16px;
+    margin-bottom: 32px;
+    padding: 5px 10px 5px 10px;
+    text-align: right;
+}
+
+.post-title {
+    background-color: #f00000;
+    font-size: 24px;
+    color: white;
+}
+
+.post-auth-date {
+    margin-top: 0px;
+    background-color: white;
+    color: black;
+    font-size: 16px;
+}
+
+.post-content {
+    padding: 5px 10px 5px 10px;
+}
+
+.a-btn {
+    border: 2px #f00000;
+    padding: 5px 10px 5px 10px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: #f00000;
+    color: white;
 }

@@ -1,31 +1,34 @@
 extends ../layout
 
 block content
-    h2 Add Team
-    form(action=`/table/${league}/add` method='post')
+    div 
+        h1 Add Team
+    div(class='form-body')
         div 
-            p Team
-            p 
-                input(type='text' name='team')
-        div 
-            p Win
-            p 
-                input(type='text' name='win') 
-        div 
-            p Draw
-            p 
-                input(type='text' name='draw') 
-        div 
-            p Lose
-            p 
-                input(type='text' name='lose') 
-        div 
-            p GF
-            p 
-                input(type='text' name='gf') 
-        div 
-            p GA
-            p 
-                input(type='text' name='ga') 
-        div 
-            input(type="submit" value="Edit")
+            form(action=`/table/${league}/add` method='post')
+                div 
+                    p(class='form-attribute') Team
+                    p 
+                        input(type='text' name='team')
+                div 
+                    p(class='form-attribute') Win
+                    p 
+                        input(type='text' name='win') 
+                div 
+                    p(class='form-attribute') Draw
+                    p 
+                        input(type='text' name='draw') 
+                div 
+                    p(class='form-attribute') Lose
+                    p 
+                        input(type='text' name='lose') 
+                div 
+                    p(class='form-attribute') GF
+                    p 
+                        input(type='text' name='gf') 
+                div 
+                    p(class='form-attribute') GA
+                    p 
+                        input(type='text' name='ga') 
+                div 
+                    input(type="submit" class='form-submit' value="Edit")

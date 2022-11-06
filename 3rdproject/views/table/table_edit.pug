@@ -1,28 +1,34 @@
 extends ../layout
 
 block content
-    h2=`Edit - ${team.team}`
-    form(action=`/table/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit` method='post')
+    div
+        h1 Edit 
+    div(class='form-body')
         div 
-            p Win
-            p 
-                input(type='text' name='win' value=`${team.win}`) 
-        div 
-            p Draw
-            p 
-                input(type='text' name='draw' value=`${team.draw}`) 
-        div 
-            p Lose
-            p 
-                input(type='text' name='lose' value=`${team.lose}`) 
-        div 
-            p GF
-            p 
-                input(type='text' name='gf' value=`${team.gf}`) 
-        div 
-            p GA
-            p 
-                input(type='text' name='ga' value=`${team.ga}`) 
-        div 
-            input(type="submit" value="Edit")
-    a(href=`/table/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/delete`) Delete Team 
+            h2=team.team
+        div
+            form(action=`/table/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit` method='post')
+                div 
+                    p(class='form-attribute') Win
+                    p
+                        input(type='text' name='win' value=`${team.win}`) 
+                div 
+                    p(class='form-attribute') Draw
+                    p 
+                        input(type='text' name='draw' value=`${team.draw}`) 
+                div 
+                    p(class='form-attribute') Lose
+                    p 
+                        input(type='text' name='lose' value=`${team.lose}`) 
+                div 
+                    p(class='form-attribute') GF
+                    p 
+                        input(type='text' name='gf' value=`${team.gf}`) 
+                div 
+                    p(class='form-attribute') GA
+                    p 
+                        input(type='text' name='ga' value=`${team.ga}`) 
+                div 
+                    input(type="submit" class='form-submit' value="Edit")
+    div(class='form-tail')
+        a(class='a-btn' href=`/table/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/delete`) Delete Team 

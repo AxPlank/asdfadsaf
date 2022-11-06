@@ -1,16 +1,16 @@
 extends ../layout
 
-block content 
-    h3=post.category
-    h2=post.title
-    p=post.content
-    p=post.auth 
-    p="posted at " + new Date(post.create_date).toLocaleString()
-    if post.modify_date
-        p="modified at " + new Date(post.modify_date).toLocaleString()
-
-    if user === post.auth || auth === "admin"
-        a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
-    if user === post.auth 
-        a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/edit`) Edit
-    a(href="/board") Back
+block content
+    div 
+        h3=post.category
+    div(class='post-body')
+        div(class='post-title')
+            p=post.title
+            p(class='post-auth-date')=post.auth + ", posted at " + new Date(post.create_date).toLocaleString()
+            if post.modify_date
+                p="modified at " + new Date(post.modify_date).toLocaleString()
+        div
+            p(class='post-content')=post.content
+    
+    div(class='post-tail')
+        a(class='a-btn' href="/board") Back

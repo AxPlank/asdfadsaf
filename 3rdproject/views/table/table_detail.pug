@@ -37,6 +37,6 @@ block content
                                 a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
 
     div(class="league-table-tail")
-        a(href="/table") Back 
+        a(class='a-btn' href="/table") Back
         if auth === 'admin'
-            a(href=`/table/${league_name.replace(/ /g, '_')}/add`) Add Team
+            a(class='a-btn' href=`/table/${league_name.replace(/ /g, '_')}/add`) Add Team

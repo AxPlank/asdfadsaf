@@ -1,61 +1,56 @@
 extends ../layout
 
 block content 
-    ul 
-        each league in leagues
-            if league.league !== "Others"
-                li 
-                    a(href=`/board/${league.category.replace(/ /g, '_')}`)=league.category
+    div(class='category')
+        div
+            h2 Category
+        div 
+            each league in leagues
+                a(href=`/board/${league.category.replace(/ /g, '_')}`)=league.category
 
-    table 
-        thead 
-            tr 
-                td No 
-                td Notice
-                td Title 
-                td Writer 
-                td Date 
-                if auth === "admin"
-                        td Delete?
-        tbody 
-            each notice, i in notices
+    div(class='board-body')
+        table 
+            thead 
                 tr 
-                    td=notices.length - i
-                    td=notice.category 
-                    td
-                        a(href=`/board/${notice.category.replace(/ /g, ' ')}/${notice.id}`)=notice.title 
-                    td=notice.auth 
-                    td=new Date(notice.create_date).toLocaleDateString()
+                    td(class='board-No') No 
+                    td(class='board-category') Category
+                    td(class='board-title') Notice
+                    td(class='board-writer') Writer 
+                    td(class='board-date') Date 
                     if auth === "admin"
-                        td 
-                            a(href=`/board/${notice.category.replace(/ /g, '_')}/${notice.id}/delete`) Delete
-
-    table 
-        thead 
-            tr 
-                td No 
-                td Category 
-                td Title 
-                td Writer 
-                td Date 
-                if auth === "admin"
                         td Delete?
-        tbody 
-            each post, i in postlist 
-                tr 
-                    td=postlist.length - i
-                    td=post.category 
-                    td
-                        a(href=`/board/${post.category.replace(/ /g, ' ')}/${post.id}`)=post.title 
-                    td=post.auth 
-                    td=new Date(post.create_date).toLocaleDateString()
-                    if auth === "admin"
-                        td 
-                            a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
+            tbody 
+                each notice, i in notices
+                    tr 
+                        td(class='board-No')=notices.length - i
+                        td=notice.category 
+                        td
+                            a(href=`/board/${notice.category.replace(/ /g, ' ')}/${notice.id}`)=notice.title 
+                        td(class='text-overflow')=notice.auth 
+                        td=new Date(notice.create_date).toLocaleDateString()
+                        if auth === "admin"
+                            td 
+                                a(class='text-overflow' href=`/board/${notice.category.replace(/ /g, '_')}/${notice.id}/delete`) Delete
 
-    if authentication === "Y"
-        a(href="/board/post") Write 
-    else if authentication === "N"
-        a(href="/auth/mypage") Authentication
-    else
-        a(href="/auth/login") Login 
+        table
+            thead
+                tr 
+                    td(class='board-No') No 
+                    td(class='board-category') Category
+                    td(class='board-title') Title 
+                    td(class='board-writer') Writer 
+                    td(class='board-date') Date 
+                    if auth === "admin"
+                        td Delete?
+            tbody 
+                each post, i in postlist 
+                    tr 
+                        td(class='board-No text-overflow')=postlist.length - i
+                        td=post.category 
+                        td
+                            a(class='text-overflow' href=`/board/${post.category.replace(/ /g, ' ')}/${post.id}`)=post.title 
+                        td(class='text-overflow')=post.auth 
+                        td=new Date(post.create_date).toLocaleDateString()
+                        if auth === "admin"
+                            td 
+                                a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete

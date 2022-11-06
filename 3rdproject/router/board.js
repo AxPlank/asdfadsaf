@@ -50,7 +50,7 @@ module.exports = () => {
                         }
                     });
                 } else {
-                    sql = `select * from board where notice=1 order by id desc`;
+                    sql = `select * from board where notice=1 order by id desc limit 3`;
 
                     db.query(sql, (err, datas) => {
                         if (err) {
