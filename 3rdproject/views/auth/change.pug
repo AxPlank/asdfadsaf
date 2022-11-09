@@ -1,21 +1,20 @@
 extends ../layout
 
 block content 
-    form(action="/auth/change" method="post")
-        div 
-            p Password length should is over 8.
-        div 
-            p 
-                b Password
-            p 
-                input(type="password", name="password")
-        div 
-            p 
-                b New Password
-            p 
-                input(type="password", name="newpassword")
-                input(type="password", name="checknewpassword" placeholder="One more...")
-        div 
-            input(type="submit", value="Change")
+    div(class='authbox')
+        div
+            form(action="/auth/change" method="post")
+                div 
+                    h2 Change Password
+                    p(class='auth-signup-explanation') Password length should is over 8.
+                div 
+                    h3 Password
+                    input(class='rgb-180-180-180' type="password", name="password" placeholder='Current Password')
+                div 
+                    h3 New Password
+                    input(class='rgb-180-180-180 auth-signup-password' type="password", name="newpassword" placeholder='New Password')
+                    input(class='rgb-180-180-180 auth-signup-password' type="password", name="checknewpassword" placeholder="One more...")
+                div 
+                    input(class='form-submit' type="submit", value="Change")
     
-    include ../error
+        include ../error

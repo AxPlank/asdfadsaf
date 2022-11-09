@@ -1,7 +1,9 @@
 extends ../layout
 
 block content 
-    h2 Really???
-    a(href="/auth/yes") YES 
-    span=" "
-    a(href="/auth/mypage") NO  
+    div(class='authbox')
+        div
+            h2 Really???
+        div(class='auth-leave-yes-or-no')
+            a(href="/auth/yes" class='a-btn') YES
+            a(href="/auth/mypage" class='a-btn') NO

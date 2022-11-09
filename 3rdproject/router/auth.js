@@ -12,17 +12,9 @@ module.exports = () => {
 
         res.render('auth/login', obj);
     }).post('/login', (req, res) => {
-        if (!req.body.id) {
+        if (Object.values(req.body).includes("")) {
             const obj = {
-                error: 'Please enter your ID'
-            }
-
-            res.render('auth/login', obj);
-        }
-
-        if (!req.body.password) {
-            const obj = {
-                error: 'Please enter your Password'
+                error: 'There exist that is not entered.'
             }
 
             res.render('auth/login', obj);
@@ -92,7 +84,7 @@ module.exports = () => {
         const PatternPhone2 = /\d{4}/;
 
         if (Object.values(UserData).includes("")) {
-            obj["error"] = "You should be write all items no exception.";
+            obj["error"] = 'There exist that is not entered.';
 
             res.render('auth/signup', obj);
         } else if (UserData["password"].length < 8) {
@@ -212,7 +204,7 @@ module.exports = () => {
     }).post('/change', (req, res) => {
         if (Object.values(req.body).includes('')) {
             const obj = {
-                error: "You should be write all items no exception.",
+                error: 'There exist that is not entered.',
                 user: req.session.user["name"]
             };
 

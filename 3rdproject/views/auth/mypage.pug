@@ -1,21 +1,29 @@
 extends ../layout
 
 block content 
-    table 
-        tbody 
-            tr 
-                td ID 
-                td=id
-            tr 
-                td Nickname 
-                td=nickname
-            tr 
-                td Phone 
-                td=phone
-            tr 
-                td Email
-                td=email 
-    p If you want to change Password?
-        a(href="/auth/change") Change Password
-    p If you want to leave this site...?
-        a(href="/auth/leave") Leave
+    div 
+        h1 Mypage
+    
+    div(class='mypage-body')
+        div(class='mypage-btn') 
+            a(href='/auth/mypage') Profile
+            a(href="/auth/change") Change Password
+            a(href="/auth/leave") Leave
+        div(class='mypage-profile')
+            table 
+                thead
+                    tr 
+                        td(class='padding-5-10-5-10' colspan='2') Profile
+                tbody 
+                    tr 
+                        td(class='padding-5-10-5-10') ID
+                        td(class='padding-5-10-5-10')=id
+                    tr 
+                        td(class='padding-5-10-5-10') Nickname
+                        td(class='padding-5-10-5-10')=nickname
+                    tr 
+                        td(class='padding-5-10-5-10') Phone
+                        td(class='padding-5-10-5-10')=phone
+                    tr 
+                        td(class='padding-5-10-5-10') Email
+                        td(class='padding-5-10-5-10')=email
