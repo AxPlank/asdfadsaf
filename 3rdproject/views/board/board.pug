@@ -54,3 +54,6 @@ block content
                         if auth === "admin"
                             td 
                                 a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
+
+    div(class='board-tail')
+        a(href='board/post' class='a-btn') Write

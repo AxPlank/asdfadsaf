@@ -2,7 +2,7 @@ article {
     margin-left: auto;
     margin-right: auto;
     width: 65%;
-    min-width: 1100px;
+    min-width: 1200px;
 }
 
 li {
@@ -404,4 +404,8 @@ table {
 
 .auth-leave-yes-or-no {
     margin-bottom: 32px;
+}
+
+.board-tail {
+    margin-top: 32px;
 }

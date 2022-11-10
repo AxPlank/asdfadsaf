@@ -1,0 +1,35 @@
+extends ../layout
+
+block content 
+    div(class='category')
+        div
+            h2 Category
+        div 
+            each league in leagues
+                a(href=`/board/${league.category.replace(/ /g, '_')}`)=league.category
+
+    div 
+        h1 Post
+    div(class='post-body')
+        div
+            form(method='post' action='/board/post')
+                div
+                    p Title
+                        input(type='text' name='title')
+                
+                div
+                    p Category
+                        select(name="category")
+                            each league of leagues
+                                option(value=`${league.category}`)=league.category
+                div
+                    p Iamge Upload
+                        input(type='file' accept='image/*' multiple='multiple' name="Image")
+                div
+                    p Video Upload
+                        input(type='file' accept='video/*' multiple='multiple' name="Video")
+                div
+                    p Content
+                    textarea(name='content')
+                div
+                    input(type='submit' class='form-submit' value='post')

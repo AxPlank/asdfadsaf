@@ -2,6 +2,25 @@ module.exports = () => {
     const router = require('express').Router();
     const db = require('../config/mysql')();
 
+    router.get('/post', (req, res) => {
+        if (!req.session.user) {
+            res.redirect('/auth/login');
+        } else {
+            let sql = 'select distinct category from board';
+
+            db.query(sql, (err, data) => {
+                const jsonn = {
+                    leagues: data,
+                    user: req.session.user["name"]
+                };
+                
+                res.render('board/post', jsonn);
+            });
+        }
+    }).post('/post', (req, res) => {
+        res.send(req.body);
+    });
+
     router.get(['/', '/:category', '/:category/:id'], (req, res) => {
         let sql = 'select distinct category from board order by category';
 
