@@ -1,0 +1,11 @@
+html
+    head
+        meta(charset='utf-8')
+    body 
+        h1=type 
+
+        form(method='post' action=`/${type}` enctype='multipart/form-data')
+            label Upload
+                input(type='file' accept=`${type}/*` name='files' multiple='multiple')
+            label Submit 
+                input(type='submit' value='SubmitBtn')
