@@ -9,15 +9,24 @@ const db = require('mysql').createConnection({
     user: 'root',
     password: 'joongseok03@',
     port: 3306,
-    database: 'thirdproject'
+    database: 'practice'
 });
 
 // const upload = multer({
-//     dest: './uploads/'
+//     dest: './uploads/' // dest: 저장 경로, storage를 이용할 경우 좀 더 자세하게 사용가능
 // });
 
-const upload = multer({ // dest: 저장 경로, storage를 이용할 경우 좀 더 자세하게 사용가능
-    dest: './uploads/'
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+})
+
+const upload = multer({
+    storage: storage
 }).array('image', 10);
 
 app.locals.pretty = true;
@@ -26,6 +35,7 @@ app.use(express.static('static'));
 app.use('/', router);
 app.set('views', './views');
 app.set('view engine', 'pug');
+app.use('/', express.static('uploads'));
 
 app.listen(3003, () => {
     console.log(`Connected Port 3003
@@ -45,9 +55,9 @@ router.get('/image', (req, res) => {
 }).post('/image', (req, res) => {
     upload(req, res, (err) => {
         if(err) {
-            res.send(`<a href='/'>Back</a>`);
+            res.send(`<h1>ERROR!!!</h1><a href='/'>Back</a>`);
         } else {
-            res.send(req.files);
+            res.send(req.files[0].path);
         }
     });
 });
