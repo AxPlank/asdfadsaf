@@ -29,7 +29,6 @@ const upload = multer({
 
 app.locals.pretty = true;
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static('static'));
 app.use('/', router);
 app.set('views', './views');
 app.set('view engine', 'pug');
@@ -41,19 +40,25 @@ app.listen(3003, () => {
     http://localhost:3003/`);
 });
 
+/**
+ * 메인페이지
+ */
 router.get('/', (req, res) => {
     res.render('main');
 });
 
-router.get('/image', (req, res) => {
+/**
+ * 이미지 저장
+ * 저장 과정: 파일 전송 → 파일 저장 및 경로 재가공 → 파일 이름 변경 → 파일 이름 DB에 저장
+ */
+router.get('/post', (req, res) => {
     res.render('formm');
-}).post('/image', (req, res) => {
-    setTimeout(() => {console.log("RESPONSE")}, 3 * 60 * 1000);
+}).post('/post', (req, res) => {
     let SqlValues = [];
     upload(req, res, (err) => {
         if(err) {
             console.log(err);
-            res.send(`<h1>ERROR!!!</h1><a href='/'>Back</a>`);
+            res.send(`<h1>ERROR!!!</h1><a href='/post'>Back</a>`);
         } else {
             /** 
              * 파일 경로와 파일 이름 재가공을 위한 반복문
@@ -64,31 +69,67 @@ router.get('/image', (req, res) => {
              * 파일 이름이 중복되는 경우에 대한 설정이 귀찮았음
             */
             for (let i = 0; i < req.files.length; i++) {
+                // 파일 확장자 분리
                 const FileExtension = req.files[i].originalname.substring(req.files[i].originalname.lastIndexOf('.'), req.files[i].originalname.length);
 
                 fs.rename(`./uploads/${req.files[i].filename}`, `./uploads/${req.files[i].filename + FileExtension}`, (err) => {
                     if (err) {
                         console.log(err);
-                        res.send(`<h1>ERROR!!!</h1><a href='/'>Back</a>`);
+                        res.send(`<h1>ERROR!!!</h1><a href='/post'>Back</a>`);
                     }
                 });
 
                 SqlValues.push(`('${req.files[i].filename + FileExtension}')`);
             }
-            console.log(1);
             
-
+            /**
+             * 파일 url을 DB에 저장하기 위한 sql
+             */
             let sql = `insert into image (image_url) values ${SqlValues.join(', ')}`;
-            console.log(sql);
 
             db.query(sql, (err, data) => {
                 if (err) {
                     console.log(err);
-                    res.send(`<h1>ERROR!!!</h1><a href='/'>Back</a>`);
+                    res.send(`<h1>ERROR!!!</h1><a href='/post'>Back</a>`);
                 } else {
-                    res.send('success');
+                    res.redirect('/');
                 }
             });
         }
     });
+});
+
+/**
+ * 이미지 리스트 및 이미지 조회
+ */
+router.get(['/list', '/list/:id'], (req, res) => {
+    const obj = {};
+
+    if (req.params.id) {
+        const sql = `select * from image where id=${req.params.id}`;
+
+        db.query(sql, (err, data) => {
+            if (err) {
+                console.log(err);
+                res.send(`<h1>ERROR!!!</h1><a href='/'>Back</a>`);
+            } else {
+                obj["image"] = data[0];
+            }
+
+            res.render('detail', obj);
+        });
+    } else {
+        const sql = `select * from image order by id asc`;
+
+        db.query(sql, (err, data) => {
+            if (err) {
+                console.log(err);
+                res.send(`<h1>ERROR!!!</h1><a href='/list'>Back</a>`);
+            } else {
+                obj["image_list"] = data;
+            }
+
+            res.render('list', obj);
+        });
+    }
 });

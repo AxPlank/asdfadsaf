@@ -5,8 +5,10 @@ html
     body 
         h1 Image
 
-        form(method='post' action='/image' enctype='multipart/form-data')
-            label Upload
-                input(type='file' accept='image/*' name='image' multiple='multiple')
-            label Submit 
-                input(type='submit' value='SubmitBtn')
+        form(method='post' action='/post' enctype='multipart/form-data')
+            div
+                label Upload
+                    input(type='file' accept='image/*' name='image' multiple='multiple')
+            div 
+                label Submit 
+                    input(type='submit' value='SubmitBtn')
