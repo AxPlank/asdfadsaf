@@ -1,3 +1,5 @@
-let str = 'hellos';
+const AlphabetPattern = /[0-9]/;
 
-str.lastIndexOf
+const a = 'a';
+
+console.log(a.match(AlphabetPattern));

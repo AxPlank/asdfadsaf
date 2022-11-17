@@ -12,10 +12,12 @@ block content
         h1 Post
     div(class='post-body')
         div
+            include ../error
+
             form(method='post' action='/board/post')
                 div
                     p Title
-                        input(type='text' name='title')
+                        input(type='text' name='title' value=PostData?PostData["title"]:"")
                 
                 div
                     p Category
@@ -30,6 +32,6 @@ block content
                         input(type='file' accept='video/*' multiple='multiple' name="Video")
                 div
                     p Content
-                    textarea(name='content')
+                    textarea(name='content' value=PostData?PostData["content"]:"")
                 div
                     input(type='submit' class='form-submit' value='post')

@@ -26,6 +26,7 @@ module.exports = () => {
         })
     }));
     app.use(express.static('static'));
+    app.use('/board', express.static('/boardmedia'));
 
     app.set('views', './views');
     app.set('view engine', 'pug');

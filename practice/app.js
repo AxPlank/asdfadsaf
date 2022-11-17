@@ -105,6 +105,11 @@ router.get('/post', (req, res) => {
 router.get(['/list', '/list/:id'], (req, res) => {
     const obj = {};
 
+    /**
+     * 이미지 조회 if-else 코드
+     * id가 존재한다는 것은 특정 이미지를 조회하고 있다는 것으로 정해 코드를 작성했다.
+     * 즉, id가 존재하면 해당 이미지만, 반대로 존재하지 않는다면 전체 리스트를 DB에서 조회했다.
+     */
     if (req.params.id) {
         const sql = `select * from image where id=${req.params.id}`;
 

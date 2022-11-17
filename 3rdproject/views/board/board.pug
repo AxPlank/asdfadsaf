@@ -48,7 +48,7 @@ block content
                         td(class='board-No text-overflow')=postlist.length - i
                         td=post.category 
                         td
-                            a(class='text-overflow' href=`/board/${post.category.replace(/ /g, ' ')}/${post.id}`)=post.title 
+                            a(class='text-overflow' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}`)=post.title 
                         td(class='text-overflow')=post.auth 
                         td=new Date(post.create_date).toLocaleDateString()
                         if auth === "admin"
@@ -56,4 +56,4 @@ block content
                                 a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
 
     div(class='board-tail')
-        a(href='board/post' class='a-btn') Write
+        a(href='/board/post' class='a-btn') Write
