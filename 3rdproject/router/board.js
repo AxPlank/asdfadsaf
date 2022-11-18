@@ -33,112 +33,49 @@ module.exports = () => {
     }).post('/post', (req, res) => {
         if (!req.session.user) {
             res.redirect('/board');
-        }
-
-        const obj = {
-            user: req.session.user["name"]
-        };
-        let sql = 'select distinct category from board';
-
-        db.query(sql, (err, data) => {
-            if (err) {
-                console.log(err);
-
-                obj["url"] = '/board';
-                obj["error"] = 500;
-
-                res.render('errorpage', obj);
-            }
-
+        } else {
             const PostData = req.body;
             const isValid = PostValid(PostData);
-            obj["PostData"] = PostData;
-            obj["leagues"] = data;
+            let sql = 'select distinct category from board category';
 
-            if (!isValid[0]) {
-                obj["error"] = isValid[1];
-
-                res.render('board/post', obj);
-            } 
-            sql = `insert into board (auth, title, category, content, create_date) values (?, ?, ?, ?, now())`;
-            let values = [req.session.user["name"], PostData["title"], PostData["category"], PostData["content"]];
-
-            db.query(sql, values, (err) => {
-                if (err) {
-                    console.log(err);
-
-                    obj["url"] = '/board/post';
-                    obj["error"] = 500;
-
-                    res.render('errorpage', obj);
-                }
-            });
-
-            sql = `select id from board where auth='${req.session.user["name"]}' order by id desc limit 1`;
-            
             db.query(sql, (err, data) => {
                 if (err) {
                     console.log(err);
-
-                    obj["url"] = '/board/post';
-                    obj["error"] = 500;
+                    
+                    const obj = {
+                        user: req.session.user["name"],
+                        url: '/board/post',
+                        error: 500
+                    }
 
                     res.render('errorpage', obj);
+                }
+
+                if (!isValid[0]) {
+                    const obj = {
+                        error: isValid[1],
+                        user: req.session.user["name"],
+                        leagues: data
+                    };  
+    
+                    res.render('board/post', obj);
                 } else {
-                    const board_id = data[0]["id"];
+                    const Year = new Date().getFullYear().toString();
+                    const Month = (new Date().getMonth() + 1) < 10 ;
+                    const Day = new Date().getDate().toString();
 
-                    const Imagelimits = {
-                        fields: 0,
-                        fileSize: 10000000,
-                        files: 10,
-                    };
-                    const ImagefileFilter = (req, file, cb) => {
-                        if (file.mimetype.match(/^(image)/)) {
-                            cb(null, true);
-                        } else {
-                            cb(null, false);
-                        }
-                    };
-                    const ImageUpload = multer({
-                        dest: `../boardmedia/${PostData.category.replace(/ /g, '_')}/image/`,
-                        limits: Imagelimits,
-                        fileFilter: ImagefileFilter,
-                    }).array('Image', 10);
-        
-                    const Videolimits = {
-                        fields: 0,
-                        fileSize: 50000000,
-                        files: 2,
-                    };
-                    const VideofileFilter = (req, file, cb) => {
-                        if (file.mimetype.match(/^(video)/)) {
-                            cb(null, true);
-                        } else {
-                            cb(null, false);
-                        }
-                    };
-                    const VideoUpload = multer({
-                        dest: `../boardmedia/${PostData.category.replace(/ /g, '_')}/video/`,
-                        limits: Videolimits,
-                        fileFilter: VideofileFilter,
-                    }).array('Video', 2);
-
-                    VideoUpload(req, res, (err) => {
-                        if (err) {
-                            sql = `delete from board where id='${board_id}'`;
-
-                            db.query(sql, () => {});
-
-                            res.render('board/post', obj);
+                    fs.exists(`./boardmedia/${Year + Month + Day}`, (exists) => {
+                        if (!exists) {
+                            fs.mkdir(`./boardmedia/${Year + Month + Day}`, () => {
+                                console.log('Create!');
+                            });
                         }
 
-                        for (let i = 0; i < req.files.length; i++) {
-                            const FileExtension = req.files[i].originalname.substring(req.files[i].originalname.lastIndexOf('.'), req.files[i].originalname.length);
-                        }
+                        sql = `insert into board (title, auth, category, content, create_date) values ('${PostData["title"]}', '${req.session.user["name"]}', '${PostData["category"]}', '${PostData["content"]}', now())`;
                     });
                 }
             });
-        });
+        }
     });
 
     router.get(['/', '/:category', '/:category/:id'], (req, res) => {

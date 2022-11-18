@@ -25,11 +25,11 @@ block content
                             each league of leagues
                                 option(value=`${league.category}`)=league.category
                 div
-                    p Iamge Upload
-                        input(type='file' accept='image/*' multiple='multiple' name="Image")
+                    p Image Upload
+                        input(type='file' accept='image/*' multiple='multiple' name="image")
                 div
                     p Video Upload
-                        input(type='file' accept='video/*' multiple='multiple' name="Video")
+                        input(type='file' accept='video/*' multiple='multiple' name="video")
                 div
                     p Content
                     textarea(name='content' value=PostData?PostData["content"]:"")
