@@ -60,19 +60,7 @@ module.exports = () => {
     
                     res.render('board/post', obj);
                 } else {
-                    const Year = new Date().getFullYear().toString();
-                    const Month = (new Date().getMonth() + 1) < 10 ;
-                    const Day = new Date().getDate().toString();
-
-                    fs.exists(`./boardmedia/${Year + Month + Day}`, (exists) => {
-                        if (!exists) {
-                            fs.mkdir(`./boardmedia/${Year + Month + Day}`, () => {
-                                console.log('Create!');
-                            });
-                        }
-
-                        sql = `insert into board (title, auth, category, content, create_date) values ('${PostData["title"]}', '${req.session.user["name"]}', '${PostData["category"]}', '${PostData["content"]}', now())`;
-                    });
+                    res.send("Creating Post API");
                 }
             });
         }
