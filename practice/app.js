@@ -1,7 +1,7 @@
 /**
  * multer
  */
-// const multerhandler = require('./router/multer')();
+const multerhandler = require('./router/multer')();
 
 /**
  * moment

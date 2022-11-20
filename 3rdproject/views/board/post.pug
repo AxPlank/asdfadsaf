@@ -14,7 +14,7 @@ block content
         div
             include ../error
 
-            form(method='post' action='/board/post')
+            form(method='post' action='/board/post' enctype='multipart/form-data')
                 div
                     p Title
                         input(type='text' name='title' value=PostData?PostData["title"]:"")
