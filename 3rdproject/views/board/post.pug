@@ -32,6 +32,7 @@ block content
                         input(type='file' accept='video/*' multiple='multiple' name="video")
                 div
                     p Content
-                    textarea(name='content' value=PostData?PostData["content"]:"")
+                    p
+                        textarea(name='content')=PostData?PostData["content"]:""
                 div
                     input(type='submit' class='form-submit' value='post')

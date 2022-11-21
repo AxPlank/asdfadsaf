@@ -6,7 +6,7 @@ const db = require('./config/mysql')();
 const cron = require('node-cron');
 const fs = require('fs');
 const moment = require('./config/moment')();
-const multer_board = require('./config/multer_board')();
+const multer_board = require('./config/multer')();
 
 /**
  * Router

@@ -3,9 +3,7 @@ module.exports = () => {
     const db = require('../config/mysql')();
     const fs = require('fs');
     const moment = require('../config/moment')();
-    const multer_board = require('../config/multer_board')();
-
-    const [ImageUpload, VideoUpload] = [multer_board[0], multer_board[1]];
+    const upload = require('../config/multer')('boardUpload');
 
     router.get('/post', (req, res) => {
         if (!req.session.user) {
@@ -37,45 +35,57 @@ module.exports = () => {
         if (!req.session.user) {
             res.redirect('/board');
         } else {
-            console.log(req.body);
-            res.send(req.body);
-        //     const PostData = req.body;
-        //     const isValid = PostValid(PostData);
-        //     let sql = 'select distinct category from board category';
+            console.log(`Entered ImageUpload`);
+            let sql = 'select distinct category from board';
 
-        //     db.query(sql, (err, data) => {
-        //         if (err) {
-        //             console.log(err);
-                    
-        //             const obj = {
-        //                 user: req.session.user["name"],
-        //                 url: '/board/post',
-        //                 error: 500
-        //             }
+            db.query(sql, (err, data) => {
+                if (err) {
+                    console.log(err);
 
-        //             res.render('errorpage', obj);
-        //         }
+                    const obj = {
+                        url: '/board/post',
+                        error: 500
+                    };
 
-        //         if (!isValid[0]) {
-        //             const obj = {
-        //                 error: isValid[1],
-        //                 user: req.session.user["name"],
-        //                 leagues: data
-        //             };  
+                    res.render('errorpage', obj);
+                } else {
+                    const leagues = data;
+                    upload(req, res, (err) => {
+                        if (err) {
+                            console.log(err);
+                            res.send(`${err}`);
+                        } else {
+                            const Postdata = req.body;
+                            const isValid = PostValid(req.body);
+                            const filelist = getFiles(req.files);
+                            console.log(filelist);
+                            console.log(isValid);
+                            console.log(Postdata);
+
+                            if (!isValid[0]) {
+                                for (let i = 0; i < filelist.length; i++) {
+                                    fs.unlink(`./boardmedia/${moment().format('YYYYMMDD')}/${filelist[i]}`, () => {
+                                        console.log("Delete");
+                                    });
+                                }
+
+                                setTimeout(() => {
+                                    const obj = {
+                                        user: req.session.user["name"],
+                                        leagues: leagues,
+                                        error: isValid[1],
+                                        PostData: Postdata
+                                    };
     
-        //             res.render('board/post', obj);
-        //         } else {
-        //             ImageUpload(req, res, (err) => {
-        //                 if (err) {
-        //                     console.log(err);
-        //                     res.send(err);
-        //                 } else {
-        //                     console.log(req.files);
-        //                     res.send(req.files);
-        //                 }
-        //             });
-        //         }
-        //     });
+                                    res.render('board/post', obj);
+                                }, 4000);
+                            } else {
+                                res.send(req.files);
+                            }
+                        }
+                    });
+                }
+            });
         }
     });
 
@@ -205,12 +215,12 @@ module.exports = () => {
 }
 
 function PostValid(obj) {
-    if (obj["title"] === '' || obj["title"] === '') {
+    console.log(obj["content"])
+    if (obj["title"] === '' || obj["content"] === '') {
         return [false, 'You need to write a title and content.'];
     }
     
     const Title = obj["title"];
-    console.log(Title);
     const TitleLen = obj["title"].length;
     const AlphabetPattern = /[A-Za-z]/;
     const NumberPattern = /[0-9]/;
@@ -231,4 +241,22 @@ function PostValid(obj) {
     }
 
     return [true];
+}
+
+function getFiles(files) {
+    const filelist = [];
+
+    if (files["image"]){
+        for (let i = 0; i < files["image"].length; i++) {
+            filelist.push(files["image"][i]["filename"]);
+        }
+    }
+
+    if (files["video"]){
+        for (let i = 0; i < files["video"].length; i++) {
+            filelist.push(files["video"][i]["filename"]);
+        }
+    }
+
+    return filelist;
 }
