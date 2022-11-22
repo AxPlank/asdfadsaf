@@ -35,7 +35,7 @@ module.exports = () => {
         if (!req.session.user) {
             res.redirect('/board');
         } else {
-            console.log(`Entered ImageUpload`);
+            console.log(`Entered Upload`);
             let sql = 'select distinct category from board';
 
             db.query(sql, (err, data) => {
@@ -43,6 +43,7 @@ module.exports = () => {
                     console.log(err);
 
                     const obj = {
+                        user: req.session.user["name"],
                         url: '/board/post',
                         error: 500
                     };
@@ -63,24 +64,39 @@ module.exports = () => {
                             console.log(Postdata);
 
                             if (!isValid[0]) {
-                                for (let i = 0; i < filelist.length; i++) {
-                                    fs.unlink(`./boardmedia/${moment().format('YYYYMMDD')}/${filelist[i]}`, () => {
-                                        console.log("Delete");
-                                    });
-                                }
-
-                                setTimeout(() => {
+                                deleteFile(filelist).then(() => {
                                     const obj = {
+                                        PostData: Postdata,
                                         user: req.session.user["name"],
-                                        leagues: leagues,
                                         error: isValid[1],
-                                        PostData: Postdata
+                                        leagues: leagues
                                     };
-    
+
                                     res.render('board/post', obj);
-                                }, 4000);
+                                });
                             } else {
-                                res.send(req.files);
+                                changeName(req.files, filelist).then(() => {
+                                    sql = 'insert into board (auth_id, auth, title, category, content, create_date) values (?, ?, ?, ?, ?, now())';
+                                    let SqlArr = [req.session.user["user_id"], req.session.user["name"], Postdata["title"], Postdata["category"], Postdata["content"]];
+
+                                    db.query(sql, SqlArr, (err, data) => {
+                                        if (err) {
+                                            console.log(err);
+
+                                            deleteFile(filelist).then(() => {
+                                                const obj = {
+                                                    user: req.session.user["name"],
+                                                    url: '/board/post',
+                                                    error: 500
+                                                };
+
+                                                res.render('errorpage', obj);
+                                            });
+                                        } else {
+                                            res.send("TEST");
+                                        }
+                                    });
+                                });
                             }
                         }
                     });
@@ -208,55 +224,93 @@ module.exports = () => {
                     });
                 }
             }
-        })
+        });
     });
 
-    return router;
-}
-
-function PostValid(obj) {
-    console.log(obj["content"])
-    if (obj["title"] === '' || obj["content"] === '') {
-        return [false, 'You need to write a title and content.'];
+    function PostValid(obj) {
+        if (obj["title"] === '' || obj["content"] === '') {
+            return [false, 'You need to write a title and content.'];
+        }
+        
+        const Title = obj["title"];
+        const TitleLen = obj["title"].length;
+        const AlphabetPattern = /[A-Za-z]/;
+        const NumberPattern = /[0-9]/;
+        let i = TitleByte = 0;
+    
+        while (i < TitleLen) {
+            if (Title[i].match(AlphabetPattern) || Title[i].match(NumberPattern)) {
+                TitleByte += 1;
+            } else {
+                TitleByte += 2;
+            }
+    
+            if (TitleByte > 200) {
+                return [false, 'Title is too long'];
+            }
+    
+            i++;
+        }
+    
+        return [true];
     }
     
-    const Title = obj["title"];
-    const TitleLen = obj["title"].length;
-    const AlphabetPattern = /[A-Za-z]/;
-    const NumberPattern = /[0-9]/;
-    let i = TitleByte = 0;
-
-    while (i < TitleLen) {
-        if (Title[i].match(AlphabetPattern) || Title[i].match(NumberPattern)) {
-            TitleByte += 1;
-        } else {
-            TitleByte += 2;
+    function getFiles(files) {
+        const filelist = [];
+    
+        if (files["image"]){
+            for (let i = 0; i < files["image"].length; i++) {
+                filelist.push(files["image"][i]["filename"]);
+            }
         }
-
-        if (TitleByte > 200) {
-            return [false, 'Title is too long'];
+    
+        if (files["video"]){
+            for (let i = 0; i < files["video"].length; i++) {
+                filelist.push(files["video"][i]["filename"]);
+            }
         }
-
-        i++;
+    
+        return filelist;
     }
 
-    return [true];
-}
-
-function getFiles(files) {
-    const filelist = [];
-
-    if (files["image"]){
-        for (let i = 0; i < files["image"].length; i++) {
-            filelist.push(files["image"][i]["filename"]);
+    async function deleteFile (files) {
+        for(let i = 0; i < files.length; i++) {
+            fs.unlink(`./boardmedia/${moment().format('YYYYMMDD')}/${files[i]}`, () => {
+                console.log('Delete');
+            });
         }
     }
 
-    if (files["video"]){
-        for (let i = 0; i < files["video"].length; i++) {
-            filelist.push(files["video"][i]["filename"]);
+    async function changeName (files, filenames) {
+        if (files["image"]){
+            for (let i = 0; i < files["image"].length; i++) {
+                const FileExtension = files["image"][i].originalname.substring(files["image"][i].originalname.lastIndexOf('.'), files["image"][i].originalname.length);
+                const basic_path = `./boardmedia/${moment().format('YYYYMMDD')}/${files["image"][i].filename}`;
+
+                fs.rename(basic_path, basic_path + FileExtension, () => {
+                    console.log("Change");
+                });
+
+                filenames[i] = filenames[i] + FileExtension;
+            }
         }
+    
+        if (files["video"]){
+            const cntImage = files["image"] ? files["image"].length : 0;
+
+            for (let i = 0; i < files["video"].length; i++) {
+                const FileExtension = files["video"][i].originalname.substring(files["video"][i].originalname.lastIndexOf('.'), files["video"][i].originalname.length);
+                const basic_path = `./boardmedia/${moment().format('YYYYMMDD')}/${files["video"][i].filename}`;
+
+                fs.rename(basic_path, basic_path + FileExtension, () => {
+                    console.log("Change");
+                });
+
+                filenames[i + cntImage] = filenames[i + cntImage] + FileExtension;
+            }
+        }
+        console.log(filenames);
     }
 
-    return filelist;
+    return router;
 }

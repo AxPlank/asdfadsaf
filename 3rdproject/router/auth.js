@@ -45,6 +45,7 @@ module.exports = () => {
 
                 if (pw === encrypted_pw) {
                     req.session.user = {
+                        user_id: data[0]["id"],
                         name: data[0]["nickname"],
                         auth: data[0]["authority"],
                         authentication: data[0]["authentication_email"]
@@ -146,6 +147,7 @@ module.exports = () => {
                         res.render('errorpage', obj);
                     } else {
                         req.session.user = {
+                            user_id: UserData["id"],
                             name: UserData["nickname"],
                             auth: 'user',
                             authentication: 'N'
