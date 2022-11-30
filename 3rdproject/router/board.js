@@ -56,48 +56,26 @@ module.exports = () => {
                             console.log(err);
                             res.send(`${err}`);
                         } else {
-                            const Postdata = req.body;
-                            const isValid = PostValid(req.body);
-                            const filelist = getFiles(req.files);
-                            console.log(filelist);
-                            console.log(isValid);
-                            console.log(Postdata);
+                            changeFile(req.files)
+                            .then(() => {
+                                const PostData = req.body;
+                                const isValid = PostValid(PostData);
 
-                            if (!isValid[0]) {
-                                deleteFile(filelist).then(() => {
-                                    const obj = {
-                                        PostData: Postdata,
-                                        user: req.session.user["name"],
-                                        error: isValid[1],
-                                        leagues: leagues
-                                    };
-
-                                    res.render('board/post', obj);
-                                });
-                            } else {
-                                changeName(req.files, filelist).then(() => {
-                                    sql = 'insert into board (auth_id, auth, title, category, content, create_date) values (?, ?, ?, ?, ?, now())';
-                                    let SqlArr = [req.session.user["user_id"], req.session.user["name"], Postdata["title"], Postdata["category"], Postdata["content"]];
-
-                                    db.query(sql, SqlArr, (err, data) => {
-                                        if (err) {
-                                            console.log(err);
-
-                                            deleteFile(filelist).then(() => {
-                                                const obj = {
-                                                    user: req.session.user["name"],
-                                                    url: '/board/post',
-                                                    error: 500
-                                                };
-
-                                                res.render('errorpage', obj);
-                                            });
-                                        } else {
-                                            res.send("TEST");
+                                if (!isValid[0]) {
+                                    deleteFile(req.files)
+                                    .then(() => {
+                                        const obj = {
+                                            leagues: leagues,
+                                            PostData: PostData,
+                                            error: isValid[1]
                                         }
+
+                                        res.render('board/post', obj);
                                     });
-                                });
-                            }
+                                } else {
+                                    res.send("HELLO");
+                                }
+                            });
                         }
                     });
                 }
@@ -254,62 +232,54 @@ module.exports = () => {
     
         return [true];
     }
-    
-    function getFiles(files) {
-        const filelist = [];
-    
-        if (files["image"]){
-            for (let i = 0; i < files["image"].length; i++) {
-                filelist.push(files["image"][i]["filename"]);
-            }
-        }
-    
-        if (files["video"]){
-            for (let i = 0; i < files["video"].length; i++) {
-                filelist.push(files["video"][i]["filename"]);
-            }
-        }
-    
-        return filelist;
+
+    async function changeFile(files) {
+        await change('image', files);
+        await change('video', files);
+        console.log(1);
     }
 
-    async function deleteFile (files) {
-        for(let i = 0; i < files.length; i++) {
-            fs.unlink(`./boardmedia/${moment().format('YYYYMMDD')}/${files[i]}`, () => {
-                console.log('Delete');
-            });
-        }
-    }
+    async function change(type, files) {
+        if (files[type]) {
+            const cntFile = files[type].length;
 
-    async function changeName (files, filenames) {
-        if (files["image"]){
-            for (let i = 0; i < files["image"].length; i++) {
-                const FileExtension = files["image"][i].originalname.substring(files["image"][i].originalname.lastIndexOf('.'), files["image"][i].originalname.length);
-                const basic_path = `./boardmedia/${moment().format('YYYYMMDD')}/${files["image"][i].filename}`;
+            for (let i = 0; i < cntFile; i++) {
+                const file = files[type][i];
+                const fileExtension = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
 
-                fs.rename(basic_path, basic_path + FileExtension, () => {
-                    console.log("Change");
+                fs.rename(file.destination + '/' + file.filename, file.destination + '/' + file.filename + fileExtension, () => {
+                    console.log("Changed.");
                 });
 
-                filenames[i] = filenames[i] + FileExtension;
+                file.filename = file.filename + fileExtension;
             }
         }
-    
-        if (files["video"]){
-            const cntImage = files["image"] ? files["image"].length : 0;
+    };
 
-            for (let i = 0; i < files["video"].length; i++) {
-                const FileExtension = files["video"][i].originalname.substring(files["video"][i].originalname.lastIndexOf('.'), files["video"][i].originalname.length);
-                const basic_path = `./boardmedia/${moment().format('YYYYMMDD')}/${files["video"][i].filename}`;
+    async function deleteFile(files) {
+        if (files.image) {
+            const cntImg = files.image.length;
 
-                fs.rename(basic_path, basic_path + FileExtension, () => {
-                    console.log("Change");
+            for (let i = 0; i < cntImg; i++) {
+                const image = files.image[i];
+
+                fs.unlink(image.destination + '/' + image.filename, () => {
+                    console.log("Deleted.");
                 });
-
-                filenames[i + cntImage] = filenames[i + cntImage] + FileExtension;
             }
         }
-        console.log(filenames);
+
+        if (files.video) {
+            const cntVid = files.video.length;
+
+            for (let i = 0; i < cntVid; i++) {
+                const video = files.video[i];
+
+                fs.unlink(video.destination + '/' + video.filename, () => {
+                    console.log("Deleted.");
+                });
+            }
+        }
     }
 
     return router;
