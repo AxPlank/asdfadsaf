@@ -37,7 +37,7 @@ module.exports = () => {
         } else {
             console.log(`Entered Upload`);
             let sql = 'select distinct category from board';
-
+            
             db.query(sql, (err, data) => {
                 if (err) {
                     console.log(err);
@@ -55,27 +55,34 @@ module.exports = () => {
                         if (err) {
                             console.log(err);
                             res.send(`${err}`);
+                            throw err;
                         } else {
-                            changeFile(req.files)
-                            .then(() => {
-                                const PostData = req.body;
-                                const isValid = PostValid(PostData);
+                            // 1st. isValid
+                            const PostData = req.body;
+                            const isValid = PostValid(PostData);
 
-                                if (!isValid[0]) {
-                                    deleteFile(req.files)
-                                    .then(() => {
-                                        const obj = {
-                                            leagues: leagues,
-                                            PostData: PostData,
-                                            error: isValid[1]
-                                        }
+                            if (!isValid[0]) {
+                                deleteFile(req.files).then(() => {
+                                    const obj = {
+                                        user: req.session.user.name,
+                                        leagues: leagues,
+                                        error: isValid[1]
+                                    }
+                                    console.log(req.body);
 
-                                        res.render('board/post', obj);
-                                    });
-                                } else {
-                                    res.send("HELLO");
-                                }
-                            });
+                                    res.render('board/post', obj);
+                                }).catch((reason) => {
+                                    res.send(reason);
+                                });
+                            } else {
+                                // 2nd. Save req.body
+                                sql = `insert into board (auth_id, auth, title, category, content, create_date) values (?, ?, ?, ?, ?, ?)`;
+                                console.log(moment());
+                                let sqlArr = [req.session.user["id"], req.session.user["name"], PostData["title"], PostData["category"], PostData["content"], moment()]
+
+                                res.send(`${sqlArr.join(' * ')}`);
+                            }
+                            // res.send(req.files.image[0]);
                         }
                     });
                 }
@@ -233,38 +240,21 @@ module.exports = () => {
         return [true];
     }
 
-    async function changeFile(files) {
-        await change('image', files);
-        await change('video', files);
-        console.log(1);
-    }
+    function getFileData(files) {
+        let fileDataArr = [];
 
-    async function change(type, files) {
-        if (files[type]) {
-            const cntFile = files[type].length;
-
-            for (let i = 0; i < cntFile; i++) {
-                const file = files[type][i];
-                const fileExtension = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
-
-                fs.rename(file.destination + '/' + file.filename, file.destination + '/' + file.filename + fileExtension, () => {
-                    console.log("Changed.");
-                });
-
-                file.filename = file.filename + fileExtension;
-            }
-        }
-    };
-
-    async function deleteFile(files) {
         if (files.image) {
             const cntImg = files.image.length;
 
             for (let i = 0; i < cntImg; i++) {
                 const image = files.image[i];
 
-                fs.unlink(image.destination + '/' + image.filename, () => {
-                    console.log("Deleted.");
+                fs.unlink(image.destination + '/' + image.filename, (err) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log("Deleted");
+                    }
                 });
             }
         }
@@ -276,6 +266,38 @@ module.exports = () => {
                 const video = files.video[i];
 
                 fs.unlink(video.destination + '/' + video.filename, () => {
+                    console.log("Deleted.");
+                });
+            }
+        }
+
+        return fileDataArr;
+    }
+
+    async function deleteFile(files) {
+        if (files.image) {
+            const cntImg = files.image.length;
+
+            for (let i = 0; i < cntImg; i++) {
+                const image = files.image[i];
+
+                fs.unlink(image.destination + '/' + image.filename, (err) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log("Deleted");
+                    }
+                });
+            }
+        }
+
+        if (files.video) {
+            const cntVid = files.video.length;
+
+            for (let i = 0; i < cntVid; i++) {
+                const video = files.video[i];
+
+                fs.unlink(video.destination + '/' + video.filename, (err) => {
                     console.log("Deleted.");
                 });
             }
