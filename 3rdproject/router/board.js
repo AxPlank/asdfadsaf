@@ -55,22 +55,23 @@ module.exports = () => {
                         if (err) {
                             console.log(err);
                             res.send(`${err}`);
-                            throw err;
                         } else {
                             // 1st. isValid
                             const PostData = req.body;
                             const isValid = PostValid(PostData);
 
                             if (!isValid[0]) {
-                                deleteFile(req.files).then(() => {
+                                deleteFile(req.files).then((result) => {
+                                    console.log(result);
+
                                     const obj = {
                                         user: req.session.user.name,
                                         leagues: leagues,
-                                        error: isValid[1]
+                                        error: isValid[1],
+                                        PostData: PostData
                                     }
-                                    console.log(req.body);
 
-                                    res.render('board/post', obj);
+                                    res.send(req.files.image[1].path);
                                 }).catch((reason) => {
                                     res.send(reason);
                                 });
@@ -275,33 +276,36 @@ module.exports = () => {
     }
 
     async function deleteFile(files) {
-        if (files.image) {
-            const cntImg = files.image.length;
-
-            for (let i = 0; i < cntImg; i++) {
-                const image = files.image[i];
-
-                fs.unlink(image.destination + '/' + image.filename, (err) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log("Deleted");
-                    }
-                });
+        return new Promise((resolve, reject) => {
+            let result;
+            if (files.image) {
+                const cntImg = files.image.length;
+    
+                for (let i = 0; i < cntImg; i++) {
+                    const image = files.image[i];
+    
+                    fs.unlinkSync(image.destination + '/' + image.filename);
+                }
             }
-        }
-
-        if (files.video) {
-            const cntVid = files.video.length;
-
-            for (let i = 0; i < cntVid; i++) {
-                const video = files.video[i];
-
-                fs.unlink(video.destination + '/' + video.filename, (err) => {
-                    console.log("Deleted.");
-                });
+    
+            if (files.video) {
+                const cntVid = files.video.length;
+    
+                for (let i = 0; i < cntVid; i++) {
+                    const video = files.video[i];
+    
+                    fs.unlink(video.destination + '/' + video.filename, (err) => {
+                        if (err) {
+                            result = err;
+                            reject(result);
+                        }
+                    });
+                }
             }
-        }
+            
+            result = "Deleted"
+            resolve(result);
+        });
     }
 
     return router;

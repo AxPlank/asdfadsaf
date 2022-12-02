@@ -1,5 +1,3 @@
-export function test(number) {
-    console.log(number);
-    console.log();
-    return number;
-}
+let a = 'hello';
+
+let b = a.lastIndexOf('.')
