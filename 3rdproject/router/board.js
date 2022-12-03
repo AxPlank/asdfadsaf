@@ -61,20 +61,26 @@ module.exports = () => {
                             const isValid = PostValid(PostData);
 
                             if (!isValid[0]) {
-                                deleteFile(req.files).then((result) => {
-                                    console.log(result);
+                                try {
+                                    deleteFile(req.files).then((result) => {
+                                        console.log(result);
 
-                                    const obj = {
-                                        user: req.session.user.name,
-                                        leagues: leagues,
-                                        error: isValid[1],
-                                        PostData: PostData
-                                    }
+                                        const obj = {
+                                            user: req.session.user["name"],
+                                            error: isValid[1],
+                                            leagues: leagues,
+                                            PostData: PostData
+                                        }
 
-                                    res.send(req.files.image[1].path);
-                                }).catch((reason) => {
-                                    res.send(reason);
-                                });
+                                        return new Promise((resolve, reject) => {
+                                            res.render('board/post', obj);
+                                        });
+                                    }).then(() => {
+                                        console.log("Success");
+                                    });
+                                } catch (err) {
+                                    res.send(err);
+                                }
                             } else {
                                 // 2nd. Save req.body
                                 sql = `insert into board (auth_id, auth, title, category, content, create_date) values (?, ?, ?, ?, ?, ?)`;
@@ -275,16 +281,25 @@ module.exports = () => {
         return fileDataArr;
     }
 
-    async function deleteFile(files) {
-        return new Promise((resolve, reject) => {
+    function deleteFile(files) {
+        const deleteFilePromise = new Promise((resolve, reject) => {
             let result;
+
             if (files.image) {
                 const cntImg = files.image.length;
     
                 for (let i = 0; i < cntImg; i++) {
                     const image = files.image[i];
     
-                    fs.unlinkSync(image.destination + '/' + image.filename);
+                    fs.unlink(image.destination + '/' + image.filename, (err) => {
+                        if (err) {
+                            console.log(err);
+                            result = err;
+                            reject(result);
+                        } else {
+                            console.log('hello');
+                        }
+                    });
                 }
             }
     
@@ -296,6 +311,7 @@ module.exports = () => {
     
                     fs.unlink(video.destination + '/' + video.filename, (err) => {
                         if (err) {
+                            console.log(err);
                             result = err;
                             reject(result);
                         }
@@ -306,6 +322,8 @@ module.exports = () => {
             result = "Deleted"
             resolve(result);
         });
+
+        return deleteFilePromise;
     }
 
     return router;
