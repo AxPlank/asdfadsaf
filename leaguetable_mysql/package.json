@@ -1,0 +1,16 @@
+{
+  "name": "leaguetable_mysql",
+  "version": "1.0.0",
+  "description": "&nbsp;[이전 프로젝트](https://github.com/AxPlank/nodeproject/tree/main/leaguetable)에서 Express.js를 이용해 5대 축구 리그에 대해 각 리그의 테이블을 파일의 형태로 만들고, 이를 조회하는 API를 구현해 보았습니다. 이번 프로젝트에서는 파일이 아닌, 데이터베이스를 이용해 구현하고, 추가적으로 수정과 삭제 기능까지 구현했습니다.",
+  "main": "app.js",
+  "scripts": {
+    "test": "papus"
+  },
+  "author": "papus",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "exrpess": "^0.0.1-security",
+    "mysql": "^2.18.1"
+  }
+}

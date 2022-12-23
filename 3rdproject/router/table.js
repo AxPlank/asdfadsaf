@@ -183,6 +183,7 @@ module.exports = () => {
             res.render('errorpage', obj);
         } else {
             const body = Object.values(req.body).map(Number);
+            console.log(body);
 
             if (isValidValue(body)) {
                 const obj = {
@@ -192,28 +193,32 @@ module.exports = () => {
                 };
 
                 res.render('errorpage', obj);
+            } else {
+                const pl = body.slice(0, 3).reduce((previous, current) => previous + current, 0);
+                console.log(pl);
+                const pts = body[0] * 3 + body[1];
+                console.log(pts);
+                const gd = body[3] - body[4];
+                console.log(gd);
+                let sql = `update teams set pl=?, win=?, draw=?, lose=?, gf=?, ga=?, gd=?, pts=? where team='${req.params.team.replace(/_/g, ' ')}'`;
+                console.log(sql);
+    
+                db.query(sql, [pl, ...values, gd, pts], (err, data) => {
+                    if (err) {
+                        console.log(err);
+                        
+                        const obj = {
+                            user: req.session.user["name"],
+                            url: `/table/${req.params.league}/${req.params.team}/edit`,
+                            error: 500
+                        };
+    
+                        res.render('errorpage', obj);
+                    } else {
+                        res.redirect(`/table/${req.params.league}`);
+                    }
+                });
             }
-
-            const pl = body.slice(0, 3).reduce((previous, current) => previous + current, 0);
-            const pts = body[0] * 3 + body[1];
-            const gd = body[3] - body[4];
-            let sql = `update teams set pl=?, win=?, draw=?, lose=?, gf=?, ga=?, gd=?, pts=? where team='${req.params.team.replace(/_/g, ' ')}'`;
-
-            db.query(sql, [pl, ...values, gd, pts], (err, data) => {
-                if (err) {
-                    console.log(err);
-                    
-                    const obj = {
-                        user: req.session.user["name"],
-                        url: `/table/${req.params.league}/${req.params.team}/edit`,
-                        error: 500
-                    };
-
-                    res.render('errorpage', obj);
-                } else {
-                    res.redirect(`/table/${req.params.league}`);
-                }
-            });
         }
     });
 

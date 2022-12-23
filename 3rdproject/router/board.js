@@ -2,8 +2,6 @@ module.exports = () => {
     const router = require('express').Router();
     const db = require('../config/mysql')();
     const fs = require('fs');
-    const moment = require('../config/moment')();
-    const upload = require('../config/multer')('boardUpload');
 
     router.get('/post', (req, res) => {
         if (!req.session.user) {
@@ -31,7 +29,7 @@ module.exports = () => {
                 res.render('board/post', obj);
             });
         }
-    }).post('/post', (req, res) => {
+    }).post('/post', async (req, res) => {
         if (!req.session.user) {
             res.redirect('/board');
         } else {
@@ -50,48 +48,7 @@ module.exports = () => {
 
                     res.render('errorpage', obj);
                 } else {
-                    const leagues = data;
-                    upload(req, res, (err) => {
-                        if (err) {
-                            console.log(err);
-                            res.send(`${err}`);
-                        } else {
-                            // 1st. isValid
-                            const PostData = req.body;
-                            const isValid = PostValid(PostData);
-
-                            if (!isValid[0]) {
-                                try {
-                                    deleteFile(req.files).then((result) => {
-                                        console.log(result);
-
-                                        const obj = {
-                                            user: req.session.user["name"],
-                                            error: isValid[1],
-                                            leagues: leagues,
-                                            PostData: PostData
-                                        }
-
-                                        return new Promise((resolve, reject) => {
-                                            res.render('board/post', obj);
-                                        });
-                                    }).then(() => {
-                                        console.log("Success");
-                                    });
-                                } catch (err) {
-                                    res.send(err);
-                                }
-                            } else {
-                                // 2nd. Save req.body
-                                sql = `insert into board (auth_id, auth, title, category, content, create_date) values (?, ?, ?, ?, ?, ?)`;
-                                console.log(moment());
-                                let sqlArr = [req.session.user["id"], req.session.user["name"], PostData["title"], PostData["category"], PostData["content"], moment()]
-
-                                res.send(`${sqlArr.join(' * ')}`);
-                            }
-                            // res.send(req.files.image[0]);
-                        }
-                    });
+                    res.redirect('/board');
                 }
             });
         }

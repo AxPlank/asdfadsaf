@@ -3,10 +3,7 @@
  */
 const app = require('./config/express')();
 const db = require('./config/mysql')();
-const cron = require('node-cron');
 const fs = require('fs');
-const moment = require('./config/moment')();
-const multer_board = require('./config/multer')();
 
 /**
  * Router
@@ -18,20 +15,14 @@ const board = require('./router/board')();
 app.use('/table', table);
 app.use('/auth', auth);
 app.use('/board', board);
-
-const task = cron.schedule('0 0 0 * * *', () => {
-    fs.exists(`./boardmedia/${moment().format('YYYYMMDD')}`, (exists) => {
-        if (exists) {
-            console.log('exist');
-        } else {
-            fs.mkdir('./boardmedia/HELLO', () => {
-                console.log('created');
-            });
-        }
-    })
-}, {
-    scheduled: true,
-    timezone: 'asia/seoul'
+app.use((err, req, res, next) => {
+    if (err && err.code === 'LIMIT_FILE_SIZE') {
+        res.send({
+            result: "fail",
+            error: {
+                code: 1001,
+                message: 'File is too big'
+            }
+        });
+    } 
 });
-
-task.start();

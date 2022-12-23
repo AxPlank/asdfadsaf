@@ -1,0 +1,21 @@
+{
+  "name": "3rdproject",
+  "version": "1.0.0",
+  "description": "---\r # Abstract\r &nbsp;이전에 [MySQL을 연동시켜 REST API를 구현한 프로젝트](https://github.com/AxPlank/nodeproject/tree/main/leaguetable_mysql)에서 주어진 목표를 달성하는 것에는 성공했지만, 아쉽게도 문제점이 있었습니다. 이 프로젝트에서는 이 문제점들을 보완하고, 회원가입, 게시판 등 일반적인 커뮤니티 사이트에 존재하는 기능들을 추가하는 시간을 가졌습니다.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "papus",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2",
+    "express-mysql-session": "^2.1.8",
+    "moment-timezone": "^0.5.40",
+    "mysql": "^2.18.1",
+    "pug": "^3.0.2",
+    "session": "^0.1.0",
+    "sha256": "^0.2.0"
+  }
+}
