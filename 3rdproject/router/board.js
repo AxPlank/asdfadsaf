@@ -29,7 +29,7 @@ module.exports = () => {
                 res.render('board/post', obj);
             });
         }
-    }).post('/post', async (req, res) => {
+    }).post('/post', (req, res) => {
         if (!req.session.user) {
             res.redirect('/board');
         } else {
