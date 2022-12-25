@@ -9,26 +9,27 @@ block content
                 div 
                     p(class='form-attribute') Team
                     p 
-                        input(type='text' name='team')
+                        input(type='text' name='team' value=`${form?form.team:''}`)
                 div 
                     p(class='form-attribute') Win
                     p 
-                        input(type='text' name='win') 
+                        input(type='text' name='win' value=`${form?form.win:''}`) 
                 div 
                     p(class='form-attribute') Draw
                     p 
-                        input(type='text' name='draw') 
+                        input(type='text' name='draw' value=`${form?form.draw:''}`) 
                 div 
                     p(class='form-attribute') Lose
                     p 
-                        input(type='text' name='lose') 
+                        input(type='text' name='lose' value=`${form?form.lose:''}`) 
                 div 
                     p(class='form-attribute') GF
                     p 
-                        input(type='text' name='gf') 
+                        input(type='text' name='gf' value=`${form?form.gf:''}`) 
                 div 
                     p(class='form-attribute') GA
                     p 
-                        input(type='text' name='ga') 
+                        input(type='text' name='ga' value=`${form?form.ga:''}`) 
                 div 
-                    input(type="submit" class='form-submit' value="Edit")
+                    input(type="submit" class='form-submit' value="Add")
+            include ../error.pug 

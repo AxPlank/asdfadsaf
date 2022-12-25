@@ -1,6 +1,4 @@
-import { test } from "./testt.js";
-
-console.log(test(3));
+console.log(parseInt("dafd"));
 
 
 

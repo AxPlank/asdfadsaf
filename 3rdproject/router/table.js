@@ -21,11 +21,11 @@ module.exports = () => {
         } else if (Object.values(req.body).includes("")) {
             const obj = {
                 user: req.session.user["name"],
-                url: `/table/${req.params.league}/${req.params.team}/edit`,
-                error: 400
+                error: "There exist that is not entered.",
+                form: req.body
             };
 
-            res.render('errorpage', obj);
+            res.render('table/table_add', obj);
         } else {
             const body = Object.values(req.body)
                 .map((el, idx) => {
@@ -39,38 +39,37 @@ module.exports = () => {
             if (isValidValue(body)) {
                 const obj = {
                     user: req.session.user["name"],
-                    url: `/table/${req.params.league}/${req.params.team}/edit`,
-                    error: 400
+                    error: "There is not valid.",
+                    form: req.body
                 };
+    
+                res.render('table/table_add', obj);
+            } else {
+                const team = body[0];
+                const league = req.params.league.replace(/_/g, ' ');
+                const values = body.slice(1, body.length);
+                const pl = values.slice(0, 3).reduce((previous, current) => previous + current, 0);
+                const pts = values[0] * 3 + values[1];
+                const gd = values[3] - values[4];
+                let sql = `insert into teams (team, league, pl, win, draw, lose, gf, ga, gd, pts) values ('${team}', '${league}', ${pl}, ${values[0]}, ${values[1]}, ${values[2]}, ${values[3]}, ${values[4]}, ${gd}, ${pts})`;
 
-                res.render('errorpage', obj);
+                db.query(sql, (err) => {
+                    console.log(sql);
+                    if (err) {
+                        console.log(err);
+                        
+                        const obj = {
+                            user: req.session.user["name"],
+                            url: `/table/${req.params.league}/add`,
+                            error: 500
+                        };
+
+                        res.render('errorpage', obj);
+                    } else {
+                        res.redirect(`/table/${req.params.league}`);
+                    }
+                });
             }
-
-            const team = body[0];
-            const league = req.params.league.replace(/_/g, ' ');
-            const values = body.slice(1, body.length);
-            const pl = values.slice(0, 3).reduce((previous, current) => previous + current, 0);
-            const pts = values[0] * 3 + values[1];
-            const gd = values[3] - values[4];
-
-            let sql = `insert into teams (team, league, pl, win, draw, lose, gf, ga, gd, pts) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-            db.query(sql, [team, league, pl, ...values, gd, pts], (err, data) => {
-                console.log(sql);
-                if (err) {
-                    console.log(err);
-                    
-                    const obj = {
-                        user: req.session.user["name"],
-                        url: `/table/${req.params.league}/${req.params.team}/edit`,
-                        error: 500
-                    };
-
-                    res.render('errorpage', obj);
-                } else {
-                    res.send("success");
-                }
-            });
         }
     });
 
@@ -83,7 +82,7 @@ module.exports = () => {
                 
                 const obj = {
                     user: req.session.user["name"],
-                    url: `/`,
+                    url: `/table`,
                     error: 500
                 }
 
@@ -102,7 +101,7 @@ module.exports = () => {
 
                             const obj = {
                                 user: req.session.user["name"],
-                                url: `/table`,
+                                url: `/table/${req.params.league}/${req.params.team}`,
                                 error: 500
                             }
 
@@ -149,7 +148,7 @@ module.exports = () => {
 
                     const obj = {
                         user: req.session.user["name"],
-                        url: `/table/${req.params.league}`,
+                        url: `/table/${req.params.league}/${req.params.team}/edit`,
                         error: 500
                     }
 
@@ -157,7 +156,7 @@ module.exports = () => {
                 } else if (data.length === 0) {
                     const obj = {
                         user: req.session.user["name"],
-                        url: `/table/${req.params.league}`,
+                        url: `/table/${req.params.league}/${req.params.team}`,
                         error: 404
                     }
 
@@ -243,16 +242,17 @@ module.exports = () => {
         }
     });
 
-    return router;
-}
-
-function isValidValue(arr) {
-    for (let el of arr) {
-        if (!el && el !== 0) {
-            console.log(el);
-            return true;
+    function isValidValue(arr) {
+        for (let el of arr) {
+            if (!el && el !== 0) {
+                console.log(true);
+                return true;
+            }
         }
+        console.log(false);
+    
+        return false;
     }
 
-    return false;
+    return router;
 }

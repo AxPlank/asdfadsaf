@@ -168,7 +168,7 @@ module.exports = () => {
                     
                     const obj = {
                         user: req.session.user["name"],
-                        id: data[0]["id"],
+                        id: data[0]["user_id"],
                         nickname: data[0]["nickname"],
                         phone: data[0]["phone_number"],
                         email: data[0]["email"],
@@ -193,100 +193,97 @@ module.exports = () => {
             res.redirect('/auth/login');
         }
     }).post('/change', (req, res) => {
-        if (Object.values(req.body).includes('')) {
-            const obj = {
-                error: 'There exist that is not entered.',
-                user: req.session.user["name"]
-            };
-
-            res.render('auth/change', obj);
-        } else if (req.body["newpassword"].length < 8) {
-            const obj = {
-                error: "New Password do not valid",
-                user: req.session.user["name"]
-            };
-
-            res.render('auth/change', obj);
-        } else if (req.body["newpassword"] === req.body["password"]) {
-            const obj = {
-                error: "You cannot change the password to the same password as your current password.",
-                user: req.session.user["name"]
-            };
-
-            res.render('auth/change', obj);
-        } else if (req.body["newpassword"] !== req.body["checknewpassword"]) {
-            const obj = {
-                error: "New Password do not match",
-                user: req.session.user["name"]
-            };
-
-            res.render('auth/change', obj);
-        } else {
-            let sql = `select pw, secrect_key from personal_info where nickname='${req.session.user["name"]}'`;
-
-            db.query(sql, (err, data) => {
-                if (err) {
-                    console.log(err);
-                    
-                    const obj = {
-                        user: req.session.user["name"],
-                        url: `/auth/change`,
-                        error: 500
-                    };
-
-                    res.render('errorpage', obj);
-                } else {
-                    const CurrentPassword = sha256(req.body["password"] + data[0]["secrect_key"]);
-
-                    if (CurrentPassword !== data[0]["pw"]) {
+        if (req.session.user) {
+            if (Object.values(req.body).includes('')) {
+                const obj = {
+                    error: 'There exist that is not entered.',
+                    user: req.session.user["name"]
+                };
+    
+                res.render('auth/change', obj);
+            } else if (req.body["newpassword"].length < 8) {
+                const obj = {
+                    error: "New Password do not valid",
+                    user: req.session.user["name"]
+                };
+    
+                res.render('auth/change', obj);
+            } else if (req.body["newpassword"] === req.body["password"]) {
+                const obj = {
+                    error: "You cannot change the password to the same password as your current password.",
+                    user: req.session.user["name"]
+                };
+    
+                res.render('auth/change', obj);
+            } else if (req.body["newpassword"] !== req.body["checknewpassword"]) {
+                const obj = {
+                    error: "New Password is not match",
+                    user: req.session.user["name"]
+                };
+    
+                res.render('auth/change', obj);
+            } else {
+                let sql = `select pw, secrect_key from personal_info where nickname='${req.session.user["name"]}'`;
+    
+                db.query(sql, (err, data) => {
+                    if (err) {
                         const obj = {
-                            error: "Password do not valid",
-                            user: req.session.user["name"]
+                            user: req.session.user["name"],
+                            url: `/auth/change`,
+                            error: 500
                         };
-            
-                        res.render('auth/change', obj);
+    
+                        res.render('errorpage', obj);
                     } else {
-                        const NewPassword = sha256(req.body["newpassword"] + data[0]["secrect_key"]);
-
-                        sql = `update personal_info set pw='${NewPassword}' where nickname='${req.session.user["name"]}'`;
-                        
-                        db.query(sql, (err, data) => {
-                            if (err)  {
-                                console.log(err);
-                                
-                                const obj = {
-                                    user: req.session.user["name"],
-                                    url: `/auth/change`,
-                                    error: 500
-                                };
-            
-                                res.render('errorpage', obj);
-                            } else {
-                                res.redirect('/');
-                            }
-                        });
+                        const CurrentPassword = sha256(req.body["password"] + data[0]["secrect_key"]);
+    
+                        if (CurrentPassword !== data[0]["pw"]) {
+                            const obj = {
+                                error: "Password is not valid",
+                                user: req.session.user["name"]
+                            };
+                
+                            res.render('auth/change', obj);
+                        } else {
+                            const NewPassword = sha256(req.body["newpassword"] + data[0]["secrect_key"]);
+                            sql = `update personal_info set pw='${NewPassword}' where nickname='${req.session.user["name"]}'`;
+                            
+                            db.query(sql, (err, data) => {
+                                if (err)  {
+                                    const obj = {
+                                        user: req.session.user["name"],
+                                        url: `/auth/change`,
+                                        error: 500
+                                    };
+                
+                                    res.render('errorpage', obj);
+                                } else {
+                                    res.redirect('/');
+                                }
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }
+        } else {
+            res.redirect('/auth/login');
         }
     });
 
     router.get('/leave', (req, res) => {
-        if (!req.session.user) {
-            res.redirect('/auth/login');
-        } else {
+        if (req.session.user) {
             const obj = {
                 user: req.session.user["name"]
             };
 
             res.render('auth/leave', obj);
+        } else {
+            res.redirect('/auth/login');
         }
     });
 
     router.get('/yes', (req, res) => {
         if (!req.session.user) {
-            res.redirect('/auth/login');
-        } else {
             let sql = `delete from personal_info where nickname='${req.session.user["name"]}'`;
 
             db.query(sql, (err, data) => {
@@ -306,6 +303,8 @@ module.exports = () => {
                     res.redirect('/');
                 }
             });
+        } else {
+            res.redirect('/auth/login');
         }
     });
 

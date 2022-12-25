@@ -14,25 +14,25 @@ block content
         div
             include ../error
 
-            form(method='post' action='/board/post' enctype='multipart/form-data')
+            form(method='post' action='/board/post')
                 div
                     p Title
-                        input(type='text' name='title' value=PostData?PostData["title"]:"")
+                        input(type='text' name='title')
                 
                 div
                     p Category
                         select(name="category")
                             each league of leagues
                                 option(value=`${league.category}`)=league.category
-                div
-                    p Image Upload
-                        input(type='file' accept='image/*' multiple='multiple' name="image")
-                div
-                    p Video Upload
-                        input(type='file' accept='video/*' multiple='multiple' name="video")
+                //- div
+                //-     p Image Upload
+                //-         input(type='file' accept='image/*' multiple='multiple' name="image")
+                //- div
+                //-     p Video Upload
+                //-         input(type='file' accept='video/*' multiple='multiple' name="video")
                 div
                     p Content
                     p
-                        textarea(name='content')=PostData?PostData["content"]:""
+                        textarea(name='content')
                 div
                     input(type='submit' class='form-submit' value='post')
