@@ -45,8 +45,6 @@ module.exports = () => {
                             auth: data[0].authority
                         }
 
-                        console.log(req.session.user);
-
                         res.redirect('/');
                     }
                 })

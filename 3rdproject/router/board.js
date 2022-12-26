@@ -7,24 +7,25 @@ module.exports = () => {
         if (!req.session.user) {
             res.redirect('/auth/login');
         } else {
-            let sql = 'select distinct category from board';
+            let sql = 'select distinct category from board order by category asc';
 
-            db.query(sql, (err, data) => {
+            db.query(sql, (err, datas) => {
                 if (err) {
+                    console.log(err);
             
                     const obj = {
                         url: `/board/board_post`,
                         error: 500,
-                        user: req.session.user["name"]
+                        user: req.session.user.name
                     };
 
                     res.render('errorpage', obj);
                 } else {
                     const obj = {
-                        leagues: data,
-                        user: req.session.user["name"]
-                    }
-                
+                        leagues: datas,
+                        user: req.session.user.name
+                    };
+
                     res.render('board/board_post', obj);
                 }
             });
@@ -33,6 +34,139 @@ module.exports = () => {
         if (!req.session.user) {
             res.redirect('/auth/login');
         } else {
+            let sql = 'select distinct category from board order by category asc';
+
+            db.query(sql, (err, datas) => {
+                if (err) {
+                    const obj = {
+                        url: `/board/post`,
+                        error: 500,
+                        user: req.session.user["name"]
+                    }
+
+                    res.render('errorpage', obj);
+                } else {
+                    let form = req.body;
+                    let leagues = datas;
+
+                    if (Object.values(form).includes("")) {
+                        const obj = {
+                            error: "There exist that is not entered",
+                            leagues: leagues,
+                            user: req.session.user.name,
+                            form: form
+                        }
+
+                        res.render('board/board_post', obj);
+                    } else if (PostValid(form)) {
+                        const obj = {
+                            error: "Title is too long.",
+                            leagues: leagues,
+                            user: req.session.user.name,
+                            form: form
+                        }
+
+                        res.render('board/board_post', obj);
+                    } else {
+                        sql = `insert into board (auth_id, auth, title, category, content, create_date) values ('${req.session.user.user_id}', '${req.session.user.name}', '${form.title}', '${form.category}', '${form.content}', now())`;
+
+                        db.query(sql, (err, datas) => {
+                            if (err) {
+                                const obj = {
+                                    url: '/board/post',
+                                    error: 500,
+                                    user: req.session.user.name
+                                }
+
+                                res.render('errorpage', obj);
+                            } else {
+                                sql = `select id, category from board where auth_id='${req.session.user.user_id}' order by id desc limit 1`;
+
+                                db.query(sql, (err, data) => {
+                                    if (err) {
+                                        const obj = {
+                                            url: '/board/post',
+                                            error: 500,
+                                            user: req.session.user.name
+                                        }
+        
+                                        res.render('errorpage', obj);
+                                    } else {
+                                        res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].id}`)
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    router.get('/:category/:id/edit', (req, res) => {
+        if (req.session.user) {
+            let sql = 'select distinct category from board order by category asc';
+
+            db.query(sql, (err, datas) => {
+                if (err) {
+                    console.log(err);
+            
+                    const obj = {
+                        url: `/board/board_post`,
+                        error: 500,
+                        user: req.session.user.name
+                    };
+
+                    res.render('errorpage', obj);
+                } else {
+                    let leagues = datas;
+                    sql = `select * from board where id=${parseInt(req.params.id)}`;
+        
+                    db.query(sql, (err, data) => {
+                        if (err) {
+                            const obj = {
+                                url: '/board/post',
+                                error: 500,
+                                user: req.session.user.name
+                            }
+        
+                            res.render('errorpage', obj);
+                        } else {
+                            const obj = {
+                                leagues: leagues,
+                                form: data[0],
+                                user: req.session.user.name
+                            };
+        
+                            res.render('board/board_post', obj);
+                        }
+                    });
+                }
+            });
+        } else {
+            res.redirect('/auth/login');
+        }
+    });
+
+    router.get('/:category/:id/delete', (req, res) => {
+        if (req.session.user) {
+            let sql = `delete from board where id=${parseInt(req.params.id)}`;
+
+            db.query(sql, (err) => {
+                if (err) {
+                    const obj = {
+                        url: '/board/post',
+                        error: 500,
+                        user: req.session.user.name
+                    }
+
+                    res.render('errorpage', obj);
+                } else {
+                    res.redirect('/board');
+                }
+            });
+        } else {
+            res.redirect('/auth/login');
         }
     });
 
@@ -168,6 +302,30 @@ module.exports = () => {
             });
         }
     });
+
+    function PostValid(obj) {
+        const Title = obj["title"];
+        const TitleLen = obj["title"].length;
+        const koreanPattern = /[ㄱ-ㅎ|가-힣]+$/;
+        let i = TitleByte = 0;
+    
+        while (i < TitleLen) {
+            if (Title[i].match(koreanPattern)) {
+                TitleByte += 2;
+            } else {
+                TitleByte += 1;
+            }
+    
+            if (TitleByte > 200) {
+                return true;
+            }
+    
+            i++;
+        }
+    
+        return false;
+    }
+
 
     return router;
 }

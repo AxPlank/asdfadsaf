@@ -11,6 +11,10 @@ block content
                 p="modified at " + new Date(post.modify_date).toLocaleString()
         div
             p(class='post-content')=post.content
+        if post.auth === user
+            div 
+                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
+                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/edit`) Edit
     
     div(class='post-tail')
         a(class='a-btn' href="/board") Back
