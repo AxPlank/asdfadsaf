@@ -25,7 +25,7 @@ block content
                         td(class='board-No')=notices.length - i
                         td=notice.category 
                         td
-                            a(href=`/board/${notice.category.replace(/ /g, ' ')}/${notice.id}`)=notice.title 
+                            a(href=`/board/${notice.category.replace(/ /g, '_')}/${notice.id}`)=notice.title 
                         td(class='text-overflow')=notice.auth 
                         td=new Date(notice.create_date).toLocaleDateString()
                         if auth === "admin"

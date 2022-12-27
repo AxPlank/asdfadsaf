@@ -14,7 +14,7 @@ module.exports = () => {
                     console.log(err);
             
                     const obj = {
-                        url: `/board/board_post`,
+                        url: `/board`,
                         error: 500,
                         user: req.session.user.name
                     };
@@ -39,7 +39,7 @@ module.exports = () => {
             db.query(sql, (err, datas) => {
                 if (err) {
                     const obj = {
-                        url: `/board/post`,
+                        url: `/board`,
                         error: 500,
                         user: req.session.user["name"]
                     }
@@ -73,7 +73,7 @@ module.exports = () => {
                         db.query(sql, (err, datas) => {
                             if (err) {
                                 const obj = {
-                                    url: '/board/post',
+                                    url: '/board',
                                     error: 500,
                                     user: req.session.user.name
                                 }
@@ -85,7 +85,7 @@ module.exports = () => {
                                 db.query(sql, (err, data) => {
                                     if (err) {
                                         const obj = {
-                                            url: '/board/post',
+                                            url: '/board',
                                             error: 500,
                                             user: req.session.user.name
                                         }
@@ -104,70 +104,167 @@ module.exports = () => {
     });
 
     router.get('/:category/:id/edit', (req, res) => {
-        if (req.session.user) {
-            let sql = 'select distinct category from board order by category asc';
+        let sql = `select auth_id from board where id=${parseInt(req.params.id)}`;
 
-            db.query(sql, (err, datas) => {
-                if (err) {
-                    console.log(err);
-            
-                    const obj = {
-                        url: `/board/board_post`,
-                        error: 500,
-                        user: req.session.user.name
-                    };
-
-                    res.render('errorpage', obj);
-                } else {
-                    let leagues = datas;
-                    sql = `select * from board where id=${parseInt(req.params.id)}`;
-        
-                    db.query(sql, (err, data) => {
-                        if (err) {
-                            const obj = {
-                                url: '/board/post',
-                                error: 500,
-                                user: req.session.user.name
-                            }
-        
-                            res.render('errorpage', obj);
-                        } else {
-                            const obj = {
-                                leagues: leagues,
-                                form: data[0],
-                                user: req.session.user.name
-                            };
-        
-                            res.render('board/board_post', obj);
-                        }
-                    });
+        db.query(sql, (err, data) => {
+            if (err) {
+                const obj = {
+                    url: `/board/${req.params.category}/${req.params.id}`,
+                    error: 500,
+                    user: req.session.user["name"]
                 }
-            });
-        } else {
-            res.redirect('/auth/login');
-        }
+
+                res.render('errorpage', obj);
+            } else if (data[0].auth_id !== req.session.user.user_id) {
+                res.redirect(`/board/${req.params.category}/${req.params.id}`);
+            } else if (!req.session.user) {
+                res.redirect(`/auth/login`);
+            } else {
+                sql = `select distinct category from board order by category asc`;
+
+                db.query(sql, (err, datas) => {
+                    if (err) {
+                        const obj = {
+                            url: `/board/${req.params.category}/${req.params.id}`,
+                            error: 500,
+                            user: req.session.user["name"]
+                        }
+        
+                        res.render('errorpage', obj);
+                    } else {
+                        const leagues = datas;
+                        sql = `select * from board where id=${req.params.id}`;
+                        
+                        db.query(sql, (err, data) => {
+                            if (err) {
+                                const obj = {
+                                    url: `/board/${req.params.category}/${req.params.id}`,
+                                    error: 500,
+                                    user: req.session.user["name"]
+                                }
+                
+                                res.render('errorpage', obj);
+                            } else {
+                                const obj = {
+                                    user: req.session.user.name,
+                                    leagues: leagues,
+                                    form: data[0],
+                                }
+
+                                res.render('board/board_edit', obj);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }).post('/:category/:id/edit', (req, res) => {
+        let sql = `select auth_id from board where id=${req.params.id}`;
+
+        db.query(sql, (err, data) => {
+            if (err) {
+                const obj = {
+                    url: `/board/${req.params.category}/${req.params.id}`,
+                    error: 500,
+                    user: req.session.user["name"]
+                }
+
+                res.render('errorpage', obj);
+            } else if (data[0].auth_id !== req.session.user.user_id) {
+                res.redirect(`/board/${req.params.category}/${req.params.id}`);
+            } else if (!req.session.user) {
+                res.redirect(`/auth/login`);
+            } else {
+                sql = `select distinct category from board order by category asc`;
+
+                db.query(sql, (err, datas) => {
+                    if (err) {
+                        const obj = {
+                            url: `/board/${req.params.category}/${req.params.id}`,
+                            error: 500,
+                            user: req.session.user["name"]
+                        }
+        
+                        res.render('errorpage', obj);
+                    } else {
+                        let form = req.body;
+                        let leagues = datas;
+
+                        if (Object.values(form).includes("")) {
+                            const obj = {
+                                error: "There exist that is not entered",
+                                leagues: leagues,
+                                user: req.session.user.name,
+                                form: form
+                            }
+
+                            res.render('board/board_post', obj);
+                        } else if (PostValid(form)) {
+                            const obj = {
+                                error: "Title is too long.",
+                                leagues: leagues,
+                                user: req.session.user.name,
+                                form: form
+                            }
+
+                            res.render('board/board_post', obj);
+                        } else {
+                            sql = `update board set title='${form.title}', content='${form.content}', category='${form.category}', modify_date=now() where id=${req.params.id}`;
+                        
+                            db.query(sql, (err, data) => {
+                                if (err) {
+                                    const obj = {
+                                        url: `/board/${req.params.category}/${req.params.id}`,
+                                        error: 500,
+                                        user: req.session.user["name"]
+                                    }
+                
+                                    res.render('errorpage', obj);
+                                } else {
+                                    res.redirect(`/board/${req.params.category}/${req.params.id}`);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
     });
 
     router.get('/:category/:id/delete', (req, res) => {
-        if (req.session.user) {
-            let sql = `delete from board where id=${parseInt(req.params.id)}`;
+        let sql = `select auth_id from board where id=${req.params.id}`;
 
-            db.query(sql, (err) => {
-                if (err) {
-                    const obj = {
-                        url: '/board/post',
-                        error: 500,
-                        user: req.session.user.name
-                    }
-
-                    res.render('errorpage', obj);
-                } else {
-                    res.redirect('/board');
+        db.query(sql, (err, data) => {
+            if (err) {
+                const obj = {
+                    url: `/board/${req.params.category}/${req.params.id}`,
+                    error: 500,
+                    user: req.session.user["name"]
                 }
-            });
-        } else {
-            res.redirect('/auth/login');
-        }
+
+                res.render('errorpage', obj);
+            } else if (data[0].auth_id !== req.session.user.user_id) {
+                res.redirect(`/board/${req.params.category}/${req.params.id}`);
+            } else if (!req.session.user) {
+                res.redirect(`/auth/login`);
+            } else {
+                sql = `delete from board where id=${req.params.id}`;
+
+                db.query(sql, (err, datas) => {
+                    if (err) {
+                        const obj = {
+                            url: `/board/${req.params.category}/${req.params.id}`,
+                            error: 500,
+                            user: req.session.user["name"]
+                        }
+        
+                        res.render('errorpage', obj);
+                    } else {
+                        res.redirect(`/board/${req.params.category}`)
+                    }
+                });
+            }
+        });
     });
 
     router.get(['/', '/:category', '/:category/:id'], (req, res) => {
@@ -221,7 +318,7 @@ module.exports = () => {
                     db.query(sql, (err, datas) => {
                         if (err) {
                             const obj = {
-                                url: `/board`,
+                                url: `/`,
                                 error: 500
                             }
         
@@ -240,7 +337,7 @@ module.exports = () => {
                                     if (err) {
                                         console.log(err);
                                         const obj = {
-                                            url: `/board/${req.params.category}`,
+                                            url: `/board`,
                                             error: 500
                                         }
                     
@@ -271,7 +368,7 @@ module.exports = () => {
                                     if (err) {
                                         console.log(err);
                                         const obj = {
-                                            url: `/board`,
+                                            url: `/`,
                                             error: 500
                                         }
                     

@@ -8,13 +8,14 @@ block content
             p=post.title
             p(class='post-auth-date')=post.auth + ", posted at " + new Date(post.create_date).toLocaleString()
             if post.modify_date
-                p="modified at " + new Date(post.modify_date).toLocaleString()
+                p(class='post-auth-date')="modified at " + new Date(post.modify_date).toLocaleString()
         div
             p(class='post-content')=post.content
-        if post.auth === user
-            div 
-                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
-                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/edit`) Edit
+                
     
     div(class='post-tail')
-        a(class='a-btn' href="/board") Back
+        div 
+            if post.auth === user
+                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/edit`) Edit
+                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
+            a(class='a-btn' href="/board") Back

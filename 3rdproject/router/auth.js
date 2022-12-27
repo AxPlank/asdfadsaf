@@ -53,13 +53,17 @@ module.exports = () => {
     });
 
     router.get('/logout', (req, res) => {
-        delete req.session.user;
-        res.redirect('/');
+        if (res.sessoin.user) {
+            delete req.session.user;
+            res.redirect('/');
+        } else {
+            res.redirect('/auth/login');
+        }
     });
 
     router.get('/signup', (req, res) => {
         if (req.session.user) {
-            res.redirect('/');
+            res.redirect('/auth/mypage');
         } else {
             res.render('auth/signup');
         }
@@ -157,7 +161,7 @@ module.exports = () => {
             
                     const obj = {
                         user: req.session.user["name"],
-                        url: `/auth/signup`,
+                        url: `/`,
                         error: 500
                     };
 
@@ -256,7 +260,7 @@ module.exports = () => {
                 
                                     res.render('errorpage', obj);
                                 } else {
-                                    res.redirect('/');
+                                    res.redirect('/auth/mypage');
                                 }
                             });
                         }
@@ -281,7 +285,7 @@ module.exports = () => {
     });
 
     router.get('/yes', (req, res) => {
-        if (!req.session.user) {
+        if (req.session.user) {
             let sql = `delete from personal_info where nickname='${req.session.user["name"]}'`;
 
             db.query(sql, (err, data) => {

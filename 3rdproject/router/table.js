@@ -101,7 +101,7 @@ module.exports = () => {
 
                             const obj = {
                                 user: req.session.user["name"],
-                                url: `/table/${req.params.league}/${req.params.team}`,
+                                url: `/table`,
                                 error: 500
                             }
 
@@ -148,7 +148,7 @@ module.exports = () => {
 
                     const obj = {
                         user: req.session.user["name"],
-                        url: `/table/${req.params.league}/${req.params.team}/edit`,
+                        url: `/table/${req.params.league}`,
                         error: 500
                     }
 
@@ -156,7 +156,7 @@ module.exports = () => {
                 } else if (data.length === 0) {
                     const obj = {
                         user: req.session.user["name"],
-                        url: `/table/${req.params.league}/${req.params.team}`,
+                        url: `/table/${req.params.league}`,
                         error: 404
                     }
 
