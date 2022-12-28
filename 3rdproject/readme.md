@@ -1,4 +1,4 @@
-# Project: Footbll Community - 축구 커뮤니티 사이트
+# Project: I Love FootBall - 축구 커뮤니티 사이트
 
 ---
 # Abstract
