@@ -1,5 +1,3 @@
-const { send } = require('process');
-
 module.exports = () => {
     const router = require('express').Router();
     const db = require('../config/mysql')();
@@ -45,6 +43,8 @@ module.exports = () => {
 
                     res.render('errorpage', obj);
                 } else {
+                    console.log(1);
+                    console.log(req.body);
                     let form = req.body;
                     let leagues = datas;
 
@@ -71,7 +71,7 @@ module.exports = () => {
                         const subQueryBoardPost2 = `(select category_id from category where category='${form.category}')`;
                         sql = `insert into board (auth_id, auth, title, category, content, create_date) values (${subQueryBoardPost1}, '${req.session.user.name}', '${form.title}', ${subQueryBoardPost2}, '${form.content}', now())`;
 
-                        db.query(sql, (err, datas) => {
+                        db.query(sql, (err) => {
                             if (err) {
                                 const obj = {
                                     url: '/board',
@@ -81,7 +81,8 @@ module.exports = () => {
 
                                 res.render('errorpage', obj);
                             } else {
-                                sql = `select id, category from board where auth_id='${req.session.user.user_id}' order by id desc limit 1`;
+                                const subQueryBoardPost3 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`
+                                sql = `select a.board_id, b.category from board a inner join category b on a.category=b.category_id where auth_id=${subQueryBoardPost3} order by board_id desc limit 1`;
 
                                 db.query(sql, (err, data) => {
                                     if (err) {
@@ -93,7 +94,7 @@ module.exports = () => {
         
                                         res.render('errorpage', obj);
                                     } else {
-                                        res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].id}`)
+                                        res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].board_id}`)
                                     }
                                 });
                             }
@@ -337,7 +338,7 @@ module.exports = () => {
                     }
                     
                     res.render('errorpage', obj);
-                } else if (data.length === 0) {
+                } else if (data.length === 0 || req.params.category.replace(/_/g, ' ') !== data[0].category) {
                     const form = {
                         title: 'HTTP 404',
                         content: '존재하지 않는 게시글입니다.',

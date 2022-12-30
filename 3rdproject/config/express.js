@@ -12,7 +12,7 @@ module.exports = () => {
 
     app.locals.pretty = true;
 
-    app.use(bodyParser.urlencoded({extended: false}));
+    app.use(express.urlencoded({extended: false}));
     app.use(session({
         secret: 'sfjo313!$32$51kjfsdaf',
         resave: false,
@@ -27,9 +27,14 @@ module.exports = () => {
     }));
     app.use(express.static('static'));
     app.use('/boardmedia', express.static('boardmedia'));
-    // app.use(express.json());
+    app.use(express.json());
     app.set('views', './views');
     app.set('view engine', 'pug');
+    app.use((err, req, res, next) => {
+        if (err) {
+            res.send(err);
+        }
+    })
     
     app.get('/', (req, res) => {
         const obj = {}
