@@ -133,7 +133,7 @@
 | pts    | int          | NO   |     | NULL    |                |
 +--------+--------------+------+-----+---------+----------------+
 ```
-```pug
+```javascript
 each team, ranking in teams 
                     tr 
                         td=ranking+1
@@ -148,7 +148,7 @@ each team, ranking in teams
                         td=team.pts 
 ```
 
-## 사용자 인증
+## 관리자와 사용자의 분리
 &nbsp;이전 프로젝트의 결과물에서는 관리자 뿐만 아니라 사용자도 리그 테이블과 관련된 테이블을 수정할 수 있었습니다. 그래서 회원정보가 있는 테이블에서 사용자, 관리자를 구분하여 이를 해결할 수 있었습니다.
 
 ![](/3rdproject/readmefiles/leaguetable.png)

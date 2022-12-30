@@ -22,7 +22,7 @@ module.exports = () => {
 
                 res.render('auth/login', obj);
             } else {
-                let sql = `select * from personal_info where user_id='${form.id}'`;
+                let sql = `select user_id, pw, nickname, authority, secrect_key from personal_info where user_id='${form.id}'`;
 
                 db.query(sql, (err, data, field) => {
                     if (err) {
@@ -53,7 +53,7 @@ module.exports = () => {
     });
 
     router.get('/logout', (req, res) => {
-        if (res.sessoin.user) {
+        if (req.session.user) {
             delete req.session.user;
             res.redirect('/');
         } else {

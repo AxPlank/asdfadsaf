@@ -23,14 +23,14 @@ block content
                 each notice, i in notices
                     tr 
                         td(class='board-No')=notices.length - i
-                        td=notice.category 
+                        td=notice.category
                         td
-                            a(href=`/board/${notice.category.replace(/ /g, '_')}/${notice.id}`)=notice.title 
+                            a(href=`/board/${notice.category.replace(/ /g, '_')}/${notice.board_id}`)=notice.title 
                         td(class='text-overflow')=notice.auth 
                         td=new Date(notice.create_date).toLocaleDateString()
                         if auth === "admin"
                             td 
-                                a(class='text-overflow' href=`/board/${notice.category.replace(/ /g, '_')}/${notice.id}/delete`) Delete
+                                a(class='text-overflow' href=`/board/${notice.category.replace(/ /g, '_')}/${notice.board_id}/delete`) Delete
 
         table
             thead
@@ -48,12 +48,13 @@ block content
                         td(class='board-No text-overflow')=postlist.length - i
                         td=post.category 
                         td
-                            a(class='text-overflow' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}`)=post.title 
+                            a(class='text-overflow' href=`/board/${post.category.replace(/ /g, '_')}/${post.board_id}`)=post.title 
                         td(class='text-overflow')=post.auth 
                         td=new Date(post.create_date).toLocaleDateString()
                         if auth === "admin"
                             td 
-                                a(href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
+                                a(href=`/board/${post.category.replace(/ /g, '_')}/${post.board_id}/delete`) Delete
 
     div(class='board-tail')
-        a(href='/board/post' class='a-btn') Write
+        if user
+            a(href='/board/post' class='a-btn') Write

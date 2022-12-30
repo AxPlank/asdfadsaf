@@ -16,6 +16,6 @@ block content
     div(class='post-tail')
         div 
             if post.auth === user
-                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/edit`) Edit
-                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.id}/delete`) Delete
+                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.board_id}/edit`) Edit
+                a(class='a-btn' href=`/board/${post.category.replace(/ /g, '_')}/${post.board_id}/delete`) Delete
             a(class='a-btn' href="/board") Back

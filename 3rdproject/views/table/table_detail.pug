@@ -20,9 +20,9 @@ block content
                     if auth === 'admin'
                         td Edit
             tbody 
-                each team, ranking in teams 
+                each team in teams 
                     tr 
-                        td=ranking+1
+                        td=team.rank
                         td=team.team 
                         td=team.pl
                         td=team.win 
@@ -34,7 +34,7 @@ block content
                         td=team.pts 
                         if auth === 'admin'
                             td
-                                a(href=`/table/${league_name.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
+                                a(href=`/table/${team.league.replace(/ /g, '_')}/${team.team.replace(/ /g, '_')}/edit`) Edit
 
     div(class="league-table-tail")
         a(class='a-btn' href="/table") Back
