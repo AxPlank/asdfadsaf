@@ -4,7 +4,7 @@ module.exports = () => {
     const moment = require('./timezone')();
 
     const task = cron.schedule('0 0 0 * * *', () => {
-        fs.mkdir(`./boardmedia/${moment().format('YYYYMMDD')}`, (err) => {
+        fs.mkdir(`./media/board/${moment().format('YYYYMMDD')}`, (err) => {
             if (err) {
                 console.log(err);
                 throw err;
