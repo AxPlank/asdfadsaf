@@ -14,7 +14,7 @@ block content
         div
             include ../error
 
-            form(method='post' action='/board/post')
+            form(method='post' action='/board/post' enctype='multipart/form-data')
                 div
                     p Title
                         input(type='text' name='title' value=form?form["title"]:"")
@@ -24,12 +24,12 @@ block content
                         select(name="category")
                             each league of leagues
                                 option(value=`${league.category}`)=league.category
-                //- div
-                //-     p Image Upload
-                //-         input(type='file' accept='image/*' multiple='multiple' name="image")
-                //- div
-                //-     p Video Upload
-                //-         input(type='file' accept='video/*' multiple='multiple' name="video")
+                div
+                    p Image Upload
+                        input(type='file' accept='image/*' multiple='multiple' name="boardimage")
+                div
+                    p Video Upload
+                        input(type='file' accept='video/*' multiple='multiple' name="boardvideo")
                 div
                     p Content
                     p

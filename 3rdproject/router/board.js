@@ -1,6 +1,12 @@
 module.exports = () => {
     const router = require('express').Router();
     const db = require('../config/mysql')();
+    const moment = require('../config/timezone')();
+    const boardUpload = require('../config/multer')('board').fields([
+        {name: 'boardimage', maxCount: 10},
+        {name: 'boardvideo', maxCount: 2}
+    ]);
+    const fs = require('node:fs/promises');
 
     router.get('/post', (req, res) => {
         if (!req.session.user) {
@@ -36,70 +42,93 @@ module.exports = () => {
             db.query(sql, (err, datas) => {
                 if (err) {
                     const obj = {
-                        url: `/board`,
+                        url: `/board/post`,
                         error: 500,
                         user: req.session.user["name"]
                     }
 
                     res.render('errorpage', obj);
                 } else {
-                    console.log(1);
-                    console.log(req.body);
-                    let form = req.body;
-                    let leagues = datas;
+                    boardUpload(req, res, (err) => {
+                        if (err) {
+                            const obj = {
+                                url: `/board/post`,
+                                error: 500,
+                                user: req.session.user["name"]
+                            }
 
-                    if (Object.values(form).includes("")) {
-                        const obj = {
-                            error: "There exist that is not entered",
-                            leagues: leagues,
-                            user: req.session.user.name,
-                            form: form
-                        }
+                            res.render('errorpage', obj);
+                        } else {
+                            let form = req.body;
+                            let leagues = datas;
 
-                        res.render('board/board_post', obj);
-                    } else if (PostValid(form)) {
-                        const obj = {
-                            error: "Title is too long.",
-                            leagues: leagues,
-                            user: req.session.user.name,
-                            form: form
-                        }
-
-                        res.render('board/board_post', obj);
-                    } else {
-                        const subQueryBoardPost1 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`;
-                        const subQueryBoardPost2 = `(select category_id from category where category='${form.category}')`;
-                        sql = `insert into board (auth_id, auth, title, category, content, create_date) values (${subQueryBoardPost1}, '${req.session.user.name}', '${form.title}', ${subQueryBoardPost2}, '${form.content}', now())`;
-
-                        db.query(sql, (err) => {
-                            if (err) {
+                            if (Object.values(form).includes("")) {
+                                
+    
                                 const obj = {
-                                    url: '/board',
-                                    error: 500,
-                                    user: req.session.user.name
+                                    error: "There exist that is not entered",
+                                    leagues: leagues,
+                                    user: req.session.user["name"],
+                                    form: form
                                 }
-
-                                res.render('errorpage', obj);
-                            } else {
-                                const subQueryBoardPost3 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`
-                                sql = `select a.board_id, b.category from board a inner join category b on a.category=b.category_id where auth_id=${subQueryBoardPost3} order by board_id desc limit 1`;
-
-                                db.query(sql, (err, data) => {
+    
+                                res.render('board/board_post', obj, (err) => {
                                     if (err) {
-                                        const obj = {
-                                            url: '/board',
-                                            error: 500,
-                                            user: req.session.user.name
-                                        }
-        
-                                        res.render('errorpage', obj);
+                                        console.log(true);
+                                        console.log(err);
+                                        res.send(err);
                                     } else {
-                                        res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].board_id}`)
+                                        res.send(req.files);
                                     }
                                 });
                             }
-                        });
-                    }
+                        }
+                    });
+
+                    
+                    // } else if (PostValid(form)) {
+                    //     const obj = {
+                    //         error: "Title is too long.",
+                    //         leagues: leagues,
+                    //         user: req.session.user.name,
+                    //         form: form
+                    //     }
+
+                    //     res.render('board/board_post', obj);
+                    // } else {
+                    //     const subQueryBoardPost1 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`;
+                    //     const subQueryBoardPost2 = `(select category_id from category where category='${form.category}')`;
+                    //     sql = `insert into board (auth_id, auth, title, category, content, create_date) values (${subQueryBoardPost1}, '${req.session.user.name}', '${form.title}', ${subQueryBoardPost2}, '${form.content}', now())`;
+
+                    //     db.query(sql, (err) => {
+                    //         if (err) {
+                    //             const obj = {
+                    //                 url: '/board',
+                    //                 error: 500,
+                    //                 user: req.session.user.name
+                    //             }
+
+                    //             res.render('errorpage', obj);
+                    //         } else {
+                    //             const subQueryBoardPost3 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`
+                    //             sql = `select a.board_id, b.category from board a inner join category b on a.category=b.category_id where auth_id=${subQueryBoardPost3} order by board_id desc limit 1`;
+
+                    //             db.query(sql, (err, data) => {
+                    //                 if (err) {
+                    //                     const obj = {
+                    //                         url: '/board',
+                    //                         error: 500,
+                    //                         user: req.session.user.name
+                    //                     }
+        
+                    //                     res.render('errorpage', obj);
+                    //                 } else {
+                    //                     res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].board_id}`)
+                    //                 }
+                    //             });
+                    //         }
+                    //     });
+                    // }
                 }
             });
         }
@@ -475,27 +504,58 @@ module.exports = () => {
         }
     });
 
+    function unlinkBoard(files) {
+        const promise = new Promise(async (resolve, rejects) => {
+            let file, fileslen;
+
+            if (files.boardimage) {
+                file = files.boardimage
+                fileslen = files.boardimage.length;
+
+                for (let i = 0; i < fieldlen; i++) {
+                    await fs.unlink(`${file[i].destination}/${files[i].filename}`).then(() => {
+                        console.log("Deleted");
+                    }).catch((reason) => {
+                        console.log(reason);
+                        throw reason;
+                    });
+                }
+            }
+
+            if (files.boardvideo) {
+                file = files.boardvideo
+                fileslen = files.boardvideo.length;
+
+                for (let i = 0; i < fieldlen; i++) {
+                    await fs.unlink(`${file[i].destination}/${files[i].filename}`).then(() => {
+                        console.log("Deleted");
+                    }).catch((reason) => {
+                        console.log(reason);
+                        throw reason;
+                    });
+                }
+            }
+
+            resolve();
+        });
+
+        return promise;
+    }
+
     function PostValid(obj) {
-        const Title = obj["title"];
-        const TitleLen = obj["title"].length;
-        const koreanPattern = /[ㄱ-ㅎ|가-힣]+$/;
-        let i = TitleByte = 0;
-    
-        while (i < TitleLen) {
-            if (Title[i].match(koreanPattern)) {
-                TitleByte += 2;
-            } else {
-                TitleByte += 1;
-            }
-    
-            if (TitleByte > 200) {
-                return true;
-            }
-    
-            i++;
+        const title = obj.title;
+
+        const ByteLength = ((s, b, i, c) => {
+            for(b = i = 0; c = s.charCodeAt(i++); b += c >> 11? 3 : c >> 7 ? 2 : 1);
+            
+            return b;
+        })(title);
+
+        if (ByteLength > 200) {
+            return true;
+        } else {
+            return false;
         }
-    
-        return false;
     }
 
 
