@@ -63,72 +63,67 @@ module.exports = () => {
                             let leagues = datas;
 
                             if (Object.values(form).includes("")) {
-                                
-    
-                                const obj = {
-                                    error: "There exist that is not entered",
-                                    leagues: leagues,
-                                    user: req.session.user["name"],
-                                    form: form
-                                }
-    
-                                res.render('board/board_post', obj, (err) => {
+                                unlinkBoard(req.files).then(() => {
+                                    const obj = {
+                                        error: "There exist that is not entered",
+                                        leagues: leagues,
+                                        user: req.session.user["name"],
+                                        form: form
+                                    }
+
+                                    res.render('board/board_post', obj);
+                                }).catch((reason) => {
+                                    res.send(reason);
+                                });
+                            } else if (PostValid(form)) {
+                                unlinkBoard(req.files).then(() => {
+                                    const obj = {
+                                        error: "Title is too long.",
+                                        leagues: leagues,
+                                        user: req.session.user.name,
+                                        form: form
+                                    }
+            
+                                    res.render('board/board_post', obj);
+                                }).catch((reason) => {
+                                    res.send(reason);
+                                });
+                            } else {
+                                const subQueryBoardPost1 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`;
+                                const subQueryBoardPost2 = `(select category_id from category where category='${form.category}')`;
+                                sql = `insert into board (auth_id, auth, title, category, content, create_date) values (${subQueryBoardPost1}, '${req.session.user.name}', '${form.title}', ${subQueryBoardPost2}, '${form.content}', now())`;
+        
+                                db.query(sql, (err) => {
                                     if (err) {
-                                        console.log(true);
-                                        console.log(err);
-                                        res.send(err);
+                                        const obj = {
+                                            url: '/board',
+                                            error: 500,
+                                            user: req.session.user.name
+                                        }
+        
+                                        res.render('errorpage', obj);
                                     } else {
-                                        res.send(req.files);
+                                        const subQueryBoardPost3 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`
+                                        sql = `select a.board_id, b.category from board a inner join category b on a.category=b.category_id where auth_id=${subQueryBoardPost3} order by board_id desc limit 1`;
+        
+                                        db.query(sql, (err, data) => {
+                                            if (err) {
+                                                const obj = {
+                                                    url: '/board',
+                                                    error: 500,
+                                                    user: req.session.user.name
+                                                }
+                
+                                                res.render('errorpage', obj);
+                                            } else {
+                                                res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].board_id}`)
+                                            }
+                                        });
                                     }
                                 });
                             }
                         }
                     });
-
-                    
-                    // } else if (PostValid(form)) {
-                    //     const obj = {
-                    //         error: "Title is too long.",
-                    //         leagues: leagues,
-                    //         user: req.session.user.name,
-                    //         form: form
-                    //     }
-
-                    //     res.render('board/board_post', obj);
-                    // } else {
-                    //     const subQueryBoardPost1 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`;
-                    //     const subQueryBoardPost2 = `(select category_id from category where category='${form.category}')`;
-                    //     sql = `insert into board (auth_id, auth, title, category, content, create_date) values (${subQueryBoardPost1}, '${req.session.user.name}', '${form.title}', ${subQueryBoardPost2}, '${form.content}', now())`;
-
-                    //     db.query(sql, (err) => {
-                    //         if (err) {
-                    //             const obj = {
-                    //                 url: '/board',
-                    //                 error: 500,
-                    //                 user: req.session.user.name
-                    //             }
-
-                    //             res.render('errorpage', obj);
-                    //         } else {
-                    //             const subQueryBoardPost3 = `(select personal_id from personal_info where user_id='${req.session.user.user_id}')`
-                    //             sql = `select a.board_id, b.category from board a inner join category b on a.category=b.category_id where auth_id=${subQueryBoardPost3} order by board_id desc limit 1`;
-
-                    //             db.query(sql, (err, data) => {
-                    //                 if (err) {
-                    //                     const obj = {
-                    //                         url: '/board',
-                    //                         error: 500,
-                    //                         user: req.session.user.name
-                    //                     }
-        
-                    //                     res.render('errorpage', obj);
-                    //                 } else {
-                    //                     res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].board_id}`)
-                    //                 }
-                    //             });
-                    //         }
-                    //     });
-                    // }
                 }
             });
         }
@@ -512,8 +507,8 @@ module.exports = () => {
                 file = files.boardimage
                 fileslen = files.boardimage.length;
 
-                for (let i = 0; i < fieldlen; i++) {
-                    await fs.unlink(`${file[i].destination}/${files[i].filename}`).then(() => {
+                for (let i = 0; i < fileslen; i++) {
+                    fs.unlink(`${file[i].destination}/${file[i].filename}`).then(() => {
                         console.log("Deleted");
                     }).catch((reason) => {
                         console.log(reason);
@@ -526,8 +521,8 @@ module.exports = () => {
                 file = files.boardvideo
                 fileslen = files.boardvideo.length;
 
-                for (let i = 0; i < fieldlen; i++) {
-                    await fs.unlink(`${file[i].destination}/${files[i].filename}`).then(() => {
+                for (let i = 0; i < fileslen; i++) {
+                    fs.unlink(`${file[i].destination}/${file[i].filename}`).then(() => {
                         console.log("Deleted");
                     }).catch((reason) => {
                         console.log(reason);
