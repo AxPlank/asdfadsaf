@@ -1,12 +1,11 @@
-const str = '안녕';
-const ByteLength = ((s, b, i, c) => {
-    console.log(s);
-    for(b = i = 0; c = s.charCodeAt(i++); b += c >> 11? 3 : c >> 7 ? 2 : 1)
-    
-    return b;
-})('HELlo');
+let sql = [1, 2];
+let sqll = [];
 
-console.log(ByteLength);
+if (0) {
+    sql = 12;
+}
+
+console.log([...sql, ...sqll].join(' '));
 
 
 // "type": "module" : import 사용 시 추가할 것

@@ -26,15 +26,10 @@ module.exports = () => {
         })
     }));
     app.use(express.static('static'));
-    app.use('/boardmedia', express.static('boardmedia'));
+    app.use('/media', express.static('media'));
     app.use(express.json());
     app.set('views', './views');
     app.set('view engine', 'pug');
-    app.use((err, req, res, next) => {
-        if (err) {
-            res.send(err);
-        }
-    })
     
     app.get('/', (req, res) => {
         const obj = {}

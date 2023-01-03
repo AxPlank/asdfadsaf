@@ -10,6 +10,14 @@ block content
             if post.modify_date
                 p(class='post-auth-date')="modified at " + new Date(post.modify_date).toLocaleString()
         div
+            if board_media 
+                each media in board_media
+                    if media.media_type === "image" 
+                        p
+                            img(src=media.URL.substring(1,), alt="" class="media-size")
+                    if media.media_type === "video" 
+                        p
+                            video(src=media.URL.substring(1,))
             p(class='post-content')=post.content
                 
     

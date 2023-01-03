@@ -1,7 +1,13 @@
-let json = {
-    board: ['a', 1],
-};
+let arr = [
+    {a: 1, b: 2},
+    {a: 3, b: 4},
+];
 
-if (json.arr.length !== 0) {
-    console.log(1);
-}
+console.log(arr);
+
+arr = arr.map((e) => {
+    return e.a + e.b;
+});
+
+console.log(arr);
+

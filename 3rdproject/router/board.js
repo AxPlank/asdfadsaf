@@ -116,7 +116,46 @@ module.exports = () => {
                 
                                                 res.render('errorpage', obj);
                                             } else {
-                                                res.redirect(`/board/${data[0].category.replace(/ /g, '_')}/${data[0].board_id}`)
+                                                const [boardCategory, boardId] = [data[0].category.replace(/ /g, '_'), data[0].board_id];
+                                                let imageURL = videoURL = [];
+
+                                                if (req.files.boardimage) {
+                                                    req.files.boardimage.map(async (e) => {
+                                                        await fs.rename(`${e.destination}/${e.filename}`, `${e.destination}/${e.filename}.${e.mimetype.substring(e.mimetype.indexOf('/') + 1,)}`);
+                                                        return e;
+                                                    })
+                                                    
+                                                    imageURL = req.files.boardimage.map((e) => {
+                                                        return `(${boardId}, 'image', '${e.destination}/${e.filename}.${e.mimetype.substring(e.mimetype.indexOf('/') + 1,)}')`;
+                                                    });
+                                                }
+
+                                                if (req.files.boardvideo) {
+                                                    req.files.boardvideo.map(async (e) => {
+                                                        await fs.rename(`${e.destination}/${e.filename}`, `${e.destination}/${e.filename}.${e.mimetype.substring(e.mimetype.indexOf('/') + 1,)}`);
+                                                        return e;
+                                                    });
+
+                                                    videoURL = req.files.boardvideo.map((e) => {
+                                                        return `(${boardId}, 'video', '${e.destination}/${e.filename}.${e.mimetype.substring(e.mimetype.indexOf('/') + 1,)}')`;
+                                                    });
+                                                }
+
+                                                sql = `insert into board_media (board_id, media_type, URL) values ${[...imageURL, ...videoURL].join(', ')}`;
+                                                
+                                                db.query(sql, (err) => {
+                                                    if (err) {
+                                                        const obj = {
+                                                            url: '/board',
+                                                            error: 500,
+                                                            user: req.session.user.name
+                                                        }
+                        
+                                                        res.render('errorpage', obj);
+                                                    } else {
+                                                        res.redirect(`/board/${boardCategory}/${boardId}`);
+                                                    }
+                                                })
                                             }
                                         });
                                     }
@@ -256,7 +295,7 @@ module.exports = () => {
                             res.redirect(`/board/${req.params.category}/${req.params.id}`);
                         } else {
                             const subQueryBoardEdit = `(select category_id from category where category='${form.category}')`;
-                            sql = `update board set title='${form.title}', category=${subQueryBoardEdit}, content='${form.content}' where board_id=${req.params.id}`;
+                            sql = `update board set title='${form.title}', category=${subQueryBoardEdit}, content='${form.content}', modify_date=now() where board_id=${req.params.id}`;
 
                             db.query(sql, (err, data) => {
                                 if (err) {
@@ -322,7 +361,7 @@ module.exports = () => {
                         }
     
                         res.render('board/board_detail', obj);
-                    } else if (data[0].user_id !== req.session.user.user_id) {
+                    } else if (data[0].user_id !== req.session.user.user_id && req.session.user.auth !== 'admin') {
                         res.redirect(`/board/${req.params.category}/${req.params.id}`);
                     } else {
                         sql = `delete from board where board_id=${req.params.id}`;
@@ -383,16 +422,45 @@ module.exports = () => {
     
                     res.render('board/board_detail', obj);
                 } else {
-                    const obj = {
-                        post: data[0],
-                    }
+                    sql = `select media_type, URL from board_media where board_id=${req.params.id}`;
 
-                    if (req.session.user) {
-                        obj["auth"] = req.session.user["auth"];
-                        obj["user"] = req.session.user["name"];
-                    }
-
-                    res.render('board/board_detail', obj);
+                    db.query(sql, (err, datas) => {
+                        if (err) {
+                            const obj = {
+                                url: `/board/${req.params.category}`,
+                                error: 500
+                            }
+        
+                            if (req.session.user) {
+                                obj["user"] = req.session.user;
+                            }
+                            
+                            res.render('errorpage', obj);
+                        } else if (data.length === 0) {
+                            const obj = {
+                                post: data[0],
+                            }
+        
+                            if (req.session.user) {
+                                obj["auth"] = req.session.user["auth"];
+                                obj["user"] = req.session.user["name"];
+                            }
+        
+                            res.render('board/board_detail', obj);
+                        } else {
+                            const obj = {
+                                post: data[0],
+                                board_media: datas
+                            }
+        
+                            if (req.session.user) {
+                                obj["auth"] = req.session.user["auth"];
+                                obj["user"] = req.session.user["name"];
+                            }
+        
+                            res.render('board/board_detail', obj);
+                        }
+                    });
                 }
             });
         } else {
@@ -498,6 +566,44 @@ module.exports = () => {
             });
         }
     });
+
+    function insertBoardMedia(files) {
+        const promise = new Promise(async (resolve, rejects) => {
+            let file, fileslen;
+
+            if (files.boardimage) {
+                file = files.boardimage
+                fileslen = files.boardimage.length;
+
+                for (let i = 0; i < fileslen; i++) {
+                    fs.unlink(`${file[i].destination}/${file[i].filename}`).then(() => {
+                        console.log("Deleted");
+                    }).catch((reason) => {
+                        console.log(reason);
+                        throw reason;
+                    });
+                }
+            }
+
+            if (files.boardvideo) {
+                file = files.boardvideo
+                fileslen = files.boardvideo.length;
+
+                for (let i = 0; i < fileslen; i++) {
+                    fs.unlink(`${file[i].destination}/${file[i].filename}`).then(() => {
+                        console.log("Deleted");
+                    }).catch((reason) => {
+                        console.log(reason);
+                        throw reason;
+                    });
+                }
+            }
+
+            resolve();
+        });
+
+        return promise;
+    }
 
     function unlinkBoard(files) {
         const promise = new Promise(async (resolve, rejects) => {

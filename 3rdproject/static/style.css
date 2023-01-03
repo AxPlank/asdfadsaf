@@ -409,3 +409,7 @@ table {
 .board-tail {
     margin-top: 32px;
 }
+
+.media-size {
+    max-width: 600px;
+}
