@@ -1,7 +1,7 @@
 /**
  * multer
  */
-const multerhandler = require('./router/multer')();
+// const multerhandler = require('./router/multer')();
 
 /**
  * moment
@@ -13,6 +13,6 @@ const multerhandler = require('./router/multer')();
 /**
  * cron
  */
-const task = require('./router/node_cron')();
+// const task = require('./router/node_cron')();
 
-task.start();
+// task.start();
