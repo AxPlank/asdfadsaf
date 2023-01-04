@@ -1,0 +1,43 @@
+<%- include('../header') %>
+    <div class="league-table-head">
+        <h1><%= league_name %></h1>
+    </div>
+    <div class="league-table-body">
+        <table>
+            <thead>
+                <tr>
+                    <td>#</td>
+                    <td class="team-name">Team</td>
+                    <td>Pl</td>
+                    <td>W</td>
+                    <td>D</td>
+                    <td>L</td>
+                    <td>GF</td>
+                    <td>GA</td>
+                    <td>GD</td>
+                    <td>Pts</td>
+                    <% if (auth === 'admin') { %><td>Edit</td><% } %>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < teams.length; i++) { %>
+                    <tr>
+                        <td><%= teams[i].rank %></td>
+                        <td><%= teams[i].team %></td>
+                        <td><%= teams[i].pl %></td>
+                        <td><%= teams[i].win %></td>
+                        <td><%= teams[i].draw %></td>
+                        <td><%= teams[i].lose %></td>
+                        <td><%= teams[i].gf %></td>
+                        <td><%= teams[i].ga %></td>
+                        <td><%= teams[i].gd %></td>
+                        <td><%= teams[i].pts %></td>
+                        <% if (auth === 'admin') { %>
+                            <td><a href="/table/<%= teams[i].league.replace(/ /g, '_') %>/<%= teams[i].team.replace(/ /g, '_') %>/edit">Edit</a></td>
+                        <% } %>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+<%- include('../footer') %>

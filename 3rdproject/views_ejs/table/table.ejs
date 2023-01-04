@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>FootBall</title>
+        <link rel="shortcut icon" href="/favicon/favicon.ico">
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <%- include('../header') %>
+        <article class="body">
+            <div>
+                <h1>Table</h1>
+            </div>
+            <div class="league-list">
+                <ul>
+                    <% for (let i = 0; i < leagues.length; i++) { %>
+                        <li>
+                            <a href="/table/<%= leagues[i].league.replace(/ /g, '_') %>">
+                                <img src="/table/<%= leagues[i].league.replace(/ /g, '_') %>.jpg" alt="">
+                                <p><%= leagues[i].league %></p>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </article>
+    </body>
+</html>

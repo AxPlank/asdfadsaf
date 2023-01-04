@@ -7,7 +7,13 @@ module.exports = () => {
         if (req.session.user) {
             res.redirect('/');
         } else {
-            res.render('auth/login');
+            const obj = {
+                user: false,
+                error: false,
+                form: false
+            }
+
+            res.render('auth/login', obj);
         }
     }).post('/login', (req, res) => {
         if (req.session.user) {
@@ -17,7 +23,9 @@ module.exports = () => {
 
             if (Object.values(form).includes("")) {
                 const obj = {
+                    user: false,
                     error: 'There exist that is not entered',
+                    form: form
                 }
 
                 res.render('auth/login', obj);
@@ -27,6 +35,7 @@ module.exports = () => {
                 db.query(sql, (err, data, field) => {
                     if (err) {
                         const obj = {
+                            user: false,
                             error: 500,
                             url: '/auth/login'
                         }
@@ -34,7 +43,9 @@ module.exports = () => {
                         res.render('errorpage', obj);
                     } else if (data.length === 0 || data[0].pw !== sha256(form.password + data[0].secrect_key)){
                         const obj = {
+                            user: false,
                             error: 'ID/PW does not match.',
+                            form: form
                         }
 
                         res.render('auth/login', obj);
@@ -65,61 +76,87 @@ module.exports = () => {
         if (req.session.user) {
             res.redirect('/auth/mypage');
         } else {
-            res.render('auth/signup');
+            const obj = {
+                user: false,
+                UserData: false
+            }
+
+            res.render('auth/signup', obj);
         }
     }).post('/signup', (req, res) => {
         const UserData = req.body;
-        console.log(UserData["nickname"].length);
 
-        const obj = {
-            UserData: UserData,
-        };
-
-        const PatternPhone1 = /\d{3}/;
-        const PatternPhone2 = /\d{4}/;
+        const PatternPhone = /^(010)(\d{3,4})(\d{4})/;
 
         if (Object.values(UserData).includes("")) {
-            obj["error"] = 'There exist that is not entered.';
+            const obj = {
+                user: false,
+                UserData: UserData,
+                error: 'There exist that is not entered.'
+            }
 
             res.render('auth/signup', obj);
         } else if (UserData["password"].length < 8) {
-            obj["error"] = "Password is not valid.";
+            const obj = {
+                user: false,
+                UserData: UserData,
+                error: "Password is not valid."
+            }
 
             res.render('auth/signup', obj);
         } else if (UserData["password"] !== UserData["checkpassword"]) {
-            obj["error"] = "Password is not match.";
+            const obj = {
+                user: false,
+                UserData: UserData,
+                error: "Password is not match."
+            }
 
             res.render('auth/signup', obj);
-        } else if (UserData["phone1"] !== '010' || !(UserData["phone2"].match(PatternPhone1) ^ UserData["phone2"].match(PatternPhone2)) || UserData["phone2"][0] === '1' || !UserData["phone3"].match(PatternPhone2)) {
-            obj["error"] = "Phone number is not valid.";
+        } else if (UserData.phone.match(PatternPhone) || UserData.phone[3] === '1') {
+            const obj = {
+                user: false,
+                UserData: UserData,
+                error: "Phone number is not valid."
+            }
 
             res.render('auth/signup', obj);
         } else if (UserData["id"].length >= 5 && UserData["id"].length <= 12 && UserData["id"].match(/\W/)) {
-            obj["error"] = "ID is not valid.";
+            const obj = {
+                user: false,
+                UserData: UserData,
+                error: "ID is not valid."
+            }
 
             res.render('auth/signup', obj);
         } else if (UserData["nickname"].match(/\W/) || UserData["nickname"].length >= 20 || UserData["nickname"].length <= 5) {
-            console.log(true);
-            obj["error"] = "Nickname is not valid.";
+            const obj = {
+                user: false,
+                UserData: UserData,
+                error: "Nickname is not valid."
+            }
 
             res.render('auth/signup', obj);
         } else {
             const SerectKey = getSecretKey();
             const PW = sha256(UserData["password"] + SerectKey);
-            const Phone = UserData["phone1"] + UserData["phone2"] + UserData["phone3"];
+            const Phone = UserData.phone;
             let sql = `select * from personal_info where user_id='${UserData.id}' or nickname='${UserData.nickname}' or email='${UserData.email}' or phone_number='${Phone}'`;
 
             db.query(sql, (err, datas) => {
                 if (err) {
                     const obj = {
+                        user: false,
                         url: `/auth/signup`,
                         error: 500
                     };
 
                     res.render('errorpage', obj);
                 } else if (datas.length !== 0) {
-                    console.log(datas);
-                    obj["error"] = "There is already exist one of ID, Nickname, Phone and Email.";
+                    const obj = {
+                        user: false,
+                        UserData: UserData,
+                        error: "There is already exist one of ID, Nickname, Phone and Email."
+                    }
 
                     res.render('auth/signup', obj);
                 } else {
@@ -128,9 +165,8 @@ module.exports = () => {
 
                     db.query(sql, (err, data) => {
                         if (err) {
-                            console.log(err);
-                
                             const obj = {
+                                user: false,
                                 url: `/auth/signup`,
                                 error: 500
                             };
@@ -157,8 +193,6 @@ module.exports = () => {
 
             db.query(sql, (err, data) => {
                 if (err) {
-                    console.log(err);
-            
                     const obj = {
                         user: req.session.user["name"],
                         url: `/`,
@@ -167,13 +201,10 @@ module.exports = () => {
 
                     res.render('errorpage', obj);
                 } else {
-                    
+                    console.log(data[0]);
                     const obj = {
                         user: req.session.user["name"],
-                        id: data[0]["user_id"],
-                        nickname: data[0]["nickname"],
-                        phone: data[0]["phone_number"],
-                        email: data[0]["email"],
+                        UserData: data[0]
                     };
 
                     res.render('auth/mypage', obj);

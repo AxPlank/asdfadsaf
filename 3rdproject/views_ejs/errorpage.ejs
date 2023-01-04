@@ -1,0 +1,15 @@
+<%- include('header') %>
+    <% switch (error)
+    case 500: %>
+        <p>Internal Server Error</p>
+        <p><a href='<%= url %>'>Back</a></p>
+    <% break;
+    case 404: %>
+        <p>Not Found</p>
+        <p><a href='<%= url %>'>Back</a></p>
+    <% break;
+    case 400: %>
+        <p>Bad Request</p>
+        <p><a href='<%= url %>'>Back</a></p>
+    <% break; %>
+<%- include('footer') %>

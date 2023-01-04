@@ -418,6 +418,8 @@ module.exports = () => {
                     if (req.session.user) {
                         obj["auth"] = req.session.user["auth"];
                         obj["user"] = req.session.user["name"];
+                    } else {
+                        obj["auth"] = obj["user"] = false;
                     }
     
                     res.render('board/board_detail', obj);
@@ -439,11 +441,14 @@ module.exports = () => {
                         } else if (data.length === 0) {
                             const obj = {
                                 post: data[0],
+                                board_media: false
                             }
         
                             if (req.session.user) {
                                 obj["auth"] = req.session.user["auth"];
                                 obj["user"] = req.session.user["name"];
+                            } else {
+                                obj["auth"] = obj["user"] = false;
                             }
         
                             res.render('board/board_detail', obj);
@@ -456,6 +461,8 @@ module.exports = () => {
                             if (req.session.user) {
                                 obj["auth"] = req.session.user["auth"];
                                 obj["user"] = req.session.user["name"];
+                            } else {
+                                obj["auth"] = obj["user"] = false;
                             }
         
                             res.render('board/board_detail', obj);

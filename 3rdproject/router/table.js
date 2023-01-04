@@ -10,7 +10,9 @@ module.exports = () => {
         } else {
             const obj = {
                 user: req.session.user["name"],
-                league: req.params.league
+                league: req.params.league,
+                form: false,
+                error: false
             };
 
             res.render('table/table_add', obj);
@@ -56,8 +58,6 @@ module.exports = () => {
                 db.query(sql, (err) => {
                     console.log(sql);
                     if (err) {
-                        console.log(err);
-                        
                         const obj = {
                             user: req.session.user["name"],
                             url: `/table/${req.params.league}/add`,
@@ -78,12 +78,15 @@ module.exports = () => {
 
         db.query(sql, (err, rows, fields) => {
             if (err) {
-                console.log(err);
-                
                 const obj = {
-                    user: req.session.user["name"],
                     url: `/table`,
                     error: 500
+                }
+
+                if (req.session.user) {
+                    obj["user"] = req.session.user.name;
+                } else {
+                    obj["user"] = false;
                 }
 
                 res.render('errorpage', obj);
@@ -97,12 +100,15 @@ module.exports = () => {
 
                     db.query(sql, (err, rows, fields) => {
                         if (err) {
-                            console.log(err);
-
                             const obj = {
-                                user: req.session.user["name"],
                                 url: `/table`,
                                 error: 500
+                            }
+
+                            if (req.session.user) {
+                                obj["user"] = req.session.user["name"];
+                            } else {
+                                obj["user"] = false;
                             }
 
                             res.render('errorpage', obj);
@@ -114,8 +120,10 @@ module.exports = () => {
                             };
 
                             if (req.session.user) {
-                                obj["user"] = req.session.user["name"];
                                 obj["auth"] = req.session.user["auth"];
+                                obj["user"] = req.session.user["name"];
+                            } else {
+                                obj["auth"] = obj["user"] = false;
                             }
                             
                             res.render('table/table_detail', obj);
@@ -127,7 +135,9 @@ module.exports = () => {
                     };
 
                     if (req.session.user) {
-                        obj["user"] = req.session.user["name"];
+                        obj["user"] = req.session.user.name;
+                    } else {
+                        obj["user"] = false;
                     }
 
                     res.render('table/table', obj);
@@ -144,8 +154,6 @@ module.exports = () => {
 
             db.query(sql, (err, data, fields) => {
                 if (err) {
-                    console.log(err);
-
                     const obj = {
                         user: req.session.user["name"],
                         url: `/table/${req.params.league}`,
@@ -164,7 +172,6 @@ module.exports = () => {
                 } else {
                     const obj = {
                         user: req.session.user["name"],
-                        auth: req.session.user["auth"],
                         team: data[0]
                     }
 

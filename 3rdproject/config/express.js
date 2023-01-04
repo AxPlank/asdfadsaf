@@ -28,14 +28,18 @@ module.exports = () => {
     app.use(express.static('static'));
     app.use('/media', express.static('media'));
     app.use(express.json());
-    app.set('views', './views');
-    app.set('view engine', 'pug');
+    // app.set('view', './views');
+    // app.set('view engine', pug);
+    app.set('views', './views_ejs');
+    app.set('view engine', 'ejs');
     
     app.get('/', (req, res) => {
         const obj = {}
 
         if (req.session.user) {
             obj["user"] = req.session.user["name"];
+        } else {
+            obj["user"] = false;
         }
 
         res.render('main', obj);

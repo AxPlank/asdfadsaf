@@ -1,0 +1,35 @@
+<%- include('../header') %>
+    <div>
+        <h3><%= post.category %></h3>
+    </div>
+    <div class="post-body">
+        <div class="post-title">
+            <p><%= post.title %></p>
+            <p class="post-auth-date"><b><%= post.auth %></b> posted at <%= new Date(post.create_date).toLocaleString() %></p>
+            <% if (post.modify_date) { %>
+                <p class="post-auth-date">modified at <%= new Date(post.modify_date).toLocaleString() %></p>
+            <% } %>
+        </div>
+        <div>
+            <% if (board_media) { %>
+                <% for (let i = 0; i < board_media.length; i++ ) { %>
+                    <% if (board_media[i].media_type === "image") { %>
+                        <p><img class="media-size" src="<%= board_media[i].URL.substring(1, ) %>" alt=""></p>
+                    <% } else { %>
+                        <p><video class="media-size" src="<%= board_media[i].URL.substring(1, ) %>" alt=""></video></p>
+                    <% } %>
+                <% } %>
+            <% } %>
+            <p class="post-content"><%= post.content %></p>
+        </div>
+    </div>
+    <div class="post-tail">
+        <div>
+            <% if (post.auth === user) { %>
+                <a class="a-btn" href="/board/<%= post.category.replace(/ /g, '_') %>/<%= post.board_id %>/edit">Edit</a>
+                <a class="a-btn" href="/board/<%= post.category.replace(/ /g, '_') %>/<%= post.board_id %>/Delete">Delete</a>
+            <% } %>
+            <a class="a-btn" href="/board">Back</a>
+        </div>
+    </div>
+<%- include('../footer') %>

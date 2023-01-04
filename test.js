@@ -1,11 +1,7 @@
-let sql = [1, 2];
-let sqll = [];
+let regx = /^(010)(\d{3,4})(\d{4})/;
 
-if (0) {
-    sql = 12;
-}
+let num = '01012345678';
 
-console.log([...sql, ...sqll].join(' '));
-
+console.log(num.match(regx));
 
 // "type": "module" : import 사용 시 추가할 것

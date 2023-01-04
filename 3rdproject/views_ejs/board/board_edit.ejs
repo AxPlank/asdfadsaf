@@ -1,0 +1,46 @@
+<%- include('../header') %>
+    <div class="category">
+        <div>
+            <h2>Category</h2>
+        </div>
+        <div>
+            <% for (let i = 0; i < leagues.length; i++) { %>
+                <a href="/board/<%= leagues[i].category.replace(/ /g, '_') %>"><%= leagues[i].category %></a>
+            <% } %>
+        </div>
+        <div class="post-body">
+            <div>
+                <%- include('../error') %>
+                <form method="post" action="/board/<%= form.category.replace(/ /g, '_') %>/<%= form.board_id %>/edit" enctype="multipart/form-data">
+                    <div>
+                        <label for="title">Title</label>
+                        <input type="text" name="title" id="title" value="<%= form?form.title:'' %>">
+                    </div>
+                    <div>
+                        <label for="category">Category</label>
+                        <select name="category" id="category">
+                            <% for (let i = 0; i < leagues.length; i++) { %>
+                                <option value="<%= leagues[i].category %>"><%= leagues[i].category %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="boardimage">Image</label>
+                        <input type="file" name="boardimage" id="boardimage" accept="image/*" multiple="multiple">
+                    </div>
+                    <div>
+                        <label for="boardvideo">Video</label>
+                        <input type="file" name="boardvideo" id="boardvideo" accept="video/*" multiple="multiple">
+                    </div>
+                    <div>
+                        <label for="content">Content</label>
+                        <textarea name="content" id="content"><%= form?form.content:"" %></textarea>
+                    </div>
+                    <div>
+                        <input type="submit" class="form-submit" value="Edit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<%- include('../footer') %>

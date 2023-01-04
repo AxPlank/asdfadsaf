@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>FootBall</title>
+        <link rel="shortcut icon" href="/favicon/favicon.ico">
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <article class="head">
+            <div class="header-btn">
+                <h1><a href="/">FootBall</a></h1>
+            </div>
+            <div class="navbar">
+                <ul>
+                    <li><a href="/table">League Table</a></li>
+                    <li><a href="/board">Board</a></li>
+                    <% if (user) { %>
+                        <li><a href="/auth/logout">Logout</a></li>
+                        <li><a href="/auth/mypage">Mypage</a></li>
+                    <% } else { %>
+                        <li><a href="/auth/login">Login</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </article>
+        <article class="body">

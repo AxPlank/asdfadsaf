@@ -16,3 +16,8 @@
 // const task = require('./router/node_cron')();
 
 // task.start();
+
+/**
+ * ejs
+ */
+const app = require('./router/ejspractice')();

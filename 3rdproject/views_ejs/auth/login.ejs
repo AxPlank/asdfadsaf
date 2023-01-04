@@ -1,0 +1,26 @@
+<%- include('../header') %>
+    <div class="authbox">
+        <div>
+            <h2>Login</h2>
+        </div>
+        <div>
+            <p>
+                If you don't have ID... <a href="/auth/signup">Sign Up</a>
+            </p>
+        </div>
+        <div>
+            <form method="post" action="/auth/login">
+                <div>
+                    <input class="rgb-180-180-180" type="text" name="id" id="id" placeholder="ID" value="<%= form?form.id:'' %>">
+                </div>
+                <div>
+                    <input class="rgb-180-180-180" type="password" name="password" id="password" placeholder="Password">
+                </div>
+                <div>
+                    <input class="form-submit" type="submit" value="Login">
+                </div>
+            </form>
+            <%- include('../error') %>
+        </div>
+    </div>
+<%- include('../footer') %>

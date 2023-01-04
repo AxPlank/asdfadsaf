@@ -1,0 +1,45 @@
+<%- include('../header') %>
+    <div class="authbox">
+        <div>
+            <h2>Sign Up</h2>
+        </div>
+        <div>
+            <p>If you have ID... <a href="/auth/login">Login</a></p>
+        </div>
+        <%- include('../error') %>
+        <div>
+            <form method="post" action="/auth/signup">
+                <div>
+                    <h3><label for="id">ID</h3>
+                    <p class="auth-signup-explanation">ID length should is over 5 and below 12. And you can only use alphabet and number at ID.</p>
+                    <input type="text" class="rgb-180-180-180" name="id" id="id" placeholder="ID" value="<%= UserData?UserData.id:'' %>">
+                </div>
+                <div>
+                    <h3><label for="password">Password</h3>
+                    <p class="auth-signup-explanation">Password length should is over 8</p>
+                    <input type="password" class="rgb-180-180-180" name="password" id="password" placeholder="Password" value="<%= UserData?UserData.password:'' %>">
+                </div>
+                <div>
+                    <h3><label for="checkpassword">Check Password</h3>
+                    <input type="password" class="rgb-180-180-180" name="checkpassword" id="checkpassword" placeholder="One more..." value="<%= UserData?UserData.checkpassword:'' %>">
+                </div>
+                <div>
+                    <h3><label for="nickname">Nickname</label></h3>
+                    <p class="auth-signup-explanation">You can use Alphabet and Number at Nickname.</p>
+                    <input type="text" class="rgb-180-180-180" name="nickname" id="nickname" placeholder="Nickname" value="<%= UserData?UserData.nickname:'' %>">
+                </div>
+                <div>
+                    <h3><label for="Phone">Phone</label></h3>
+                    <input type="text" class="rgb-180-180-180" name="phone" id="phone" placeholder="Phone" value="<%= UserData?UserData.phone:'' %>">
+                </div>
+                <div>
+                    <h3><label for="Phone">Email</label></h3>
+                    <input type="text" class="rgb-180-180-180" name="email" id="email" placeholder="Email" value="<%= UserData?UserData.email:'' %>">
+                </div>
+                <div>
+                    <input type="submit" class="form-submit" value="SignUp">
+                </div>
+            </form>
+        </div>
+    </div>
+<%- include('../footer') %>

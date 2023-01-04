@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>FootBall</title>
+        <link rel="shortcut icon" href="/favicon/favicon.ico">
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <%- include('../header') %>
+        <article class="body">
+            <div>
+                <h1>Add Team</h1>
+            </div>
+            <div class="form-body">
+                <div>
+                    <form action="/table/<%= league %>/add" method="post">
+                        <div>
+                            <p class="form-attribute"><label for="team">Team</label></p>
+                            <p><input type="text" name="team" id="team" value="<%= form?form.team:'' %>"></p>
+                        </div>
+                        <div>
+                            <p class="form-attribute"><label for="win">Win</label></p>
+                            <p><input type="text" name="win" id="win" value="<%= form?form.win:'' %>"></p>
+                        </div>
+                        <div>
+                            <p class="form-attribute"><label for="draw">Draw</label></p>
+                            <p><input type="text" name="draw" id="draw" value="<%= form?form.draw:'' %>"></p>
+                        </div>
+                        <div>
+                            <p class="form-attribute"><label for="lose">Lose</label></p>
+                            <p><input type="text" name="lose" id="lose" value="<%= form?form.lose:'' %>"></p>
+                        </div>
+                        <div>
+                            <p class="form-attribute"><label for="gf">GF</label></p>
+                            <p><input type="text" name="gf" id="gf" value="<%= form?form.gf:'' %>"></p>
+                        </div>
+                        <div>
+                            <p class="form-attribute"><label for="ga">GA</label></p>
+                            <p><input type="text" name="ga" id="ga" value="<%= form?form.ga:'' %>"></p>
+                        </div>
+                        <div>
+                            <input type="submit" class="form-submit" value="Add">
+                        </div>
+                    </form>
+                    <%- include('../error') %>
+                </div>
+            </div>
+        </article>
+    </body>
+</html>
