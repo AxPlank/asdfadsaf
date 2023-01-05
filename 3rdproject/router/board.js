@@ -25,6 +25,8 @@ module.exports = () => {
                     res.render('errorpage', obj);
                 } else {
                     const obj = {
+                        error: false,
+                        form: false,
                         leagues: datas,
                         user: req.session.user.name
                     };
@@ -195,6 +197,8 @@ module.exports = () => {
                         res.render('errorpage', obj);
                     } else if (!req.session.user) {
                         res.redirect(`/auth/login`);
+                    } else if (data[0].user_id !== req.session.user.user_id) {
+                        res.redirect(`/board/${req.params.category}/${req.params.id}`);
                     } else if (data.length === 0) {
                         const form = {
                             title: 'HTTP 404',
@@ -208,16 +212,18 @@ module.exports = () => {
                         const obj = {
                             leagues: leagues,
                             post: form,
-                            user: req.session.user["name"]
+                            board_media: false,
+                            user: req.session.user["name"],
+                            error: false
                         }
         
                         res.render('board/board_detail', obj);
-                    } else if (data[0].user_id !== req.session.user.user_id) {
-                        res.redirect(`/board/${req.params.category}/${req.params.id}`);
                     } else {
                         const obj = {
                             leagues: leagues,
+                            post: data[0],
                             form: data[0],
+                            error: false,
                             user: req.session.user
                         }
 
@@ -242,77 +248,80 @@ module.exports = () => {
                 let form = req.body;
                 const leagues = datas;
 
-                if (Object.values(form).includes("")) {
-                    const obj = {
-                        error: "There exist that is not entered",
-                        leagues: leagues,
-                        user: req.session.user.name,
-                        form: form
-                    }
+                sql = `select a.board_id, b.user_id, c.category from board a inner join personal_info b on a.auth_id=b.personal_id inner join category c on a.category=c.category_id where board_id=${req.params.id}`;
 
-                    res.render('board/board_post', obj);
-                } else if (PostValid(form)) {
-                    const obj = {
-                        error: "Title is too long.",
-                        leagues: leagues,
-                        user: req.session.user.name,
-                        form: form
-                    }
-
-                    res.render('board/board_post', obj);
-                } else {
-                    sql = `select a.board_id, b.user_id from board a inner join personal_info b on a.auth_id=b.personal_id where board_id=${req.params.id}`;
-
-                    db.query(sql, (err, data) => {
-                        if (err) {
-                            const obj = {
-                                url: `/board/${req.params.category}/${req.params.id}`,
-                                error: 500,
-                                user: req.session.user["name"]
-                            }
-        
-                            res.render('errorpage', obj);
-                        } else if (!req.session.user) {
-                            res.redirect(`/auth/login`);
-                        } else if (data.length === 0) {
-                            const form = {
-                                title: 'HTTP 404',
-                                content: '존재하지 않는 게시글입니다.',
-                                auth: 'admin',
-                                category: req.params.category.replace(/_/g, ' '),
-                                create_date: new Date(),
-                                modify_date: NaN
-                            }
-        
-                            const obj = {
-                                leagues: leagues,
-                                post: form,
-                                user: req.session.user["name"]
-                            }
-        
-                            res.render('board/board_detail', obj);
-                        } else if (data[0].user_id !== req.session.user.user_id) {
-                            res.redirect(`/board/${req.params.category}/${req.params.id}`);
-                        } else {
-                            const subQueryBoardEdit = `(select category_id from category where category='${form.category}')`;
-                            sql = `update board set title='${form.title}', category=${subQueryBoardEdit}, content='${form.content}', modify_date=now() where board_id=${req.params.id}`;
-
-                            db.query(sql, (err, data) => {
-                                if (err) {
-                                    const obj = {
-                                        url: `/board/${req.params.category}/${req.params.id}`,
-                                        error: 500,
-                                        user: req.session.user["name"]
-                                    }
-                
-                                    res.render('errorpage', obj);
-                                } else {
-                                    res.redirect(`/board/${req.params.category}/${req.params.id}`);
-                                }
-                            });
+                db.query(sql, (err, data) => {
+                    if (err) {
+                        console.log(err);
+                        const obj = {
+                            url: `/board/${req.params.category}/${req.params.id}`,
+                            error: 500,
+                            user: req.session.user["name"]
                         }
-                    });
-                }
+    
+                        res.render('errorpage', obj);
+                    } else if (!req.session.user) {
+                        res.redirect(`/auth/login`);
+                    } else if (data[0].user_id !== req.session.user.user_id) {
+                        res.redirect(`/board/${req.params.category}/${req.params.id}`);
+                    } else if (Object.values(form).includes("")) {
+                        const obj = {
+                            error: "There exist that is not entered",
+                            leagues: leagues,
+                            user: req.session.user.name,
+                            post: data[0],
+                            form: form
+                        }
+    
+                        res.render('board/board_edit', obj);
+                    } else if (PostValid(form)) {
+                        const obj = {
+                            error: "Title is too long.",
+                            leagues: leagues,
+                            user: req.session.user.name,
+                            post: data[0],
+                            form: form
+                        }
+    
+                        res.render('board/board_edit', obj);
+                    } else if (data.length === 0) {
+                        const form = {
+                            title: 'HTTP 404',
+                            content: '존재하지 않는 게시글입니다.',
+                            auth: 'admin',
+                            category: req.params.category.replace(/_/g, ' '),
+                            create_date: new Date(),
+                            modify_date: NaN
+                        }
+    
+                        const obj = {
+                            leagues: leagues,
+                            board_media: false,
+                            post: form,
+                            user: req.session.user["name"]
+                        }
+    
+                        res.render('board/board_detail', obj);
+                    } else {
+                        const subQueryBoardEdit = `(select category_id from category where category='${form.category}')`;
+                        sql = `update board set title='${form.title}', category=${subQueryBoardEdit}, content='${form.content}', modify_date=now() where board_id=${req.params.id}`;
+
+                        db.query(sql, (err) => {
+                            if (err) {
+                                console.log(err);
+                                const obj = {
+                                    url: `/board/${req.params.category}/${req.params.id}/edit`,
+                                    error: 500,
+                                    user: req.session.user.name
+                                };
+
+                                res.render('errorpage', obj);
+                            } else {
+                                res.redirect(`/board/${form.category.replace(/ /g, '_')}/${req.params.id}`);
+                            }
+                        });
+                    }
+                });
             }
         });
     });
@@ -398,6 +407,8 @@ module.exports = () => {
 
                     if (req.session.user) {
                         obj["user"] = req.session.user;
+                    } else {
+                        obj["user"] = false;
                     }
                     
                     res.render('errorpage', obj);
@@ -412,7 +423,8 @@ module.exports = () => {
                     }
     
                     const obj = {
-                        post: form
+                        post: form,
+                        board_media: false
                     }
     
                     if (req.session.user) {
@@ -435,6 +447,8 @@ module.exports = () => {
         
                             if (req.session.user) {
                                 obj["user"] = req.session.user;
+                            } else {
+                                obj["user"] = false;
                             }
                             
                             res.render('errorpage', obj);
@@ -482,6 +496,8 @@ module.exports = () => {
 
                     if (req.session.user) {
                         obj["user"] = req.session.user["name"];
+                    } else {
+                        obj["user"] = false;
                     }
 
                     res.render('errorpage', obj);
@@ -498,6 +514,8 @@ module.exports = () => {
         
                             if (req.session.user) {
                                 obj["user"] = req.session.user["name"];
+                            } else {
+                                obj["user"] = false;
                             }
         
                             res.render('errorpage', obj);
@@ -517,6 +535,8 @@ module.exports = () => {
                     
                                         if (req.session.user) {
                                             obj["user"] = req.session.user["name"];
+                                        } else {
+                                            obj["user"] = false;
                                         }
                     
                                         res.render('errorpage', obj);
@@ -524,12 +544,16 @@ module.exports = () => {
                                         const obj = {
                                             leagues: leagues,
                                             notices: notices,
-                                            postlist: datas
+                                            postlist: datas,
+                                            category: req.params.category,
+                                            currtPage: 14,
                                         }
 
                                         if (req.session.user) {
                                             obj["user"] = req.session.user["name"];
                                             obj["auth"] = req.session.user["auth"];
+                                        } else {
+                                            obj["user"] = obj["auth"] = false;
                                         }
 
                                         res.render('board/board', obj);
@@ -548,6 +572,8 @@ module.exports = () => {
                     
                                         if (req.session.user) {
                                             obj["user"] = req.session.user["name"];
+                                        } else {
+                                            obj["user"] = false;
                                         }
                     
                                         res.render('errorpage', obj);
@@ -561,6 +587,9 @@ module.exports = () => {
                                         if (req.session.user) {
                                             obj["user"] = req.session.user["name"];
                                             obj["auth"] = req.session.user["auth"];
+                                        } else {
+                                            obj["user"] = false;
+                                            obj["auth"] = false;
                                         }
 
                                         res.render('board/board', obj);

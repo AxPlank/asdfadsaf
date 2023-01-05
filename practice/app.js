@@ -20,4 +20,14 @@
 /**
  * ejs
  */
-const app = require('./router/ejspractice')();
+// const app = require('./router/ejspractice')();
+
+/**
+ * 민형님
+ */
+// const app = require('./router/checked')();
+
+/**
+ * querystring
+ */
+const app = require('./router/querystring')();

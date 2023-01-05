@@ -16,7 +16,7 @@
                     <% if (board_media[i].media_type === "image") { %>
                         <p><img class="media-size" src="<%= board_media[i].URL.substring(1, ) %>" alt=""></p>
                     <% } else { %>
-                        <p><video class="media-size" src="<%= board_media[i].URL.substring(1, ) %>" alt=""></video></p>
+                        <p><video class="media-size" src="<%= board_media[i].URL.substring(1, ) %>" autoplay controls="true"></video></p>
                     <% } %>
                 <% } %>
             <% } %>

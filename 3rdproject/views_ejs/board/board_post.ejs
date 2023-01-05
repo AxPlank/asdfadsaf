@@ -1,0 +1,53 @@
+<%- include('../header') %>
+    <div class="category">
+        <div>
+            <h2>Category</h2>
+        </div>
+        <div>
+            <% for (let i = 0; i < leagues.length; i++) { %>
+                <a href="/board/<%= leagues[i].category.replace(/ /g, '_') %>"><%= leagues[i].category %></a>
+            <% } %>
+        </div>
+    </div>
+    <div>
+        <h1>Post</h1>
+    </div>
+    <div class="post-body">
+        <div>
+            <%- include('../error') %>
+            <form method="post" action="/board/post" enctype="multipart/form-data">
+                <div>
+                    <p>
+                        <label for="title"><b>Title</b></label>
+                        <input class="rgb-180-180-180 board-post-edit" type="text" name="title" id="title" value="<%= form?form.title:'' %>">
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        <label for="category"><b>Category</b></label>
+                        <select class="rgb-180-180-180 board-post-edit" name="category" id="category">
+                            <% for (let i = 0; i < leagues.length; i++) { %>
+                                <option value="<%= leagues[i].category %>"><%= leagues[i].category %></option>
+                            <% } %>
+                        </select>
+                    </p>
+                </div>
+                <div>
+                    <p><label for="boardimage"><b>Image</b></label></p>
+                    <input type="file" accept="image/*" multiple="multiple" id="boardimage" name="boardimage">
+                </div>
+                <div>
+                    <p><label for="boardimage"><b>Video</b></label></p>
+                    <input type="file" accept="video/*" multiple="multiple" id="boardvideo" name="boardvideo">
+                </div>
+                <div>
+                    <p><label for="content"><b>Content</b></label></p>
+                    <p style="text-align: center"><textarea class="board-textarea rgb-180-180-180" name="content" id="content"><%= form?form.content:"" %></textarea></p>
+                </div>
+                <div>
+                    <input type="submit" class="form-submit" value="Edit">
+                </div>
+            </form>
+        </div>
+    </div>
+<%- include('../footer') %>
