@@ -332,6 +332,7 @@ table {
 }
 
 .post-auth-date {
+    background-color: #f00000;
     margin-top: 0px;
     background-color: white;
     color: black;
@@ -426,4 +427,25 @@ table {
 .board-post-edit {
     border: none;
     padding: 5px;
+}
+
+.paging-bar {
+    margin-top: 20px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.paging-bar > a {
+    margin: 5px;
+    padding: 5px;
+    background-color: #ff0000;
+    max-width: 20px;
+    color: rgb(255, 255, 255);
+    border: 2px solid #ff0000;
+    font-size: 18px;
+}
+
+div.paging-bar > a > img{
+    height: 14px;
 }

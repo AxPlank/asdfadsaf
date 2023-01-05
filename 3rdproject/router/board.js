@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = () => {
     const router = require('express').Router();
     const db = require('../config/mysql')();
@@ -119,7 +121,8 @@ module.exports = () => {
                                                 res.render('errorpage', obj);
                                             } else {
                                                 const [boardCategory, boardId] = [data[0].category.replace(/ /g, '_'), data[0].board_id];
-                                                let imageURL = videoURL = [];
+                                                let imageURL = [];
+                                                let videoURL = [];
 
                                                 if (req.files.boardimage) {
                                                     req.files.boardimage.map(async (e) => {
@@ -143,7 +146,13 @@ module.exports = () => {
                                                     });
                                                 }
 
-                                                sql = `insert into board_media (board_id, media_type, URL) values ${[...imageURL, ...videoURL].join(', ')}`;
+                                                if (imageURL.length !== 0) {
+                                                    sql = `insert into board_media (board_id, media_type, URL) values ` + imageURL.join(', ');
+                                                }
+
+                                                if (videoURL.length !== 0) {
+                                                    sql = sql + ', ' + videoURL.join(', ');
+                                                }
                                                 
                                                 db.query(sql, (err) => {
                                                     if (err) {
@@ -155,7 +164,7 @@ module.exports = () => {
                         
                                                         res.render('errorpage', obj);
                                                     } else {
-                                                        res.redirect(`/board/${boardCategory}/${boardId}`);
+                                                        res.redirect(`/board/${boardId}`);
                                                     }
                                                 })
                                             }
@@ -170,13 +179,13 @@ module.exports = () => {
         }
     });
 
-    router.get('/:category/:id/edit', (req, res) => {
+    router.get('/:id/edit', (req, res) => {
         let sql = `select category from category order by category asc`;
 
         db.query(sql, (err, datas) => {
             if (err) {
                 const obj = {
-                    url: `/board/${req.params.category}/${req.params.id}`,
+                    url: `/board/${req.params.id}`,
                     error: 500,
                     user: req.session.user["name"]
                 }
@@ -189,7 +198,7 @@ module.exports = () => {
                 db.query(sql, (err, data) => {
                     if (err) {
                         const obj = {
-                            url: `/board/${req.params.category}/${req.params.id}`,
+                            url: `/board/${req.params.id}`,
                             error: 500,
                             user: req.session.user["name"]
                         }
@@ -198,7 +207,7 @@ module.exports = () => {
                     } else if (!req.session.user) {
                         res.redirect(`/auth/login`);
                     } else if (data[0].user_id !== req.session.user.user_id) {
-                        res.redirect(`/board/${req.params.category}/${req.params.id}`);
+                        res.redirect(`/board/${req.params.id}`);
                     } else if (data.length === 0) {
                         const form = {
                             title: 'HTTP 404',
@@ -232,13 +241,13 @@ module.exports = () => {
                 });
             }
         });
-    }).post('/:category/:id/edit', (req, res) => {
+    }).post('/:id/edit', (req, res) => {
         let sql = `select category from category order by category asc`;
 
         db.query(sql, (err, datas) => {
             if (err) {
                 const obj = {
-                    url: `/board/${req.params.category}/${req.params.id}`,
+                    url: `/board/${req.params.id}`,
                     error: 500,
                     user: req.session.user["name"]
                 }
@@ -254,7 +263,7 @@ module.exports = () => {
                     if (err) {
                         console.log(err);
                         const obj = {
-                            url: `/board/${req.params.category}/${req.params.id}`,
+                            url: `/board/${req.params.id}`,
                             error: 500,
                             user: req.session.user["name"]
                         }
@@ -263,7 +272,7 @@ module.exports = () => {
                     } else if (!req.session.user) {
                         res.redirect(`/auth/login`);
                     } else if (data[0].user_id !== req.session.user.user_id) {
-                        res.redirect(`/board/${req.params.category}/${req.params.id}`);
+                        res.redirect(`/board/${req.params.id}`);
                     } else if (Object.values(form).includes("")) {
                         const obj = {
                             error: "There exist that is not entered",
@@ -289,7 +298,7 @@ module.exports = () => {
                             title: 'HTTP 404',
                             content: '존재하지 않는 게시글입니다.',
                             auth: 'admin',
-                            category: req.params.category.replace(/_/g, ' '),
+                            category: 'Others',
                             create_date: new Date(),
                             modify_date: NaN
                         }
@@ -310,14 +319,14 @@ module.exports = () => {
                             if (err) {
                                 console.log(err);
                                 const obj = {
-                                    url: `/board/${req.params.category}/${req.params.id}/edit`,
+                                    url: `/board/${req.params.id}/edit`,
                                     error: 500,
                                     user: req.session.user.name
                                 };
 
                                 res.render('errorpage', obj);
                             } else {
-                                res.redirect(`/board/${form.category.replace(/ /g, '_')}/${req.params.id}`);
+                                res.redirect(`/board/${req.params.id}`);
                             }
                         });
                     }
@@ -326,13 +335,13 @@ module.exports = () => {
         });
     });
 
-    router.get('/:category/:id/delete', (req, res) => {
+    router.get('/:id/delete', (req, res) => {
         let sql = `select category from category order by category asc`;
 
         db.query(sql, (err, datas) => {
             if (err) {
                 const obj = {
-                    url: `/board/${req.params.category}/${req.params.id}`,
+                    url: `/board/${req.params.id}`,
                     error: 500,
                     user: req.session.user["name"]
                 }
@@ -340,12 +349,13 @@ module.exports = () => {
                 res.render('errorpage', obj);
             } else {
                 const leagues = datas;
-                sql = `select a.board_id, b.user_id from board a inner join personal_info b on a.auth_id=b.personal_id where board_id=${req.params.id}`;
+                sql = `select a.board_id, b.user_id, c.category from board a inner join personal_info b on a.auth_id=b.personal_id inner join category c on a.category=c.category_id where board_id=${req.params.id}`;
 
                 db.query(sql, (err, data) => {
                     if (err) {
+                        console.log(err);
                         const obj = {
-                            url: `/board/${req.params.category}/${req.params.id}`,
+                            url: `/board/${req.params.id}`,
                             error: 500,
                             user: req.session.user["name"]
                         }
@@ -358,7 +368,8 @@ module.exports = () => {
                             title: 'HTTP 404',
                             content: '존재하지 않는 게시글입니다.',
                             auth: 'admin',
-                            category: req.params.category.replace(/_/g, ' '),
+                            category: 'Others',
+                            board_media: false,
                             create_date: new Date(),
                             modify_date: NaN
                         }
@@ -371,21 +382,21 @@ module.exports = () => {
     
                         res.render('board/board_detail', obj);
                     } else if (data[0].user_id !== req.session.user.user_id && req.session.user.auth !== 'admin') {
-                        res.redirect(`/board/${req.params.category}/${req.params.id}`);
+                        res.redirect(`/board/${req.params.id}`);
                     } else {
                         sql = `delete from board where board_id=${req.params.id}`;
 
-                        db.query(sql, (err, data) => {
+                        db.query(sql, (err, datas) => {
                             if (err) {
                                 const obj = {
-                                    url: `/board/${req.params.category}/${req.params.id}`,
+                                    url: `/board/${req.params.id}`,
                                     error: 500,
                                     user: req.session.user["name"]
                                 }
             
                                 res.render('errorpage', obj);
                             } else {
-                                res.redirect(`/board/${req.params.category}`);
+                                res.redirect(`/board/${data[0].category}`);
                             }
                         });
                     }
@@ -394,213 +405,238 @@ module.exports = () => {
         });
     });
 
-    router.get(['/', '/:category', '/:category/:id'], (req, res) => {
-        if (req.params.category && req.params.id) {
-            let sql = `select a.board_id, a.auth, a.title, a.content, a.create_date, a.modify_date, b.category from board a inner join category b on a.category=b.category_id where board_id=${req.params.id}`;
+    router.get('/:pk', (req, res) => {
+        if (Number.isInteger(parseInt(req.params.pk))) {
+            // 게시글 조회
+            const pk = parseInt(req.params.pk);
+
+            let sql = `select b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id where board_id=${pk}`;
 
             db.query(sql, (err, data) => {
                 if (err) {
+                    console.log(err);
                     const obj = {
-                        url: `/board/${req.params.category}`,
-                        error: 500
-                    }
+                        error: 500,
+                        url: '/board/main',
+                        user: req.session.user?req.session.user.name:false
+                    };
 
-                    if (req.session.user) {
-                        obj["user"] = req.session.user;
-                    } else {
-                        obj["user"] = false;
-                    }
-                    
                     res.render('errorpage', obj);
-                } else if (data.length === 0 || req.params.category.replace(/_/g, ' ') !== data[0].category) {
-                    const form = {
-                        title: 'HTTP 404',
-                        content: '존재하지 않는 게시글입니다.',
-                        auth: 'Admin',
-                        category: req.params.category.replace(/_/g, ' '),
-                        create_date: new Date(),
-                        modify_date: NaN
-                    }
-    
-                    const obj = {
-                        post: form,
-                        board_media: false
-                    }
-    
-                    if (req.session.user) {
-                        obj["auth"] = req.session.user["auth"];
-                        obj["user"] = req.session.user["name"];
-                    } else {
-                        obj["auth"] = obj["user"] = false;
-                    }
-    
-                    res.render('board/board_detail', obj);
                 } else {
-                    sql = `select media_type, URL from board_media where board_id=${req.params.id}`;
+                    const post = data[0];
+                    sql = `select media_type, URL from board_media where board_id=${pk}`;
 
-                    db.query(sql, (err, datas) => {
+                    db.query(sql, (err, data) => {
                         if (err) {
                             const obj = {
-                                url: `/board/${req.params.category}`,
-                                error: 500
-                            }
+                                error: 500,
+                                url: '/board/main',
+                                user: req.session.user?req.session.user.name:false
+                            };
         
-                            if (req.session.user) {
-                                obj["user"] = req.session.user;
-                            } else {
-                                obj["user"] = false;
-                            }
-                            
                             res.render('errorpage', obj);
-                        } else if (data.length === 0) {
-                            const obj = {
-                                post: data[0],
-                                board_media: false
-                            }
-        
-                            if (req.session.user) {
-                                obj["auth"] = req.session.user["auth"];
-                                obj["user"] = req.session.user["name"];
-                            } else {
-                                obj["auth"] = obj["user"] = false;
-                            }
-        
-                            res.render('board/board_detail', obj);
                         } else {
                             const obj = {
-                                post: data[0],
-                                board_media: datas
+                                user: req.session.user?req.session.user.name:false,
+                                error: false,
+                                post: post,
+                                board_media: data
                             }
-        
-                            if (req.session.user) {
-                                obj["auth"] = req.session.user["auth"];
-                                obj["user"] = req.session.user["name"];
-                            } else {
-                                obj["auth"] = obj["user"] = false;
-                            }
-        
+                            
                             res.render('board/board_detail', obj);
                         }
                     });
                 }
             });
         } else {
-            let sql = 'select distinct category from category order by category asc';
+            // 전체 or 카테고리별 게시글 목록 조회 - 1페이지만
+            const pk = req.params.pk;
+
+            let sql = `select category from category order by category`;
 
             db.query(sql, (err, datas) => {
                 if (err) {
                     const obj = {
-                        url: `/board`,
-                        error: 500
-                    }
-
-                    if (req.session.user) {
-                        obj["user"] = req.session.user["name"];
-                    } else {
-                        obj["user"] = false;
-                    }
+                        error: 500,
+                        url: '/',
+                        user: req.session.user?req.session.user.name:false
+                    };
 
                     res.render('errorpage', obj);
                 } else {
                     const leagues = datas;
-                    sql = `select a.board_id, a.auth, a.title, a.content, a.create_date, b.category from board a inner join category b on a.category=b.category_id where notice=1 order by board_id desc limit 3`;
+                    const subQueryBoardList1 = `(select category_id from category where category='${pk.replace(/_/g, ' ')}')`;
 
-                    db.query(sql, (err, datas) => {
+                    if (pk === "main") {
+                        sql = `select count(board_id) as cntPost from board`;
+                    } else {
+                        sql = `select count(board_id) as cntPost from board where category=${subQueryBoardList1}`;
+                    }
+
+                    db.query(sql, (err, data) => {
                         if (err) {
                             const obj = {
-                                url: `/`,
-                                error: 500
-                            }
-        
-                            if (req.session.user) {
-                                obj["user"] = req.session.user["name"];
-                            } else {
-                                obj["user"] = false;
-                            }
-        
+                                error: 500,
+                                url: '/',
+                                user: req.session.user?req.session.user.name:false
+                            };
+    
                             res.render('errorpage', obj);
                         } else {
-                            const notices = datas;
+                            const lastPage = Math.ceil(data[0].cntPost / 10);
 
-                            if (req.params.category) {
-                                sql = `select a.board_id, a.auth, a.title, a.content, a.create_date, b.category from board a inner join category b on a.category=b.category_id where b.category='${req.params.category.replace(/_/g, ' ')}' order by board_id desc`;
-
-                                db.query(sql, (err, datas) => {
-                                    if (err) {
-                                        console.log(err);
-                                        const obj = {
-                                            url: `/board`,
-                                            error: 500
-                                        }
-                    
-                                        if (req.session.user) {
-                                            obj["user"] = req.session.user["name"];
-                                        } else {
-                                            obj["user"] = false;
-                                        }
-                    
-                                        res.render('errorpage', obj);
-                                    } else {
-                                        const obj = {
-                                            leagues: leagues,
-                                            notices: notices,
-                                            postlist: datas,
-                                            category: req.params.category,
-                                            currtPage: 14,
-                                        }
-
-                                        if (req.session.user) {
-                                            obj["user"] = req.session.user["name"];
-                                            obj["auth"] = req.session.user["auth"];
-                                        } else {
-                                            obj["user"] = obj["auth"] = false;
-                                        }
-
-                                        res.render('board/board', obj);
-                                    }
-                                });
+                            if (pk === "main") {
+                                sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id where notice=1 order by board_id desc limit 3`;
                             } else {
-                                sql = `select a.board_id, a.auth, a.title, a.content, a.create_date, b.category from board a inner join category b on a.category=b.category_id order by board_id desc`;
-
-                                db.query(sql, (err, datas) => {
-                                    if (err) {
-                                        console.log(err);
-                                        const obj = {
-                                            url: `/`,
-                                            error: 500
-                                        }
-                    
-                                        if (req.session.user) {
-                                            obj["user"] = req.session.user["name"];
-                                        } else {
-                                            obj["user"] = false;
-                                        }
-                    
-                                        res.render('errorpage', obj);
-                                    } else {
-                                        const obj = {
-                                            leagues: leagues,
-                                            notices: notices,
-                                            postlist: datas
-                                        }
-
-                                        if (req.session.user) {
-                                            obj["user"] = req.session.user["name"];
-                                            obj["auth"] = req.session.user["auth"];
-                                        } else {
-                                            obj["user"] = false;
-                                            obj["auth"] = false;
-                                        }
-
-                                        res.render('board/board', obj);
-                                    }
-                                });
+                                sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id where notice=1 and c.category='${pk.replace(/_/g, ' ')}' order by board_id desc limit 3`;
                             }
+            
+                            db.query(sql, (err, datas) => {
+                                if (err) {
+                                    const obj = {
+                                        error: 500,
+                                        url: '/',
+                                        user: req.session.user?req.session.user.name:false
+                                    };
+            
+                                    res.render('errorpage', obj);
+                                } else {
+                                    const notices = datas;
+
+                                    if (pk === "main") {
+                                        sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id order by board_id desc limit 10`;
+                                    } else {
+                                        sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id where c.category='${pk.replace(/_/g, ' ')}' order by board_id desc limit 10`;
+                                    }
+    
+                                    db.query(sql, (err, datas) => {
+                                        if (err) {
+                                            const obj = {
+                                                error: 500,
+                                                url: '/',
+                                                user: req.session.user?req.session.user.name:false
+                                            };
+                    
+                                            res.render('errorpage', obj);
+                                        } else {
+                                            const postlist = datas;
+    
+                                            const obj = {
+                                                user: req.session.user?req.session.user.name:false,
+                                                auth: req.session.user?req.session.user.auth:false,
+                                                leagues: leagues,
+                                                notices: notices,
+                                                postlist: postlist,
+                                                category: pk,
+                                                currentPage: 1,
+                                                lastPage: lastPage
+                                            }
+    
+                                            res.render('board/board', obj);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     });
                 }
             });
         }
+    });
+
+    router.get('/', (req, res) => {
+        const category = req.query.category;
+        const currentPage = parseInt(req.query.page);
+        const offset = (currentPage - 1) * 10;
+
+        let sql = 'select category from category order by category';
+
+        db.query(sql, (err, datas) => {
+            if (err) {
+                const obj = {
+                    error: 500,
+                    url: '/',
+                    user: req.session.user?req.session.user.name:false
+                };
+
+                res.render('errorpage', obj);
+            } else {
+                const leagues = datas;
+                if (category === "main") {
+                    sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id where notice=1 order by board_id desc limit 3`;
+                } else {
+                    sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id where notice=1 and c.category='${category.replace(/_/g, ' ')}' order by board_id desc limit 3`;
+                }
+
+                db.query(sql, (err, datas) => {
+                    if (err) {
+                        const obj = {
+                            error: 500,
+                            url: '/',
+                            user: req.session.user?req.session.user.name:false
+                        };
+        
+                        res.render('errorpage', obj);
+                    } else {
+                        const notices = datas;
+                        const subQueryBoardList2 = `(select category_id from category where category='${category.replace(/_/g, ' ')}')`;
+                        
+                        if (category === "main") {
+                            sql = `select count(board_id) as cntPost from board`;
+                        } else {
+                            sql = `select count(board_id) as cntPost from board where category=${subQueryBoardList2}`;
+                        }
+                        
+                        db.query(sql, (err, data) => {
+                            if (err) {
+                                const obj = {
+                                    error: 500,
+                                    url: '/',
+                                    user: req.session.user?req.session.user.name:false
+                                };
+                
+                                res.render('errorpage', obj);
+                            } else {
+                                const lastPage = Math.ceil(data[0].cntPost / 10);
+
+                                if (category === "main") {
+                                    sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id order by board_id desc limit ${offset}, 10`;
+                                } else {
+                                    sql = `select rank() over (order by board_id asc) as no, b.board_id, b.title, b.content, b.auth, b.create_date, b.modify_date, c.category, p.user_id from board b inner join category c on b.category=c.category_id inner join personal_info p on b.auth_id=p.personal_id where c.category='${category.replace(/_/g, ' ')}' order by board_id desc limit ${offset}, 10`;
+                                }
+
+                                db.query(sql, (err, datas) => {
+                                    if (err) {
+                                        const obj = {
+                                            error: 500,
+                                            url: '/',
+                                            user: req.session.user?req.session.user.name:false
+                                        };
+                        
+                                        res.render('errorpage', obj);
+                                    } else {
+                                        const postlist = datas;
+
+                                        const obj = {
+                                            user: req.session.user?req.session.user.name:false,
+                                            auth: req.session.user?req.session.user.auth:false,
+                                            leagues: leagues,
+                                            notices: notices,
+                                            postlist: postlist,
+                                            category: category,
+                                            currentPage: currentPage,
+                                            lastPage: lastPage
+                                        }
+
+                                        res.render('board/board', obj);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
     });
 
     function insertBoardMedia(files) {

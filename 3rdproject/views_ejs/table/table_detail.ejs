@@ -40,4 +40,10 @@
             </tbody>
         </table>
     </div>
+    <div class="league-table-tail">
+        <a class="a-btn" href="/table">Back</a>
+        <% if (auth === "admin") { %>
+            <a class="a-btn" href="/table/<%= league_name.replace(/ /g, '_') %>/add">Add Team</a>
+        <% } %>
+    </div>
 <%- include('../footer') %>

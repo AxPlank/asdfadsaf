@@ -15,7 +15,7 @@
     <div class="post-body">
         <div>
             <%- include('../error') %>
-            <form method="post" action="/board/<%= post.category.replace(/ /g, '_') %>/<%= post.board_id %>/edit">
+            <form method="post" action="/board/<%= post.board_id %>/edit">
                 <div>
                     <p>
                         <label for="title"><b>Title</b></label>

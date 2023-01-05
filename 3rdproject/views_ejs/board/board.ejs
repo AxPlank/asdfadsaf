@@ -29,16 +29,16 @@
             <tbody>
                 <% for (let i = 0; i < notices.length; i++) { %>
                     <tr>
-                        <td class="board-No"><%= notices.length - i %></td>
+                        <td class="board-No"><%= notices[i].no %></td>
                         <td class="board-category"><%= notices[i].category %></td>
                         <td class="board-title">
-                            <a href="/board/<%= notices[i].category.replace(/ /g, '_') %>/<%= notices[i].board_id %>"><%= notices[i].title %></a>
+                            <a href="/board/<%= notices[i].board_id %>"><%= notices[i].title %></a>
                         </td>
                         <td class="text-overflow"><%= notices[i].auth %></td>
                         <td class="board-date"><%= new Date(notices[i].create_date).toLocaleDateString() %></td>
                         <% if (auth ==="admin") { %>
                             <td>
-                                <a href="/board/<%= notices[i].category.replace(/ /g, '_') %>/<%= notices[i].board_id %>/delete">Delete</a>
+                                <a href="/board/<%= notices[i].board_id %>/delete">Delete</a>
                             </td>
                         <% } %>
                     </tr>
@@ -64,34 +64,44 @@
             <tbody>
                 <% for (let i = 0; i < postlist.length; i++) { %>
                     <tr>
-                        <td class="board-No"><%= postlist.length - i %></td>
+                        <td class="board-No"><%= postlist[i].no %></td>
                         <td class="board-category"><%= postlist[i].category %></td>
                         <td class="board-title">
-                            <a href="/board/<%= postlist[i].category.replace(/ /g, '_') %>/<%= postlist[i].board_id %>"><%= postlist[i].title %></a>
+                            <a href="/board/<%= postlist[i].board_id %>"><%= postlist[i].title %></a>
                         </td>
                         <td class="text-overflow"><%= postlist[i].auth %></td>
                         <td class="board-date"><%= new Date(postlist[i].create_date).toLocaleDateString() %></td>
                         <% if (auth ==="admin") { %>
                             <td>
-                                <a href="/board/<%= postlist[i].category.replace(/ /g, '_') %>/<%= postlist[i].board_id %>/delete">Delete</a>
+                                <a href="/board/<%= postlist[i].board_id %>/delete">Delete</a>
                             </td>
                         <% } %>
                     </tr>
                 <% } %>
             </tbody>
         </table>
-        <ul>
-            <% if (category) { %>
-                <li><a href="/board/<%= category %>?page=1">처음으로</a></li>
-                <li><a href="/board/<%= category %>?page=<%= (currentPage-10 > 0)?(currentPage-10):1 %>">-10</a></li>
-                <li><a href="/board/<%= category %>?page=1">처음으로</a></li>
-            <% } else { %>
-            <% } %>
-        </ul>
     </div>
     <div class="board-tail">
         <% if (user) { %>
-            <a href="/board/post" class="a-btn">Post</a>
+            <a href="/board/post" class="a-btn" style="float: right;">Post</a>
         <% } %>
+        <div class="paging-bar">
+            <a href="/board/<%= category %>">처음으로</a>
+            <% if (currentPage - 10 > 0) { %>
+                <a href="/board/<%= category - 10 %>"><img src="/board/paging1.png"></a>
+            <% } %>
+            <% for (let i = -4; i < 5; i++) { %>
+                <% if (currentPage + i >= 1 && currentPage + i <= lastPage) { %>
+                    <% if (currentPage + i === 1) { %>
+                        <a href="/board/<%= category %>">1</a>
+                    <% } else { %>
+                        <a href="/board/?category=<%= category %>&page=<%= currentPage + i %>"><%= currentPage + i %></a>
+                    <% } %>
+                <% } %>
+            <% } %>
+            <% if (currentPage + 10 < lastPage) { %>
+                <a href="/board/<%= category - 10 %>"><img src="/board/paging2.png"></a>
+            <% } %>
+        </div>
     </div>
 <%- include('../footer') %>

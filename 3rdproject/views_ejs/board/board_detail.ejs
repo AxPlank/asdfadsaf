@@ -26,8 +26,8 @@
     <div class="post-tail">
         <div>
             <% if (post.auth === user) { %>
-                <a class="a-btn" href="/board/<%= post.category.replace(/ /g, '_') %>/<%= post.board_id %>/edit">Edit</a>
-                <a class="a-btn" href="/board/<%= post.category.replace(/ /g, '_') %>/<%= post.board_id %>/Delete">Delete</a>
+                <a class="a-btn" href="/board/<%= post.board_id %>/edit">Edit</a>
+                <a class="a-btn" href="/board/<%= post.board_id %>/Delete">Delete</a>
             <% } %>
             <a class="a-btn" href="/board">Back</a>
         </div>

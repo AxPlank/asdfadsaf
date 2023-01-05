@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = () => {
     const router = require('express').Router();
     const db = require('../config/mysql')();
@@ -56,8 +58,8 @@ module.exports = () => {
                 let sql = `insert into team (team, league, pl, win, draw, lose, gf, ga, gd, pts) values ('${team}', '${league}', ${pl}, ${values[0]}, ${values[1]}, ${values[2]}, ${values[3]}, ${values[4]}, ${gd}, ${pts})`;
 
                 db.query(sql, (err) => {
-                    console.log(sql);
                     if (err) {
+                        console.log(err);
                         const obj = {
                             user: req.session.user["name"],
                             url: `/table/${req.params.league}/add`,
@@ -150,10 +152,11 @@ module.exports = () => {
         if (!req.session.user || req.session.user["auth"] !== 'admin') {
             res.redirect(`/table/${req.params.league}`);
         } else {
-            let sql = `select * from team where team='${req.params.team.replace(/_/g, ' ')}'`;
+            let sql = `select * from team where team="${req.params.team.replace(/_/g, ' ')}"`;
 
             db.query(sql, (err, data, fields) => {
                 if (err) {
+                    console.log(err);
                     const obj = {
                         user: req.session.user["name"],
                         url: `/table/${req.params.league}`,
@@ -205,7 +208,7 @@ module.exports = () => {
                 const pl = body.slice(0, 3).reduce((previous, current) => previous + current, 0);
                 const pts = body[0] * 3 + body[1];
                 const gd = body[3] - body[4];
-                let sql = `update team set pl=${pl}, win=${body[0]}, draw=${body[1]}, lose=${body[2]}, gf=${gd}, ga=${body[3]}, gd=${body[4]}, pts=${pts} where team='${req.params.team.replace(/_/g, ' ')}'`;
+                let sql = `update team set pl=${pl}, win=${body[0]}, draw=${body[1]}, lose=${body[2]}, gf=${gd}, ga=${body[3]}, gd=${body[4]}, pts=${pts} where team="${req.params.team.replace(/_/g, ' ')}"`;
 
                 db.query(sql, (err, data, fields) => {
                     if (err) {
@@ -256,7 +259,6 @@ module.exports = () => {
                 return true;
             }
         }
-        console.log(false);
     
         return false;
     }

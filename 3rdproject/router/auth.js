@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = () => {
     const router = require('express').Router();
     const sha256 = require('sha256');
