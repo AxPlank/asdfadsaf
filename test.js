@@ -1,7 +1,11 @@
-let regx = /^(010)(\d{3,4})(\d{4})/;
+const fs = require('node:fs');
 
-let num = '01012345678';
-
-console.log(num.match(regx));
+fs.access('./ac', (err) => {
+    if (err) {
+        fs.mkdir('./testfolder/accesstest', (err) => {
+            console.log('hello');
+        });
+    }
+});
 
 // "type": "module" : import 사용 시 추가할 것
