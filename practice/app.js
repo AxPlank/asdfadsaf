@@ -30,4 +30,4 @@
 /**
  * querystring
  */
-const app = require('./router/querystring')();
+// const app = require('./router/querystring')();
