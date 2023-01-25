@@ -1,52 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>FootBall</title>
-        <link rel="shortcut icon" href="/favicon/favicon.ico">
-        <link rel="stylesheet" href="/style.css">
-    </head>
-    <body>
-        <%- include('../header') %>
-        <article class="body">
-            <div>
-                <h1>Edit - <%= team.team %></h1>
-            </div>
-            <div class="form-body">
+<%- include('../header') %>
+    <div>
+        <h1>Edit - <%= team.team %></h1>
+    </div>
+    <div class="form-body">
+        <div>
+            <h2><%= team.tema %></h2>
+        </div>
+        <div>
+            <form action="/table/<%= team.league.replace(/ /g, '_') %>/<%= team.team.replace(/ /g, '_') %>/edit" method="post">
                 <div>
-                    <h2><%= team.tema %></h2>
+                    <p class="form-attribute"><label for="win">Win</label></p>
+                    <p><input type="text" name="win" id="win" value="<%= team.win %>"></p>
                 </div>
                 <div>
-                    <form action="/table/<%= team.league.replace(/ /g, '_') %>/<%= team.team.replace(/ /g, '_') %>/edit" method="post">
-                        <div>
-                            <p class="form-attribute"><label for="win">Win</label></p>
-                            <p><input type="text" name="win" id="win" value="<%= team.win %>"></p>
-                        </div>
-                        <div>
-                            <p class="form-attribute"><label for="draw">Draw</label></p>
-                            <p><input type="text" name="draw" id="draw" value="<%= team.draw %>"></p>
-                        </div>
-                        <div>
-                            <p class="form-attribute"><label for="lose">Lose</label></p>
-                            <p><input type="text" name="lose" id="lose" value="<%= team.lose %>"></p>
-                        </div>
-                        <div>
-                            <p class="form-attribute"><label for="gf">GF</label></p>
-                            <p><input type="text" name="gf" id="gf" value="<%= team.gf %>"></p>
-                        </div>
-                        <div>
-                            <p class="form-attribute"><label for="ga">GA</label></p>
-                            <p><input type="text" name="ga" id="ga" value="<%= team.ga %>"></p>
-                        </div>
-                        <div>
-                            <input type="submit" class="form-submit" value="Edit">
-                        </div>
-                    </form>
+                    <p class="form-attribute"><label for="draw">Draw</label></p>
+                    <p><input type="text" name="draw" id="draw" value="<%= team.draw %>"></p>
                 </div>
-            </div>
-            <div class="form-tail">
-                <a class="a-btn" href="/table/<%= team.league.replace(/ /g, '_') %>/<%= team.team.replace(/ /g, '_') %>/delete">Delete Team</a>
-            </div>
-        </article>
-    </body>
-</html>
+                <div>
+                    <p class="form-attribute"><label for="lose">Lose</label></p>
+                    <p><input type="text" name="lose" id="lose" value="<%= team.lose %>"></p>
+                </div>
+                <div>
+                    <p class="form-attribute"><label for="gf">GF</label></p>
+                    <p><input type="text" name="gf" id="gf" value="<%= team.gf %>"></p>
+                </div>
+                <div>
+                    <p class="form-attribute"><label for="ga">GA</label></p>
+                    <p><input type="text" name="ga" id="ga" value="<%= team.ga %>"></p>
+                </div>
+                <div>
+                    <input type="submit" class="form-submit" value="Edit">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="form-tail">
+        <a class="a-btn" href="/table/<%= team.league.replace(/ /g, '_') %>/<%= team.team.replace(/ /g, '_') %>/delete">Delete Team</a>
+    </div>
+<%- include('../footer') %>

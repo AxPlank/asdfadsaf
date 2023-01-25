@@ -1,6 +1,6 @@
 # Express.js Toyproject. I Love FootBall - 축구 커뮤니티 사이트
 ## 1st. Table and Board
-주요 축구 리그의 리그 테이블과 리그 관련 정보 등을 공유할 수 있는 게시판을 구현했습니다.ㄴ
+주요 축구 리그의 리그 테이블과 리그 관련 정보 등을 공유할 수 있는 게시판을 구현했습니다.
 
 # 목표
 1. Express.js를 이용해 REST API를 구현한다.

@@ -2,20 +2,10 @@
 
 const express = require('express');
 const mysql = require('mysql');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
-const auth = express.Router();
-const admin = express.Router();
-
-// app
-app.listen(3003, () => {
-    console.log("http://localhost:3003");
-});
-app.use('admin', admin);
-app.use('admin', auth);
-app.use(express.urlencoded({extended: false}));
-app.set('view engine', 'ejs');
-app.set('views', '/views');
 
 // MySQL
 const db = mysql.createConnection({
@@ -26,17 +16,26 @@ const db = mysql.createConnection({
     database: 'thirdproject'
 });
 
-// auth
-auth.get('/login', (req, res) => {
-    if (req.session.user) {
-        res.redirect('/admin/main');
-    } else {
-        res.render('/auth/login');
-    }
-}).post('/login', (req, res) => {
-    if (req.session.user) {
-        res.redirect('/admin/main');
-    }
-
-    if 
+// app
+app.listen(3003, () => {
+    console.log("http://localhost:3003/admin/login");
 });
+app.use(express.urlencoded({extended: false}));
+app.use(session({
+    secret: 'sfjo313!$32$51kjfsdaf',
+    resave: false,
+    saveUninitialized: true,
+    store: new MySQLStore({
+        host: 'localhost',
+        port: 3306,
+        user: 'root',
+        password: 'joongseok03@',
+        database: 'thirdproject'
+    })
+}));
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+
+// Router
+const admin = require('./admin');
+app.use('/admin', admin);
