@@ -1,3 +1,8 @@
-<% include '../header' %>
-    <h1>Login Page</h1>
-<% include '../footer' %>
+<%- include('header') %>
+    <%- include('error') %>
+    <form method="post" action="/admin/login">
+        <input type="text" id="adminID" name="adminID" placeholder="ID">
+        <input type="password" id="adminPassword" name="adminPassword" placeholder="Password">
+        <input type="submit" id="adminLoginBtn" name="adminLoginBtn" value="Log-In">
+    </form>
+<%- include('footer') %>

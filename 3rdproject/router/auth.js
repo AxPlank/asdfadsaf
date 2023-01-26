@@ -32,7 +32,7 @@ module.exports = () => {
 
                 res.render('auth/login', obj);
             } else {
-                let sql = `select user_id, pw, nickname, authority, secrect_key from personal_info where user_id='${form.id}'`;
+                let sql = `select user_id, pw, nickname, authority, secret_key from personal_info where user_id='${form.id}'`;
 
                 db.query(sql, (err, data, field) => {
                     if (err) {
@@ -43,7 +43,7 @@ module.exports = () => {
                         }
 
                         res.render('errorpage', obj);
-                    } else if (data.length === 0 || data[0].pw !== sha256(form.password + data[0].secrect_key)){
+                    } else if (data.length === 0 || data[0].pw !== sha256(form.password + data[0].secret_key)){
                         const obj = {
                             user: false,
                             error: 'ID/PW does not match.',
@@ -163,7 +163,7 @@ module.exports = () => {
                     res.render('auth/signup', obj);
                 } else {
                     SqlArr = [UserData["id"], PW, UserData["nickname"], UserData["email"], Phone, SerectKey];
-                    sql = `insert into personal_info (user_id, pw, nickname, email, phone_number, secrect_key) values (${SqlArr.map((e) => {return `'${e}'`;}).join(", ")})`;
+                    sql = `insert into personal_info (user_id, pw, nickname, email, phone_number, secret_key) values (${SqlArr.map((e) => {return `'${e}'`;}).join(", ")})`;
 
                     db.query(sql, (err, data) => {
                         if (err) {
@@ -258,7 +258,7 @@ module.exports = () => {
     
                 res.render('auth/change', obj);
             } else {
-                let sql = `select pw, secrect_key from personal_info where nickname='${req.session.user["name"]}'`;
+                let sql = `select pw, secret_key from personal_info where nickname='${req.session.user["name"]}'`;
     
                 db.query(sql, (err, data) => {
                     if (err) {
@@ -270,7 +270,7 @@ module.exports = () => {
     
                         res.render('errorpage', obj);
                     } else {
-                        const CurrentPassword = sha256(req.body["password"] + data[0]["secrect_key"]);
+                        const CurrentPassword = sha256(req.body["password"] + data[0]["secret_key"]);
     
                         if (CurrentPassword !== data[0]["pw"]) {
                             const obj = {
@@ -280,7 +280,7 @@ module.exports = () => {
                 
                             res.render('auth/change', obj);
                         } else {
-                            const NewPassword = sha256(req.body["newpassword"] + data[0]["secrect_key"]);
+                            const NewPassword = sha256(req.body["newpassword"] + data[0]["secret_key"]);
                             sql = `update personal_info set pw='${NewPassword}' where nickname='${req.session.user["name"]}'`;
                             
                             db.query(sql, (err, data) => {

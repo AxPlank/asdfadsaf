@@ -30,11 +30,11 @@ app.use(session({
         port: 3306,
         user: 'root',
         password: 'joongseok03@',
-        database: 'thirdproject'
+        database: 'session_db'
     })
 }));
 app.set('view engine', 'ejs');
-app.set('views', __dirname + '/views');
+app.set('views', './views');
 
 // Router
 const admin = require('./admin');

@@ -1,3 +1,18 @@
-<% include ../header %>
-    <h1>Main Page</h1>
-<% include ../footer %>
+<%- include('header') %>
+    <% if (auth === 'admin') { %>
+        <section>
+            <div>
+                <ul>
+                    <% for (let el of table_name) { %>
+                        <li><a href="/admin/<%= el.TABLE_NAME %>"><%= el.TABLE_NAME %></a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </section>
+        <section>
+            <div>
+                <h1>Admin Page - Main</h1>
+            </div>
+        </section>
+    <% } else %>
+<%- include('footer') %>
