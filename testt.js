@@ -1,3 +1,5 @@
-const str = 'HELOEHRQOR';
+if (parseInt('ads11')) {
+    console.log(1)
+}
 
-console.log(str.match(/KOREA/));
+console.log(parseInt('abcde'))

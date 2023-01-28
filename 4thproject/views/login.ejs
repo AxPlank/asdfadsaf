@@ -1,8 +1,12 @@
 <%- include('header') %>
-    <%- include('error') %>
-    <form method="post" action="/admin/login">
-        <input type="text" id="adminID" name="adminID" placeholder="ID">
-        <input type="password" id="adminPassword" name="adminPassword" placeholder="Password">
-        <input type="submit" id="adminLoginBtn" name="adminLoginBtn" value="Log-In">
-    </form>
+    <section>
+        <div>
+            <%- include('error') %>
+            <form method="post" action="/admin/login">
+                <input type="text" id="adminID" name="adminID" placeholder="ID">
+                <input type="password" id="adminPassword" name="adminPassword" placeholder="Password">
+                <input type="submit" id="adminLoginBtn" name="adminLoginBtn" value="Log-In">
+            </form>
+        </div>
+    </section>
 <%- include('footer') %>

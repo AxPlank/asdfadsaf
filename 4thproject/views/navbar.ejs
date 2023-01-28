@@ -1,0 +1,10 @@
+<section>
+    <div>
+        <ul>
+            <li><a href="/admin/main">Main</a></li>
+            <% for (let el of tables) { %>
+                <li><a href="/admin/<%= el.TABLE_NAME %>"><%= el.TABLE_NAME %></a></li>
+            <% } %>
+        </ul>
+    </div>
+</section>

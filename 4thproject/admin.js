@@ -75,27 +75,51 @@ router.get('/login', (req, res) => {
     }
 });
 
-router.get('/main', (req, res) => {
+router.get('/:kwarg', (req, res) => {
     if (!req.session.user) {
         res.redirect('/admin/login');
     } else if (req.session.user.auth !== 'admin') {
         res.send("You are not Admin!");
     } else {
+        const kwarg = req.params.kwarg;
         let sql = "select table_name from information_schema.tables where table_schema='thirdproject'";
         
-        db.query(sql, (err, rows) => {
+        db.query(sql, (err, results) => {
             if (err) {
                 res.send(err);
             } else {
-                console.log(req.session.user);
-                const table_name = rows.filter(el => el.TABLE_NAME.match(/_media/) === null);
-                const obj = {
-                    user: req.session.user.name,
-                    auth: req.session.user.auth,
-                    table_name: table_name
-                }
+                const tables = results.filter(el => el.TABLE_NAME.match(/_media/) === null);
 
-                res.render('main', obj);
+                if (parseInt(kwarg)) {
+                    res.send("kwarg is number");
+                } else if (kwarg === 'main') {
+                    const obj = {
+                        user: req.session.user.name,
+                        auth: req.session.user.auth,
+                        tables: tables,
+                        instances: null
+                    }
+
+                    res.render('admin', obj);
+                } else {
+                    sql = `select * from ${kwarg}`;
+
+                    db.query(sql, (err, results) => {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            const obj = {
+                                user: req.session.user.name,
+                                auth: req.session.user.auth,
+                                tables: tables,
+                                table: kwarg,
+                                instances: results.reverse()
+                            }
+
+                            res.render('admin', obj);
+                        }
+                    });
+                }
             }
         });
     }
