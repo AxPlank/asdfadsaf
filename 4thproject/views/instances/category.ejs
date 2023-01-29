@@ -3,8 +3,8 @@
         <%- include('../search') %>
     </div>
     <div>
-        <a href="/admin/board/add">공지사항 작성</a>
-        <form method="post" action="/admin/board/delete">
+        <a href="/admin/category/add">카테고리 추가</a>
+        <form method="post" action="/admin/category/delete">
             <div>
                 <div>
                     <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)"> 전체 선택
@@ -18,22 +18,16 @@
                     <input type="checkbox">
                 </div>
                 <div>
-                    제목
-                </div>
-                <div>
-                    내용
+                    카테고리
                 </div>
             </div>
             <% for (let i = 0; i < instances.length; i++) { %>
                 <div>
                     <div>
-                        <input type="checkbox" id="instance" name="instance" value="<%= instances[i].board_id %>">
+                        <input type="checkbox" id="instance" name="instance" value="<%= instances[i].category_id %>">
                     </div>
                     <div>
-                        <a href="/admin/board/<%= instances[i].board_id %>"><%= instances[i].title %></a>
-                    </div>
-                    <div>
-                        <%= instances[i].auth %>
+                        <a href="/admin/persoanl_info/<%= instances[i].category_id_id %>"><%= instances[i].category %></a>
                     </div>
                 </div>
             <% } %>

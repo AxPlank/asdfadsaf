@@ -13,6 +13,37 @@ const db = mysql.createConnection({
     database: 'thirdproject'
 });
 
+function getCondition (table, form) {
+    const searchtype = {
+        board : {
+            all: ["title", "content", "auth"],
+            title: ["title"],
+            content: ["content"],
+            auth: ["auth"]
+        },
+        category : {
+            category: ["category"]
+        },
+        personal_info : {
+            all: ["user_id", "nickname"],
+            user_id: ["user_id"],
+            nickname: ["nickname"]
+        },
+        team : {
+            all: ["league", "team"],
+            league: ["league"],
+            team: ["team"]
+        },
+    }
+
+    const condition = searchtype[table][form.searchType].map((el) => {
+        el = el + ' like ' + `"%${form.search}%"`
+        return el;
+    }).join(' or ');
+
+    return condition;
+}
+
 // Admin
 router.get('/login', (req, res) => {
     if (!req.session.user) {
@@ -122,6 +153,68 @@ router.get('/:kwarg', (req, res) => {
                 }
             }
         });
+    }
+}).post('/:kwarg', (req, res) => {
+    if (!req.session.user) {
+        res.redirect('/admin/login');
+    } else if (req.session.user.auth !== 'admin') {
+        res.send("You are not Admin!");
+    } else {
+        const kwarg = req.params.kwarg;
+        let sql = "select table_name from information_schema.tables where table_schema='thirdproject'";
+        
+        db.query(sql, (err, results) => {
+            if (err) {
+                res.send(err);
+            } else {
+                const tables = results.filter(el => el.TABLE_NAME.match(/_media/) === null);
+
+                if (parseInt(kwarg)) {
+                    res.send("kwarg is number");
+                } else if (kwarg === 'main') {
+                    const obj = {
+                        user: req.session.user.name,
+                        auth: req.session.user.auth,
+                        tables: tables,
+                        instances: null
+                    }
+
+                    res.render('admin', obj);
+                } else {
+                    const searchCondition = getCondition(kwarg, req.body);
+
+                    let sql = `select * from ${kwarg} where ${searchCondition}`;
+
+                    db.query(sql, (err, results) => {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            const obj = {
+                                user: req.session.user.name,
+                                auth: req.session.user.auth,
+                                tables: tables,
+                                table: kwarg,
+                                instances: results.reverse()
+                            }
+
+                            res.render('admin', obj);
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
+
+router.post('/:kwarg/delete', (req, res) => {
+    if (!req.session.user) {
+        res.redirect('/admin/login');
+    } else if (req.session.user.auth !== 'admin') {
+        res.send("You are not Admin!");
+    } else {
+        const kwarg = req.params.kwarg;
+        
+        res.send(req.body);
     }
 });
 

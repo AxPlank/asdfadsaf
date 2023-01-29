@@ -3,11 +3,11 @@
         <%- include('../search') %>
     </div>
     <div>
-        <a href="/admin/board/add">공지사항 작성</a>
-        <form method="post" action="/admin/board/delete">
+        <a href="/admin/team/add">팀 추가</a>
+        <form method="post" action="/admin/team/delete">
             <div>
                 <div>
-                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)"> 전체 선택
+                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)">
                 </div>
                 <div>
                     <input type="submit" value="삭제">
@@ -15,25 +15,27 @@
             </div>
             <div>
                 <div>
-                    <input type="checkbox">
+                    <div>
+                        <input type="checkbox">
+                    </div>
                 </div>
                 <div>
-                    제목
+                    팀
                 </div>
                 <div>
-                    내용
+                    리그
                 </div>
             </div>
             <% for (let i = 0; i < instances.length; i++) { %>
                 <div>
                     <div>
-                        <input type="checkbox" id="instance" name="instance" value="<%= instances[i].board_id %>">
+                        <input type="checkbox" id="instance" name="instance" value="<%= instances[i].team_id %>">
                     </div>
                     <div>
-                        <a href="/admin/board/<%= instances[i].board_id %>"><%= instances[i].title %></a>
+                        <a href="/admin/persoanl_info/<%= instances[i].team_id %>"><%= instances[i].team %></a>
                     </div>
                     <div>
-                        <%= instances[i].auth %>
+                        <%= instances[i].league %>
                     </div>
                 </div>
             <% } %>

@@ -5,6 +5,15 @@
             <% if (table === 'board') { %>
                 <%- include('./instances/board') %>
             <% } %>
+            <% if (table === 'personal_info') { %>
+                <%- include('./instances/personal_info') %>
+            <% } %>
+            <% if (table === 'team') { %>
+                <%- include('./instances/team') %>
+            <% } %>
+            <% if (table === 'category') { %>
+                <%- include('./instances/category') %>
+            <% } %>
         <% } else { %>
             <h1>Main Page</h1>
         <% } %>

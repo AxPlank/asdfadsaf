@@ -1,0 +1,49 @@
+<section>
+    <div>
+        <%- include('../search') %>
+    </div>
+    <div>
+        <form method="post" action="/admin/personal_info/delete">
+            <div>
+                <div>
+                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)"> 전체 선택
+                </div>
+                <div>
+                    <input type="submit" value="삭제">
+                </div>
+            </div>
+            <div>
+                <div>
+                    <input type="checkbox">
+                </div>
+                <div>
+                    ID
+                </div>
+                <div>
+                    닉네임
+                </div>
+                <div>
+                    인증
+                </div>
+            </div>
+            <% for (let i = 0; i < instances.length; i++) { %>
+                <% if (instances[i].authority !== 'admin') { %>
+                    <div>
+                        <div>
+                            <input type="checkbox" id="instance" name="instance" value="<%= instances[i].personal_id %>">
+                        </div>
+                        <div>
+                            <a href="/admin/persoanl_info/<%= instances[i].personal_id %>"><%= instances[i].user_id %></a>
+                        </div>
+                        <div>
+                            <%= instances[i].nickname %>
+                        </div>
+                        <div>
+                            <%= instances[i].authentication %>
+                        </div>
+                    </div>
+                <% } %>
+            <% } %>
+        </form>
+    </div>
+</section>
