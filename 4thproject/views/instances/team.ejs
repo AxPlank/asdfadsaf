@@ -7,7 +7,7 @@
         <form method="post" action="/admin/team/delete">
             <div>
                 <div>
-                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)">
+                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)"> 전체 선택
                 </div>
                 <div>
                     <input type="submit" value="삭제">
@@ -32,7 +32,7 @@
                         <input type="checkbox" id="instance" name="instance" value="<%= instances[i].team_id %>">
                     </div>
                     <div>
-                        <a href="/admin/persoanl_info/<%= instances[i].team_id %>"><%= instances[i].team %></a>
+                        <a href="/admin/team/<%= instances[i].team_id %>"><%= instances[i].team %></a>
                     </div>
                     <div>
                         <%= instances[i].league %>

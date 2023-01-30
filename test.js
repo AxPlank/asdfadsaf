@@ -1,8 +1,7 @@
-function allclick(click) {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach((el) => {
-        el.checked = click.checked;
-    })
+const a = null;
+
+if (a) {
+    console.log("null");
 }
 
 // const fs = require('node:fs');

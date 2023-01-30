@@ -1,0 +1,32 @@
+<section>
+    <div>
+        <h2><%= table %></h2>
+        <p>팀 추가</p>
+    </div>
+    <div>
+        <%- include('../error') %>
+        <form>
+            <label for="team">팀 이름</label>
+            <input type="text" id="team" name="team" value="<%= form?form.team:'' %>">
+            <label for="league">리그</label>
+            <select id="league" name="league">
+                <% for (let i = 0; i < leagues.length; i++) { %>
+                    <% if (leagues[i].category !== "Others") { %>
+                        <option value="<%= leagues[i].category %>"><%= leagues[i].category %></option>
+                    <% } %>
+                <% } %>
+            </select>
+            <label for="win">승리</label>
+            <input type="text" id="win" name="win" value="<%= form?form.win:'' %>">
+            <label for="draw">무승부</label>
+            <input type="text" id="draw" name="draw" value="<%= form?form.draw:'' %>">
+            <label for="lose">패배</label>
+            <input type="text" id="lose" name="lose" value="<%= form?form.lose:'' %>">
+            <label for="gf">득점</label>
+            <input type="text" id="gf" name="gf" value="<%= form?form.gf:'' %>">
+            <label for="ga">실점</label>
+            <input type="text" id="ga" name="ga" value="<%= form?form.ga:'' %>">
+            <input type="submit" value="등록">
+        </form>
+    </div>
+</section>
