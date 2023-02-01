@@ -1,0 +1,26 @@
+<section>
+    <div>
+        <%- include('../search') %>
+    </div>
+    <div>
+        <div>
+            <h2>카테고리 정보</h2>
+        </div>
+        <div>
+            <div>
+                <div>카테고리</div>
+                <div><%= instance.category %></div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <h2>카테고리 수정</h2>
+            </div>
+            <form method="post" action="/admin/<%= table %>/<%= instance.id %>">
+                <label for="category">카테고리</label>
+                <input type="text" id="category" name="category">
+                <input type="submit" value="저장">
+            </form>
+        </div>
+    </div>
+</section>

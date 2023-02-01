@@ -1,0 +1,70 @@
+<section>
+    <div>
+        <%- include('../search') %>
+    </div>
+    <div>
+        <div>
+            <h2>팀 정보</h2>
+        </div>
+        <div>
+            <div>
+                <div>팀</div>
+                <div><%= instance.team %></div>
+            </div>
+            <div>
+                <div>리그</div>
+                <div><%= instance.league %></div>
+            </div>
+            <div>
+                <div>경기 수</div>
+                <div><%= instance.pl %></div>
+            </div>
+            <div>
+                <div>승점</div>
+                <div><%= instance.pts %></div>
+            </div>
+            <div>
+                <div>승리</div>
+                <div><%= instance.win %></div>
+            </div>
+            <div>
+                <div>무승부</div>
+                <div><%= instance.draw %></div>
+            </div>
+            <div>
+                <div>패배</div>
+                <div><%= instance.lose %></div>
+            </div>
+            <div>
+                <div>득점</div>
+                <div><%= instance.gf %></div>
+            </div>
+            <div>
+                <div>실점</div>
+                <div><%= instance.ga %></div>
+            </div>
+            <div>
+                <div>득실차</div>
+                <div><%= instance.gd %></div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <h2>팀 정보 수정</h2>
+            </div>
+            <form method="post" action="/admin/<%= table %>/<%= instance.id %>">
+                <label for="win">승리</label>
+                <input type="text" id="win" name="win">
+                <label for="draw">무승부</label>
+                <input type="text" id="draw" name="draw">
+                <label for="lose">패배</label>
+                <input type="text" id="lose" name="lose">
+                <label for="gf">득점</label>
+                <input type="text" id="gf" name="gf">
+                <label for="win">실점</label>
+                <input type="text" id="ga" name="ga">
+                <input type="submit" value="저장">
+            </form>
+        </div>
+    </div>
+</section>

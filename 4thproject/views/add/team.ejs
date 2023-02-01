@@ -5,7 +5,7 @@
     </div>
     <div>
         <%- include('../error') %>
-        <form>
+        <form method="post" action="/admin/team/add">
             <label for="team">팀 이름</label>
             <input type="text" id="team" name="team" value="<%= form?form.team:'' %>">
             <label for="league">리그</label>

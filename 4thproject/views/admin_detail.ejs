@@ -1,0 +1,23 @@
+<%- include('header') %>
+    <%- include('navbar') %>
+    <% if (auth === 'admin') { %>
+        <% if (table) { %>
+            <% if (table === 'board') { %>
+                <%- include('./detail/board/') %>
+            <% } %>
+            <% if (table === 'team') { %>
+                <%- include('./detail/team') %>
+            <% } %>
+            <% if (table === 'category') { %>
+                <%- include('./detail/category') %>
+            <% } %>
+            <% if (table === 'personal_info') { %>
+                <%- include('./personal_info/category') %>
+            <% } %>
+        <% } else { %>
+            <h1>Main Page</h1>
+        <% } %>
+    <% } else { %>
+        <h1>You aren't Admin</h1>
+    <% } %>
+<%- include('footer') %>

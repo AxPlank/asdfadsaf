@@ -1,0 +1,49 @@
+<section>
+    <div>
+        <%- include('../search') %>
+    </div>
+    <div>
+        <div>
+            <h2>게시글 정보</h2>
+        </div>
+        <div>
+            <div>
+                <% if (instance.notice === 1) { %>
+                    <div>공지</div>
+                <% } %>
+                <div>제목</div>
+                <div><%= instance.title %></div>
+            </div>
+            <div>
+                <div>작성시각</div>
+                <div><%= new Date(instance.create_date).toLocaleString() %></div>
+            </div>
+            <div>
+                <div>마지막 수정시각</div>
+                <div>
+                    <% if (instance.modify_date) { %>
+                        <%= new Date(instance.modify_date).toLocaleString() %>
+                    <% } else { %>
+                        수정이 이뤄지지 않았습니다.
+                    <% } %>
+                </div>
+            </div>
+            <% if (media) { %>
+                <div>
+                    <div>첨부파일</div>
+                    <% for (let i = 0; i < media.length; i++ ) { %>
+                        <% if (board_media[i].media_type === "image") { %>
+                            <p><img src="<%= media[i].URL.substring(1, ) %>" alt=""></p>
+                        <% } else { %>
+                            <p><video src="<%= media[i].URL.substring(1, ) %>" autoplay controls="true"></video></p>
+                        <% } %>
+                    <% } %>
+                </div>
+            <% } %>
+            <div>
+                <div>본문</div>
+                <div><%= instance.content %></div>
+            </div>
+        </div>
+    </div>
+</section>

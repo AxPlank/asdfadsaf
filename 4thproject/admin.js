@@ -71,6 +71,16 @@ const PostValid = (obj) => {
     }
 }
 
+const teamValid = (values) => {
+    for (let i = 2; i < values.length; i++) {
+        if (!values[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // Admin
 router.get('/login', (req, res) => {
     if (!req.session.user) {
@@ -148,9 +158,7 @@ router.get('/:kwarg', (req, res) => {
             } else {
                 const tables = results.filter(el => el.TABLE_NAME.match(/_media/) === null);
 
-                if (parseInt(kwarg)) {
-                    res.send("kwarg is number");
-                } else if (kwarg === 'main') {
+                if (kwarg === 'main') {
                     const obj = {
                         user: req.session.user.name,
                         auth: req.session.user.auth,
@@ -408,9 +416,167 @@ router.get('/:kwarg/add', (req, res) => {
                         });
                     }
                 } else if (kwarg === "team") {
-                    res.send("!");
+                    sql = 'select category from category order by category';
+
+                    db.query(sql, (err, results) => {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            if (Object.values(req.body).includes("")) {
+                                const obj = {
+                                    user: req.session.user.name,
+                                    auth: req.session.user.auth,
+                                    tables: tables,
+                                    table: kwarg,
+                                    leagues: results,
+                                    form: req.body,
+                                    error: "입력되지 않은 항목이 존재합니다."
+                                }
+                
+                                res.render('admin_add', obj);
+                            } else {
+                                const teamValues = Object.values(req.body).map((el, idx) => {
+                                    if (idx === 0 || idx === 1) {
+                                        return el;
+                                    } else {
+                                        return parseInt(el);
+                                    }
+                                });
+        
+                                if (teamValid(teamValues)) {
+                                    const pl = teamValues[2] + teamValues[3] + teamValues[4];
+                                    const gd = teamValues[5] - teamValues[6];
+                                    const pts = teamValues[2] * 3 + teamValues[3];
+
+                                    sql = `insert into team (team, league, pl, win, draw, lose, gf, ga, gd, pts) values ("${teamValues[0]}", "${teamValues[1]}", ${pl}, ${teamValues[2]}, ${teamValues[3]}, ${teamValues[4]}, ${teamValues[5]}, ${teamValues[6]}, ${gd}, ${pts})`;
+
+                                    db.query(sql, (err) => {
+                                        if (err) {
+                                            res.send(err);
+                                        } else {
+                                            res.redirect('/admin/team');
+                                        }
+                                    });
+                                } else {
+                                    const obj = {
+                                        user: req.session.user.name,
+                                        auth: req.session.user.auth,
+                                        tables: tables,
+                                        table: kwarg,
+                                        leagues: results,
+                                        form: req.body,
+                                        error: "값이 유효하지 않은 항목이 존재합니다."
+                                    }
+                    
+                                    res.render('admin_add', obj);
+                                }
+                            }
+                        }
+                    });
                 } else {
                     res.status(404).send(404);
+                }
+            }
+        });
+    }
+});
+
+router.get('/:kwarg/:id', (req, res) => {
+    if (!req.session.user) {
+        res.redirect('/admin/login');
+    } else if (req.session.user.auth !== 'admin') {
+        res.send("You are not Admin!");
+    } else {
+        const kwarg = req.params.kwarg;
+        const id = req.params.id;
+        let sql = "select table_name from information_schema.tables where table_schema='thirdproject'";
+        
+        db.query(sql, (err, results) => {
+            if (err) {
+                res.send(err);
+            } else {
+                const tables = results.filter(el => el.TABLE_NAME.match(/_media/) === null);
+
+                if (kwarg === 'board' || kwarg === 'team') {
+                    sql = kwarg === 'board'? `select category from category order by category` : `select category from category where category != "Others"`;
+
+                    db.query(sql, (err, results) => {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            const leagues = results;
+
+                            sql = kwarg === 'board'
+                            ?`select b.board_id, p.personal_id, b.auth, b.title, c.category, b.content, b.create_date, b.modify_date, b.notice from board b inner join personal_info p on b.auth_id=p.personal_id inner join category c on b.category=c.category_id where board_id=${id}`
+                            :`select * from team where team_id=${id}`;
+                            
+                            db.query(sql, (err, results) => {
+                                if (err) {
+                                    res.send(err);
+                                } else {
+                                    const instance = results[0];
+
+                                    if (kwarg === "board") {
+                                        sql = `select * from board_media where board_id=${instance.board_id}`
+
+                                        db.query(sql, (err, results) => {
+                                            if (err) {
+                                                res.send(err);
+                                            } else {
+                                                const obj = {
+                                                    user: req.session.user.name,
+                                                    auth: req.session.user.auth,
+                                                    tables: tables,
+                                                    table: kwarg,
+                                                    category: leagues,
+                                                    instance: instance,
+                                                    media: results.length === 0? null : results,
+                                                    error: null
+                                                }
+                                
+                                                res.render('admin_detail', obj);
+                                            }
+                                        });
+                                    } else {
+                                        const obj = {
+                                            user: req.session.user.name,
+                                            auth: req.session.user.auth,
+                                            tables: tables,
+                                            table: kwarg,
+                                            leagues: leagues,
+                                            instance: instance,
+                                            error: null
+                                        }
+                        
+                                        res.render('admin_detail', obj);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                } else if (kwarg === "category" || kwarg === "personal_info") {
+                    sql = kwarg === "category"
+                    ?`select * from category where category_id=${id}`
+                    :`select * from personal_info where personal_id=${id}`;
+
+                    db.query(sql, (err, results) => {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            const instance = results[0];
+
+                            const obj = {
+                                user: req.session.user.name,
+                                auth: req.session.user.auth,
+                                tables: tables,
+                                table: kwarg,
+                                instance: instance,
+                                error: null
+                            }
+            
+                            res.render('admin_detail', obj);
+                        }
+                    });
                 }
             }
         });
