@@ -143,6 +143,18 @@ router.get('/login', (req, res) => {
     }
 });
 
+router.get('/logout', (req, res) => {
+    if (!req.session.user) {
+        res.redirect('/admin/login')
+    } else if (req.session.user.auth !== 'admin') {
+        res.send("You are not Admin!");
+    } else {
+        delete req.session.user;
+
+        res.redirect('/admin/login');
+    }
+});
+
 router.get('/:kwarg', (req, res) => {
     if (!req.session.user) {
         res.redirect('/admin/login');

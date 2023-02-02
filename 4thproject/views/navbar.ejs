@@ -1,10 +1,7 @@
-<section>
-    <div>
-        <ul>
-            <li><a href="/admin/main">Main</a></li>
-            <% for (let el of tables) { %>
-                <li><a href="/admin/<%= el.TABLE_NAME %>"><%= el.TABLE_NAME %></a></li>
-            <% } %>
-        </ul>
-    </div>
-</section>
+<ul class="nav border border-4 border-primary bg-primary-subtle flex-column position-fixed top-50 start-0 translate-middle-y list-group" style="margin-left: 35px;">
+    <li><a href="/admin/main" class="list-group-item link-primary p-3 fs-3 navbar-brand text-center rounded">I Love FootBall</a></li>
+    <% for (let el of tables) { %>
+        <li><a href="/admin/<%= el.TABLE_NAME %>" class="list-group-item link-primary p-3 text-center rounded"><%= el.TABLE_NAME %></a></li>
+    <% } %>
+    <li><a href="/admin/logout" class="list-group-item link-primary p-3 text-center rounded">로그아웃</a></li>
+</ul>

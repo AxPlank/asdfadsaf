@@ -1,29 +1,29 @@
-<div>
-    <div>
-        <form method="post" action="/admin/<%= table %>">
-            <select id="searchType" name="searchType">
-                <% if (table === 'board') { %>
-                    <option value="all">제목+내용+작성자</option>
-                    <option value="title">제목</option>
-                    <option value="content">내용</option>
-                    <option value="auth">작성자</option>
-                <% } %>
-                <% if (table === 'category') { %>
-                    <option value="category">카테고리</option>
-                <% } %>
-                <% if (table === 'personal_info') { %>
-                    <option value="all">ID+닉네임</option>
-                    <option value="user_id">ID</option>
-                    <option value="nickname">닉네임</option>
-                <% } %>
-                <% if (table === 'team') { %>
-                    <option value="all">리그+팀</option>
-                    <option value="league">리그</option>
-                    <option value="team">팀</option>
-                <% } %>
-                <input type="text" id="search" name="search">
-                <input type="submit" value="검색">
-            </select>
-        </form>
+<form method="post" action="/admin/<%= table %>" class="form-control form-control-lg border border-3 border-primary shadow-sm">
+    <div class="p-3 input-group w-50">
+        <label for="searchType"></label>
+        <select id="searchType" name="searchType" class="form-select-sm rounded">
+            <% if (table === 'board') { %>
+                <option value="all">제목+내용+작성자</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="auth">작성자</option>
+            <% } %>
+            <% if (table === 'category') { %>
+                <option value="category">카테고리</option>
+            <% } %>
+            <% if (table === 'personal_info') { %>
+                <option value="all">ID+닉네임</option>
+                <option value="user_id">ID</option>
+                <option value="nickname">닉네임</option>
+            <% } %>
+            <% if (table === 'team') { %>
+                <option value="all">리그+팀</option>
+                <option value="league">리그</option>
+                <option value="team">팀</option>
+            <% } %>
+        </select>
+        <label for="search"></label>
+        <input type="text" id="search" name="search" class="form-control form-control-sm rounded border border-2 border-primary" style="margin-left: 15px;">
+        <input type="submit" value="검색" class="btn btn-sm btn-primary rounded" style="margin-left: 10px;">
     </div>
-</div>
+</form>

@@ -1,36 +1,40 @@
-<section>
-    <div>
+<section class="p-3">
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h2 class="p-3"><%= table %></h2>
+    </div>
+    <div class="p-3">
         <%- include('../search') %>
     </div>
-    <div>
-        <a href="/admin/category/add">카테고리 추가</a>
-        <form method="post" action="/admin/category/delete">
-            <div>
-                <div>
-                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)"> 전체 선택
+    <div class="p-3">
+        <div class="p-3">
+            <a href="/admin/category/add">카테고리 추가</a>
+        </div>
+        <div class="p-3">
+            <form method="post" action="/admin/category/delete">
+                <div class="p-3 form-check">
+                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)" class="form-check-input">
+                    <label for="allcheck" class="form-check-label">전체 선택</label>
+                    <input type="submit" value="삭제" class="btn btn-sm btn-primary">
                 </div>
-                <div>
-                    <input type="submit" value="삭제">
+                <div class="p-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>#</td>
+                                <td>팀</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let i = 0; i < instances.length; i++) { %>
+                                <tr>
+                                    <td><input type="checkbox" id="instance" name="instance" value="<%= instances[i].category_id %>" class="form-check-input border border-1 border-primary"></td>
+                                    <td><a href="/admin/category/<%= instances[i].category_id %>"><%= instances[i].category %></a></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div>
-                <div>
-                    <input type="checkbox">
-                </div>
-                <div>
-                    카테고리
-                </div>
-            </div>
-            <% for (let i = 0; i < instances.length; i++) { %>
-                <div>
-                    <div>
-                        <input type="checkbox" id="instance" name="instance" value="<%= instances[i].category_id %>">
-                    </div>
-                    <div>
-                        <a href="/admin/category/<%= instances[i].category_id %>"><%= instances[i].category %></a>
-                    </div>
-                </div>
-            <% } %>
-        </form>
+            </form>
+        </div>
     </div>
 </section>

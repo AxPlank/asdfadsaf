@@ -1,44 +1,42 @@
-<section>
-    <div>
+<section class="p-3">
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h2 class="p-3"><%= table %></h2>
+    </div>
+    <div class="p-3">
         <%- include('../search') %>
     </div>
-    <div>
-        <a href="/admin/team/add">팀 추가</a>
-        <form method="post" action="/admin/team/delete">
-            <div>
-                <div>
-                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)"> 전체 선택
+    <div class="p-3">
+        <div class="p-3">
+            <a href="/admin/team/add">팀 추가</a>
+        </div>
+        <div class="p-3">
+            <form method="post" action="/admin/team/delete">
+                <div class="p-3 form-check">
+                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)" class="form-check-input">
+                    <label for="allcheck" class="form-check-label">전체 선택</label>
+                    <input type="submit" value="삭제" class="btn btn-sm btn-primary">
                 </div>
-                <div>
-                    <input type="submit" value="삭제">
+                <div class="p-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>#</td>
+                                <td>팀</td>
+                                <td>리그</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let i = 0; i < instances.length; i++) { %>
+                                <tr>
+                                    <td><input type="checkbox" id="instance" name="instance" value="<%= instances[i].team_id %>" class="form-check-input border border-1 border-primary"></td>
+                                    <td><a href="/admin/team/<%= instances[i].team_id %>"><%= instances[i].team %></a></td>
+                                    <td><%= instances[i].league %></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div>
-                <div>
-                    <div>
-                        <input type="checkbox">
-                    </div>
-                </div>
-                <div>
-                    팀
-                </div>
-                <div>
-                    리그
-                </div>
-            </div>
-            <% for (let i = 0; i < instances.length; i++) { %>
-                <div>
-                    <div>
-                        <input type="checkbox" id="instance" name="instance" value="<%= instances[i].team_id %>">
-                    </div>
-                    <div>
-                        <a href="/admin/team/<%= instances[i].team_id %>"><%= instances[i].team %></a>
-                    </div>
-                    <div>
-                        <%= instances[i].league %>
-                    </div>
-                </div>
-            <% } %>
-        </form>
+            </form>
+        </div>
     </div>
 </section>
