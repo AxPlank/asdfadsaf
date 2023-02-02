@@ -12,7 +12,8 @@ module.exports = () => {
             const obj = {
                 user: false,
                 error: false,
-                form: false
+                form: false,
+                error: null
             }
 
             res.render('auth/login', obj);
@@ -80,7 +81,8 @@ module.exports = () => {
         } else {
             const obj = {
                 user: false,
-                UserData: false
+                UserData: false,
+                error: null
             }
 
             res.render('auth/signup', obj);
@@ -114,7 +116,7 @@ module.exports = () => {
             }
 
             res.render('auth/signup', obj);
-        } else if (UserData.phone.match(PatternPhone) || UserData.phone[3] === '1') {
+        } else if (!UserData.phone.match(PatternPhone) || UserData.phone[3] === '1') {
             const obj = {
                 user: false,
                 UserData: UserData,
@@ -162,7 +164,7 @@ module.exports = () => {
 
                     res.render('auth/signup', obj);
                 } else {
-                    SqlArr = [UserData["id"], PW, UserData["nickname"], UserData["email"], Phone, SerectKey];
+                    const SqlArr = [UserData["id"], PW, UserData["nickname"], UserData["email"], Phone, SerectKey];
                     sql = `insert into personal_info (user_id, pw, nickname, email, phone_number, secret_key) values (${SqlArr.map((e) => {return `'${e}'`;}).join(", ")})`;
 
                     db.query(sql, (err, data) => {

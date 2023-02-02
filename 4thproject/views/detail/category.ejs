@@ -16,7 +16,8 @@
             <div>
                 <h2>카테고리 수정</h2>
             </div>
-            <form method="post" action="/admin/<%= table %>/<%= instance.id %>">
+            <%- include('../error') %>
+            <form method="post" action="/admin/<%= table %>/<%= instance.category_id %>">
                 <label for="category">카테고리</label>
                 <input type="text" id="category" name="category">
                 <input type="submit" value="저장">

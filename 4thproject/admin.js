@@ -72,7 +72,7 @@ const PostValid = (obj) => {
 }
 
 const teamValid = (values) => {
-    for (let i = 2; i < values.length; i++) {
+    for (let i = 0; i < values.length; i++) {
         if (!values[i]) {
             return false;
         }
@@ -498,60 +498,48 @@ router.get('/:kwarg/:id', (req, res) => {
                 const tables = results.filter(el => el.TABLE_NAME.match(/_media/) === null);
 
                 if (kwarg === 'board' || kwarg === 'team') {
-                    sql = kwarg === 'board'? `select category from category order by category` : `select category from category where category != "Others"`;
-
+                    sql = kwarg === 'board'
+                    ?`select b.board_id, p.personal_id, b.auth, b.title, c.category, b.content, b.create_date, b.modify_date, b.notice from board b inner join personal_info p on b.auth_id=p.personal_id inner join category c on b.category=c.category_id where board_id=${id}`
+                    :`select * from team where team_id=${id}`;
+                    
                     db.query(sql, (err, results) => {
                         if (err) {
                             res.send(err);
                         } else {
-                            const leagues = results;
+                            const instance = results[0];
 
-                            sql = kwarg === 'board'
-                            ?`select b.board_id, p.personal_id, b.auth, b.title, c.category, b.content, b.create_date, b.modify_date, b.notice from board b inner join personal_info p on b.auth_id=p.personal_id inner join category c on b.category=c.category_id where board_id=${id}`
-                            :`select * from team where team_id=${id}`;
-                            
-                            db.query(sql, (err, results) => {
-                                if (err) {
-                                    res.send(err);
-                                } else {
-                                    const instance = results[0];
+                            if (kwarg === "board") {
+                                sql = `select * from board_media where board_id=${instance.board_id}`
 
-                                    if (kwarg === "board") {
-                                        sql = `select * from board_media where board_id=${instance.board_id}`
-
-                                        db.query(sql, (err, results) => {
-                                            if (err) {
-                                                res.send(err);
-                                            } else {
-                                                const obj = {
-                                                    user: req.session.user.name,
-                                                    auth: req.session.user.auth,
-                                                    tables: tables,
-                                                    table: kwarg,
-                                                    category: leagues,
-                                                    instance: instance,
-                                                    media: results.length === 0? null : results,
-                                                    error: null
-                                                }
-                                
-                                                res.render('admin_detail', obj);
-                                            }
-                                        });
+                                db.query(sql, (err, results) => {
+                                    if (err) {
+                                        res.send(err);
                                     } else {
                                         const obj = {
                                             user: req.session.user.name,
                                             auth: req.session.user.auth,
                                             tables: tables,
                                             table: kwarg,
-                                            leagues: leagues,
                                             instance: instance,
+                                            media: results.length === 0? null : results,
                                             error: null
                                         }
                         
                                         res.render('admin_detail', obj);
                                     }
+                                });
+                            } else {
+                                const obj = {
+                                    user: req.session.user.name,
+                                    auth: req.session.user.auth,
+                                    tables: tables,
+                                    table: kwarg,
+                                    instance: instance,
+                                    error: null
                                 }
-                            });
+                
+                                res.render('admin_detail', obj);
+                            }
                         }
                     });
                 } else if (kwarg === "category" || kwarg === "personal_info") {
@@ -577,6 +565,121 @@ router.get('/:kwarg/:id', (req, res) => {
                             res.render('admin_detail', obj);
                         }
                     });
+                }
+            }
+        });
+    }
+}).post('/:kwarg/:id', (req, res) => {
+    if (!req.session.user) {
+        res.redirect('/admin/login');
+    } else if (req.session.user.auth !== 'admin') {
+        res.send("You are not Admin!");
+    } else {
+        const kwarg = req.params.kwarg;
+        const id = req.params.id;
+        let sql = "select table_name from information_schema.tables where table_schema='thirdproject'";
+        
+        db.query(sql, (err, results) => {
+            if (err) {
+                res.send(err);
+            } else {
+                const tables = results.filter(el => el.TABLE_NAME.match(/_media/) === null);
+
+                if (kwarg === 'team') {
+                    const teamValues = Object.values(req.body).map((el, idx) => {
+                        if (idx === 0) {
+                            return el;
+                        } else {
+                            return parseInt(el);
+                        }
+                    });
+
+                    if (Object.values(req.body).includes("") || !teamValid(teamValues)) {
+                        const error = Object.values(req.body).includes("")
+                        ? '입력되지 않은 값이 존재합니다.'
+                        : '유효하지 않은 값이 존재합니다.';
+
+                        sql = `select * from team where team_id=${id}`;
+
+                        db.query(sql, (err, results) => {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                const obj = {
+                                    user: req.session.user.name,
+                                    auth: req.session.user.auth,
+                                    tables: tables,
+                                    table: kwarg,
+                                    instance: results[0],
+                                    error: error
+                                }
+                
+                                res.render('admin_detail', obj);
+                            }
+                        });
+                    } else {
+                        const pl = teamValues[1] + teamValues[2] + teamValues[3];
+                        const gd = teamValues[4] - teamValues[5];
+                        const pts = teamValues[1] * 3 + teamValues[2];
+                        const team = req.body.team;
+
+                        sql = `update team set team="${team}", pl=${pl}, win=${teamValues[1]}, draw=${teamValues[2]}, lose=${teamValues[3]}, gf=${teamValues[4]}, ga=${teamValues[5]}, gd=${gd}, pts=${pts} where team_id=${id}`;
+
+                        db.query(sql, (err) => {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                res.redirect(`/admin/${kwarg}/${id}`);
+                            }
+                        });
+                    }
+                } else if (kwarg === "category") {
+                    if (Object.values(req.body).includes("")) {
+                        sql = `select * from category where category_id=${id}`;
+
+                        db.query(sql, (err, results) => {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                const instance = results[0];
+    
+                                const obj = {
+                                    user: req.session.user.name,
+                                    auth: req.session.user.auth,
+                                    tables: tables,
+                                    table: kwarg,
+                                    instance: instance,
+                                    error: "입력되지 않은 값이 존재합니다."
+                                }
+                
+                                res.render('admin_detail', obj);
+                            }
+                        });
+                    } else {
+                        sql = `update category set category="${req.body.category}" where category_id=${id}`;
+
+                        db.query(sql, (err) => {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                res.redirect(`/admin/${kwarg}/${id}`);
+                            }
+                        });
+                    }
+                } else if (kwarg === "personal_info") {
+                    if (req.body.authority === "on") {
+                        sql = `update personal_info set authority="admin" where personal_id=${id}`;
+
+                        db.query(sql, (err) => {
+                            if (err) {
+                                res.send(err);
+                            } else {
+                                res.redirect(`/admin/${kwarg}`);
+                            }
+                        });
+                    } else {
+                        res.redirect(`/admin/${kwarg}/${id}`);
+                    }
                 }
             }
         });

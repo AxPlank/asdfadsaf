@@ -1,5 +1,5 @@
 # Express.js Toyproject. I Love FootBall - 축구 커뮤니티 사이트
-## 1st. Admin
+## 2nd. Admin
 관리자가 회원, 게시글과 같은 데이터를 관리할 수 있는 페이지입니다. 
 
 # 목표

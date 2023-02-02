@@ -52,7 +52,10 @@
             <div>
                 <h2>팀 정보 수정</h2>
             </div>
-            <form method="post" action="/admin/<%= table %>/<%= instance.id %>">
+            <%- include('../error') %>
+            <form method="post" action="/admin/<%= table %>/<%= instance.team_id %>">
+                <label for="win">팀</label>
+                <input type="text" id="team" name="team">
                 <label for="win">승리</label>
                 <input type="text" id="win" name="win">
                 <label for="draw">무승부</label>
