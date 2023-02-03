@@ -1,50 +1,65 @@
-<section>
-    <div>
+<section class="p-3">
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h1 class="p-3"><%= table %></h1>
+    </div>
+    <div class="p-3">
         <%- include('../search') %>
     </div>
     <% if (instance.authority !== "admin") { %>
-        <div>
-            <div>
-                <h2>회원 정보</h2>
+        <div class="p-3 row">
+            <div class="p-3 col rounded shadow">
+                <div class="p-3 bg-primary-subtle rounded text-primary">
+                    <h4 class="p-1">회원 조회</h4>
+                </div>
+                <div class="p-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>속성</td>
+                                <td>내용</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ID</td>
+                                <td><%= instance.user_id %></td>
+                            </tr>
+                            <tr>
+                                <td>닉네임</td>
+                                <td><%= instance.nickname %></td>
+                            </tr>
+                            <tr>
+                                <td>핸드폰</td>
+                                <td><%= instance.phone_number %></td>
+                            </tr>
+                            <tr>
+                                <td>E-mail</td>
+                                <td><%= instance.email %></td>
+                            </tr>
+                            <tr>
+                                <td>인증</td>
+                                <td><%= instance.authentication %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div>
-                <div>
-                    <div>ID</div>
-                    <div><%= instance.user_id %></div>
+            <div class="p-3 col rounded shadow">
+                <div class="p-3 bg-primary-subtle rounded text-primary">
+                    <h4 class="p-1">관리자 권한 부여</h4>
                 </div>
-                <div>
-                    <div>닉네임</div>
-                    <div><%= instance.nickname %></div>
+                <div class="p-3">
+                    <%- include('../error') %>
+                    <form method="post" action="/admin/<%= table %>/<%= instance.personal_id %>" class="form-control shadow-sm">
+                        <div class="p-3">
+                            <label for="authority" class="form-check-label">체크 후 저장 시, 관리자로 지정</label>
+                            <input type="checkbox" id="authority" name="authority" class="form-check-input">
+                        </div>
+                        <div class="p-3">
+                            <input type="submit" value="권한 부여" class="btn btn-sm btn-primary">
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <div>핸드폰</div>
-                    <div><%= instance.phone_number %></div>
-                </div>
-                <div>
-                    <div>E-mail</div>
-                    <div><%= instance.email %></div>
-                </div>
-                <div>
-                    <div>인증 여부</div>
-                    <div>
-                        <% if (instance.authentication === "Y") { %>
-                            인증
-                        <% } else { %>
-                            미인증
-                        <% } %>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <h2>관리자 지정</h2>
-                </div>
-                <%- include('../error') %>
-                <form method="post" action="/admin/<%= table %>/<%= instance.personal_id %>">
-                    <label for="authority">체크 후 저장 시, 관리자로 지정</label>
-                    <input type="checkbox" id="authority" name="authority">
-                    <input type="submit" value="저장">
-                </form>
             </div>
         </div>
     <% } else { %>

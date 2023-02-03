@@ -1,45 +1,48 @@
 <section class="p-3">
-    <div class="p-3">
-        <h2><%= table %></h2>
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h1 class="p-3"><%= table %></h1>
     </div>
-    <div>
+    <div class="p-3">
         <%- include('../search') %>
     </div>
-    <div>
-        <a href="/admin/board/add">공지사항 작성</a>
-        <form method="post" action="/admin/board/delete">
-            <div>
-                <div>
-                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)"> 전체 선택
+    <div class="p-3">
+        <div class="p-3">
+            <a href="/admin/board/add">공지사항 작성</a>
+        </div>
+        <div class="p-3">
+            <form method="post" action="/admin/board/delete">
+                <div class="p-3 form-check">
+                    <input type="checkbox" id="allcheck" name="allcheck" value="allinstance" onclick="allclick(this)" class="form-check-input">
+                    <label for="allcheck" class="form-check-label">전체 선택</label>
+                    <input type="submit" value="삭제" class="btn btn-sm btn-primary">
                 </div>
-                <div>
-                    <input type="submit" value="삭제">
+                <div class="p-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>#</td>
+                                <td>제목</td>
+                                <td>작성자</td>
+                                <td>공지여부</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let i = 0; i < instances.length; i++) { %>
+                                <tr>
+                                    <td><input type="checkbox" id="instance" name="instance" value="<%= instances[i].board_id %>" class="form-check-input border border-1 border-primary"></td>
+                                    <td><a href="/admin/board/<%= instances[i].board_id %>"><%= instances[i].title %></a></td>
+                                    <td><%= instances[i].auth %></td>
+                                    <td>
+                                        <% if (instances[i].notice === 1) { %>
+                                            공지
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div>
-                <div>
-                    <input type="checkbox">
-                </div>
-                <div>
-                    제목
-                </div>
-                <div>
-                    내용
-                </div>
-            </div>
-            <% for (let i = 0; i < instances.length; i++) { %>
-                <div>
-                    <div>
-                        <input type="checkbox" id="instance" name="instance" value="<%= instances[i].board_id %>">
-                    </div>
-                    <div>
-                        <a href="/admin/board/<%= instances[i].board_id %>"><%= instances[i].title %></a>
-                    </div>
-                    <div>
-                        <%= instances[i].auth %>
-                    </div>
-                </div>
-            <% } %>
-        </form>
+            </form>
+        </div>
     </div>
 </section>

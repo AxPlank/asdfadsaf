@@ -1,6 +1,6 @@
 <section class="p-3">
     <div class="p-3 bg-primary-subtle rounded text-primary">
-        <h2 class="p-3"><%= table %></h2>
+        <h1 class="p-3"><%= table %></h1>
     </div>
     <div class="p-3">
         <%- include('../search') %>
@@ -28,7 +28,7 @@
                                 <% if (instances[i].authority !== 'admin') { %>
                                 <tr>
                                     <td><input type="checkbox" id="instance" name="instance" value="<%= instances[i].personal_id %>" class="form-check-input border border-1 border-primary"></td>
-                                    <td><a href="/admin/team/<%= instances[i].personal_id %>"><%= instances[i].auth_id %></a></td>
+                                    <td><a href="/admin/personal_info/<%= instances[i].personal_id %>"><%= instances[i].user_id %></a></td>
                                     <td><%= instances[i].nickname %></td>
                                     <td><%= instances[i].authentication %></td>
                                 </tr>

@@ -1,27 +1,35 @@
-<section>
-    <div>
+<section class="p-3">
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h1 class="p-3"><%= table %></h1>
+    </div>
+    <div class="p-3">
         <%- include('../search') %>
     </div>
-    <div>
-        <div>
-            <h2>카테고리 정보</h2>
-        </div>
-        <div>
-            <div>
-                <div>카테고리</div>
-                <div><%= instance.category %></div>
+    <div class="p-3 row">
+        <div class="p-3 col rounded shadow">
+            <div class="p-3 bg-primary-subtle rounded text-primary">
+                <h4 class="p-1">카테고리 조회</h4>
+            </div>
+            <div class="p-3">
+                <h4>카테고리명 - <%= instance.category %></h4>
             </div>
         </div>
-        <div>
-            <div>
-                <h2>카테고리 수정</h2>
+        <div class="p-3 col rounded shadow">
+            <div class="p-3 bg-primary-subtle rounded text-primary">
+                <h4 class="p-1">카테고리 수정</h4>
             </div>
-            <%- include('../error') %>
-            <form method="post" action="/admin/<%= table %>/<%= instance.category_id %>">
-                <label for="category">카테고리</label>
-                <input type="text" id="category" name="category">
-                <input type="submit" value="저장">
-            </form>
+            <div class="p-3">
+                <%- include('../error') %>
+                <form method="post" action="/admin/<%= table %>/<%= instance.category_id %>" class="form-control shadow-sm">
+                    <div class="p-1">
+                        <label for="category"></label>
+                        <input type="text" id="category" name="category" class="form-control form-control-sm rounded border border-2 border-primary" placeholder="카테고리명">
+                    </div>
+                    <div class="p-3">
+                        <input type="submit" value="수정" class="btn btn-sm btn-primary">
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </section>
