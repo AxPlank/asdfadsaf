@@ -1,22 +1,41 @@
-<section>
-    <div>
-        <h2><%= table %></h2>
-        <p>공지사항 작성</p>
+<section class="p-3">
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h1 class="p-3"><%= table %></h1>
     </div>
-    <div>
-        <%- include('../error') %>
-        <form method="post" action="/admin/board/add">
-            <label for="title">제목</label>
-            <input type="text" id="title" name="title" value="<%= form?form.title:'' %>">
-            <label for="category">카테고리</label>
-            <select id="category" name="category">
-                <% for (let i = 0; i < leagues.length; i++) { %>
-                    <option value="<%= leagues[i].category %>"><%= leagues[i].category %></option>
-                <% } %>
-            </select>
-            <label for="content">내용</label>
-            <textarea id="content" name="content"><%= form?form.content:"" %></textarea>
-            <input type="submit" value="등록">
-        </form>
+    <div class="p-3">
+        <%- include('../search') %>
+    </div>
+    <div class="p-3">
+        <div class="p-3 col rounded shadow">
+            <div class="p-3 bg-primary-subtle rounded text-primary">
+                <h4 class="p-1">공지사항 작성</h4>
+            </div>
+            <div class="p-3">
+                <form method="post" action="/admin/board/add" class="form-control shadow-sm">
+                    <%- include('../error') %>
+                    <div class="p-3 row row-cols-2">
+                        <div class="col">
+                            <label for="title"></label>
+                            <input type="text" id="title" name="title" value="<%= form?form.title:'' %>" placeholder="제목" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                        <div class="col">
+                            <label for="category" class=""></label>
+                            <select id="category" name="category" class="form-select rounded">
+                                <% for (let i = 0; i < leagues.length; i++) { %>
+                                    <option value="<%= leagues[i].category %>"><%= leagues[i].category %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <label for="content"></label>
+                        <textarea id="content" name="content" class="form-control form-control-sm rounded border border-2 border-primary"><%= form?form.content:"공지사항 내용" %></textarea>
+                    </div>
+                    <div class="p-3">
+                        <input type="submit" value="등록" class="btn btn-sm btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </section>

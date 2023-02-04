@@ -1,4 +1,4 @@
-<form method="post" action="/admin/<%= table %>" class="form-control form-control-lg border border-3 border-primary shadow-sm">
+<form method="post" action="<%= table?'/admin/'+table:'#' %>" class="form-control form-control-lg border border-3 border-primary shadow-sm">
     <div class="p-3 input-group w-50">
         <label for="searchType"></label>
         <select id="searchType" name="searchType" class="form-select-sm rounded">
@@ -24,6 +24,10 @@
         </select>
         <label for="search"></label>
         <input type="text" id="search" name="search" placeholder="검색어를 입력하세요 WWW" class="form-control form-control-sm rounded border border-2 border-primary" style="margin-left: 15px;">
-        <input type="submit" value="검색" class="btn btn-sm btn-primary rounded" style="margin-left: 10px;">
+        <% if (table) { %>
+            <input type="submit" value="검색" class="btn btn-sm btn-primary rounded" style="margin-left: 10px;">
+        <% } else { %>
+            <input type="submit" value="검색" class="btn btn-sm btn-primary rounded" style="margin-left: 10px;" disabled>
+        <% } %>
     </div>
 </form>

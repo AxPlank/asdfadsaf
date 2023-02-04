@@ -1,14 +1,29 @@
-<section>
-    <div>
-        <h2><%= table %></h2>
-        <p>카테고리 추가</p>
+<section class="p-3">
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h1 class="p-3"><%= table %></h1>
     </div>
-    <div>
-        <%- include('../error') %>
-        <form method="post" action="/admin/category/add">
-            <label for="category">카테고리</label>
-            <input type="text" id="category" name="category" value="<%= form?form.category:'' %>">
-            <input type="submit" value="등록">
-        </form>
+    <div class="p-3">
+        <%- include('../search') %>
+    </div>
+    <div class="p-3">
+        <div class="p-3 col rounded shadow">
+            <div class="p-3 bg-primary-subtle rounded text-primary">
+                <h4 class="p-1">카테고리 추가</h4>
+            </div>
+            <div class="p-3">
+                <form method="post" action="/admin/category/add" class="form-control shadow-sm">
+                    <%- include('../error') %>
+                    <div class="p-3 row row-cols-2">
+                        <div class="col">
+                            <label for="category"></label>
+                            <input type="text" id="category" name="category" value="<%= form?form.category:'' %>" placeholder="카테고리명" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                        <div class="col p-4">
+                            <input type="submit" value="등록" class="btn btn-sm btn-primary">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </section>

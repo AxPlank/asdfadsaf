@@ -15,7 +15,14 @@
                 <%- include('./instances/category') %>
             <% } %>
         <% } else { %>
-            <h1>Main Page</h1>
+            <section class="p-3">
+                <div class="p-3 bg-primary-subtle rounded text-primary">
+                    <h1 id="tablename" class="p-3">Admin</h1>
+                </div>
+                <div class="p-3">
+                    <%- include('search') %>
+                </div>
+            </section>
         <% } %>
     <% } else { %>
         <h1>You aren't Admin</h1>

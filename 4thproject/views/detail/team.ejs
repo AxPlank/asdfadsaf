@@ -60,8 +60,8 @@
                 <h4 class="p-1">팀 기록 수정</h4>
             </div>
             <div class="p-3">
-                <%- include('../error') %>
                 <form method="post" action="/admin/<%= table %>/<%= instance.team_id %>" class="form-control shadow-sm">
+                    <%- include('../error') %>
                     <div class="p-1">
                         <label for="team"></label>
                         <input type="text" id="team" name="team" placeholder="팀" class="form-control form-control-sm rounded border border-2 border-primary">

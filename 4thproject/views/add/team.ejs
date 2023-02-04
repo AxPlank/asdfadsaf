@@ -1,32 +1,63 @@
-<section>
-    <div>
-        <h2><%= table %></h2>
-        <p>팀 추가</p>
+<section class="p-3">
+    <div class="p-3 bg-primary-subtle rounded text-primary">
+        <h1 class="p-3"><%= table %></h1>
     </div>
-    <div>
-        <%- include('../error') %>
-        <form method="post" action="/admin/team/add">
-            <label for="team">팀 이름</label>
-            <input type="text" id="team" name="team" value="<%= form?form.team:'' %>">
-            <label for="league">리그</label>
-            <select id="league" name="league">
-                <% for (let i = 0; i < leagues.length; i++) { %>
-                    <% if (leagues[i].category !== "Others") { %>
-                        <option value="<%= leagues[i].category %>"><%= leagues[i].category %></option>
-                    <% } %>
-                <% } %>
-            </select>
-            <label for="win">승리</label>
-            <input type="text" id="win" name="win" value="<%= form?form.win:'' %>">
-            <label for="draw">무승부</label>
-            <input type="text" id="draw" name="draw" value="<%= form?form.draw:'' %>">
-            <label for="lose">패배</label>
-            <input type="text" id="lose" name="lose" value="<%= form?form.lose:'' %>">
-            <label for="gf">득점</label>
-            <input type="text" id="gf" name="gf" value="<%= form?form.gf:'' %>">
-            <label for="ga">실점</label>
-            <input type="text" id="ga" name="ga" value="<%= form?form.ga:'' %>">
-            <input type="submit" value="등록">
-        </form>
+    <div class="p-3">
+        <%- include('../search') %>
+    </div>
+    <div class="p-3">
+        <div class="p-3 col rounded shadow">
+            <div class="p-3 bg-primary-subtle rounded text-primary">
+                <h4 class="p-1">팀 추가</h4>
+            </div>
+            <div class="p-3">
+                <form method="post" action="/admin/team/add">
+                    <%- include('../error') %>
+                    <div class="p-3 row row-cols-3">
+                        <div class="col">
+                            <label for="team"></label>
+                            <input type="text" id="team" name="team" value="<%= form?form.team:'' %>" placeholder="팀 이름" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                        <div class="col">
+                            <label for="league"></label>
+                            <select id="league" name="league" class="form-select">
+                                <% for (let i = 0; i < leagues.length; i++) { %>
+                                    <% if (leagues[i].category !== "Others") { %>
+                                        <option value="<%= leagues[i].category %>"><%= leagues[i].category %></option>
+                                    <% } %>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="p-3 row row-cols-3">
+                        <div class="col">
+                            <label for="win"></label>
+                            <input type="text" id="win" name="win" value="<%= form?form.win:'' %>" placeholder="승리" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                        <div class="col">
+                            <label for="draw"></label>
+                            <input type="text" id="draw" name="draw" value="<%= form?form.draw:'' %>" placeholder="무승부" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                        <div class="col">
+                            <label for="lose"></label>
+                            <input type="text" id="lose" name="lose" value="<%= form?form.lose:'' %>" placeholder="패배" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                    </div>
+                    <div class="p-3 row row-cols-3">
+                        <div class="col">
+                            <label for="gf"></label>
+                            <input type="text" id="gf" name="gf" value="<%= form?form.gf:'' %>" placeholder="팀 득점" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                        <div class="col">
+                            <label for="ga"></label>
+                            <input type="text" id="ga" name="ga" value="<%= form?form.ga:'' %>" placeholder="팀 실점" class="form-control form-control-sm rounded border border-2 border-primary">
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <input type="submit" value="등록" class="btn btn-sm btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </section>

@@ -175,6 +175,7 @@ router.get('/:kwarg', (req, res) => {
                         user: req.session.user.name,
                         auth: req.session.user.auth,
                         tables: tables,
+                        table: null,
                         instances: null
                     }
 

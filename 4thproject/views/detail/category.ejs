@@ -11,7 +11,20 @@
                 <h4 class="p-1">카테고리 조회</h4>
             </div>
             <div class="p-3">
-                <h4>카테고리명 - <%= instance.category %></h4>
+                <table class="table">
+                    <thead class="bg-primary-subtle">
+                        <tr>
+                            <td>속성</td>
+                            <td>내용</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>카테고리명</td>
+                            <td><%= instance.category %></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="p-3 col rounded shadow">
@@ -19,8 +32,8 @@
                 <h4 class="p-1">카테고리 수정</h4>
             </div>
             <div class="p-3">
-                <%- include('../error') %>
                 <form method="post" action="/admin/<%= table %>/<%= instance.category_id %>" class="form-control shadow-sm">
+                    <%- include('../error') %>
                     <div class="p-1">
                         <label for="category"></label>
                         <input type="text" id="category" name="category" class="form-control form-control-sm rounded border border-2 border-primary" placeholder="카테고리명">
