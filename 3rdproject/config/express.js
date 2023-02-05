@@ -12,6 +12,7 @@ module.exports = () => {
 
     app.locals.pretty = true;
 
+    // Middleware
     app.use(express.urlencoded({extended: false}));
     app.use(session({
         secret: 'sfjo313!$32$51kjfsdaf',
@@ -33,6 +34,7 @@ module.exports = () => {
     app.set('views', './views_ejs');
     app.set('view engine', 'ejs');
     
+    // Main Page
     app.get('/', (req, res) => {
         const obj = {}
 
