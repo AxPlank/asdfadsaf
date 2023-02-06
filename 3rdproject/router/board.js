@@ -10,10 +10,13 @@ module.exports = () => {
     ]);
     const fs = require('node:fs/promises');
 
+    // 게시글 작성
     router.get('/post', (req, res) => {
         if (!req.session.user) {
+            // 로그인하지 않으면 작성창으로 진입 안됨
             res.redirect('/auth/login');
         } else {
+            // 페이지 상단 카테고리 출력 및 글 작성 때 사용할 select box 위한 쿼리문
             let sql = 'select category from category order by category asc';
 
             db.query(sql, (err, datas) => {
@@ -27,8 +30,8 @@ module.exports = () => {
                     res.render('errorpage', obj);
                 } else {
                     const obj = {
-                        error: false,
-                        form: false,
+                        error: null,
+                        form: null,
                         leagues: datas,
                         user: req.session.user.name
                     };
