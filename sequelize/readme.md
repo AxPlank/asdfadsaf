@@ -11,10 +11,11 @@
 툴: Visual Studio Code, MySQL, Git, Github
 
 # 이론 학습 일지 (학습하면서 글 추가예정)
-[블로그 링크](https://papus.tistory.com)
+1. [ORM](https://papus.tistory.com/206)
+2. [sequelize](asdfasdf)
 
 # 일정
 | 기간 | 내용 | 비고 |
 |---|---|---|
-| 2023/02/06 ~ 02/10 | 이론 학습 <br> 관련 노드 패키지 설치 <br> Git, GitHub 최초커밋 실시 |  |
-| 02/11 ~ 02/13 | 실습 |  |
+| 2023/02/06 ~ 02/13 | 이론 학습 <br> 관련 노드 패키지 설치 <br> Git, GitHub 최초커밋 실시 |  |
+| 02/13 ~ 02/20 | 실습 |  |

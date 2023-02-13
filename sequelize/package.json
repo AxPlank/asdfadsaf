@@ -1,0 +1,15 @@
+{
+  "name": "sequelize",
+  "version": "1.0.0",
+  "description": "1. sequelize를 이용해 Node.js환경과 MySQL을 연동한다.\r 2. sequelize를 이용해 DB를 조작한다.\r 3. sequelize를 이용해 이미 존재하는 테이블을 연결해 조작해본다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^3.1.2",
+    "sequelize": "^6.28.0"
+  }
+}
