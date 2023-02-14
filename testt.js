@@ -1,5 +1,11 @@
-if (parseInt('ads11')) {
-    console.log(1)
-}
+let a = 1;
 
-console.log(parseInt('abcde'))
+let b = a || 'none';
+
+console.log(b);
+
+let c;
+
+b = c || 'none';
+
+console.log(b);
