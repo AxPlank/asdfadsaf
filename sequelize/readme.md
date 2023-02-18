@@ -12,7 +12,8 @@
 
 # 이론 학습 일지 (학습하면서 글 추가예정)
 1. [ORM](https://papus.tistory.com/206)
-2. [sequelize](asdfasdf)
+2. [sequelize - seeder, CRUD](https://papus.tistory.com/207)
+3. [sequelize - Express.js](#)
 
 # 일정
 | 기간 | 내용 | 비고 |
