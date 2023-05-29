@@ -23,6 +23,7 @@ app.set('view engine', 'pug'); // View에 사용할 언어 지정
 app.use(bodyParser.urlencoded({ // 요청이 왔을 때, JSON 파일을 읽기 위한 설정
     extended: false
 }));
+app.use(express.static('static'));
 
 /*
 REST API
