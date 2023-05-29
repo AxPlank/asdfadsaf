@@ -11,7 +11,9 @@ Setting
 app.locals.pretty = true; // 소스 코드 예쁘게 정렬
 
 // listen
-app.listen(port);
+app.listen(port, () => {
+    console.log("http://localhost:3000");
+});
 
 // set
 app.set('views', './views'); // View에 사용할 파일들을 위치시킬 폴더 지정
