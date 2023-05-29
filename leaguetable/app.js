@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-const port = 3000;
 
 /*
 Setting
@@ -11,7 +10,7 @@ Setting
 app.locals.pretty = true; // 소스 코드 예쁘게 정렬
 
 // listen
-app.listen(port, () => {
+app.listen(3000, () => {
     console.log("http://localhost:3000");
 });
 
